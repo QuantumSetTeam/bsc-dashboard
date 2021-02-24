@@ -1,0 +1,8 @@
+.table-container-dark table,
+.table-container-dark div {
+  background: #131825 !important;
+}
+
+.tabs-container-dark > div {
+  background: #131825 !important;
+}
