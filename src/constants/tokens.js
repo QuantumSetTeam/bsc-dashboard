@@ -1,4 +1,4 @@
-import { UniV2PairAddress, GovernanceToken, Dao, Dollar } from './contracts';
+import { UniV2PairAddress, GovernanceToken, Dao, Dai, Dollar } from './contracts';
 
 export const UNI = {
   addr: UniV2PairAddress,
@@ -7,7 +7,7 @@ export const UNI = {
 };
 
 export const DAI = {
-  addr: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  addr: Dai,
   decimals: 18,
   symbol: 'DAI',
 };
