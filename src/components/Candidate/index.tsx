@@ -2,7 +2,7 @@ import { IdentityBadge, Layout } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { QSDS } from '../../constants/tokens';
+import { SCDS } from '../../constants/tokens';
 import { proposalStatus } from '../../utils/gov';
 import {
   getApproveFor,
@@ -53,15 +53,15 @@ function Candidate({ user }: { user: string }) {
       const poolAddress = await getPoolGovAddress();
 
       const [voteStr, statusStr, userStakeStr] = await Promise.all([
-        getRecordedVote(QSDS.addr, user, candidate),
-        getStatusOf(QSDS.addr, user),
+        getRecordedVote(SCDS.addr, user, candidate),
+        getStatusOf(SCDS.addr, user),
         getBalanceBonded(poolAddress, user),
       ]);
 
       if (!isCancelled) {
         setVote(parseInt(voteStr, 10));
         setStatus(parseInt(statusStr, 10));
-        setUserStake(toTokenUnitsBN(userStakeStr, QSDS.decimals));
+        setUserStake(toTokenUnitsBN(userStakeStr, SCDS.decimals));
       }
     }
     updateUserInfo();
@@ -87,13 +87,13 @@ function Candidate({ user }: { user: string }) {
         periodForStr,
         isInitialized,
       ] = await Promise.all([
-        getApproveFor(QSDS.addr, candidate),
-        getRejectFor(QSDS.addr, candidate),
-        getTokenTotalSupply(QSDS.addr),
-        getEpoch(QSDS.addr),
-        getStartFor(QSDS.addr, candidate),
-        getPeriodFor(QSDS.addr, candidate),
-        getIsInitialized(QSDS.addr, candidate),
+        getApproveFor(SCDS.addr, candidate),
+        getRejectFor(SCDS.addr, candidate),
+        getTokenTotalSupply(SCDS.addr),
+        getEpoch(SCDS.addr),
+        getStartFor(SCDS.addr, candidate),
+        getPeriodFor(SCDS.addr, candidate),
+        getIsInitialized(SCDS.addr, candidate),
       ]);
 
       const epochN = parseInt(epochStr, 10);
@@ -102,13 +102,13 @@ function Candidate({ user }: { user: string }) {
 
       const endsAfter = startN + periodN - 1;
       if (epochN > endsAfter) {
-        totalStakeStr = await getTotalBondedAt(QSDS.addr, endsAfter);
+        totalStakeStr = await getTotalBondedAt(SCDS.addr, endsAfter);
       }
 
       if (!isCancelled) {
-        setApproveFor(toTokenUnitsBN(approveForStr, QSDS.decimals));
-        setRejectFor(toTokenUnitsBN(rejectForStr, QSDS.decimals));
-        setTotalStake(toTokenUnitsBN(totalStakeStr, QSDS.decimals));
+        setApproveFor(toTokenUnitsBN(approveForStr, SCDS.decimals));
+        setRejectFor(toTokenUnitsBN(rejectForStr, SCDS.decimals));
+        setTotalStake(toTokenUnitsBN(totalStakeStr, SCDS.decimals));
         setEpoch(epochN);
         setStartEpoch(startN);
         setPeriodEpoch(periodN);

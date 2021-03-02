@@ -6,11 +6,11 @@ import { pokeRewards } from '../../utils/web3';
 
 interface RewardsProps {
   poolAddress: string | null;
-  amountQSD: BigNumber;
+  amountSCD: BigNumber;
   amountQSG: BigNumber;
 }
 
-export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountQSD, amountQSG }) => (
+export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountSCD, amountQSG }) => (
   <TopBorderSection title='Rewards'>
     <div
       style={{
@@ -20,7 +20,7 @@ export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountQSD, amount
       }}
     >
       <div>
-        <BalanceBlock asset='Rewarded' balance={amountQSD} suffix={'QSD'} />
+        <BalanceBlock asset='Rewarded' balance={amountSCD} suffix={'SCD'} />
       </div>
       <div>
         <BalanceBlock asset='Rewarded' balance={amountQSG} suffix={'QSG'} />

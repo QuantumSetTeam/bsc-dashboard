@@ -47,7 +47,7 @@ export const WithdrawDeposit: React.FC<WithdrawDepositProps> = ({
               suffix={suffix}
             />
           </div>
-          {/* Deposit QSD into DAO */}
+          {/* Deposit SCD into DAO */}
           <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
             <div style={{ display: 'flex' }}>
               <div style={{ width: '60%', minWidth: '6em' }}>
@@ -86,7 +86,7 @@ export const WithdrawDeposit: React.FC<WithdrawDepositProps> = ({
             </div>
           </div>
           <div style={{ flexBasis: '2%' }} />
-          {/* Withdraw QSD from DAO */}
+          {/* Withdraw SCD from DAO */}
           <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
             <div style={{ display: 'flex' }}>
               <div style={{ width: '60%', minWidth: '7em' }}>
@@ -131,7 +131,7 @@ export const WithdrawDeposit: React.FC<WithdrawDepositProps> = ({
             />
           </div>
           <div style={{ flexBasis: '35%' }} />
-          {/* Approve DAO to spend QSD */}
+          {/* Approve DAO to spend SCD */}
           <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
             <Button
               wide

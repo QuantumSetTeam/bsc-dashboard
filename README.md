@@ -1,10 +1,10 @@
-# QSD dashboard
-simple dashboard for interacting with the QSD protocol.
+# SCD dashboard
+simple dashboard for interacting with the SCD protocol.
 
 forked from [Opyn Monitor](https://opynmonitor.xyz).
 
 ## ipfs
-for convenience, the current IPFS build of QSD dashboard can be accessed here: [https://quantumset.finance](https://quantumset.finance)
+for convenience, the current IPFS build of SCD dashboard can be accessed here: [https://quantumset.finance](https://quantumset.finance)
 
 ## screenshot
 ![image](screenshot.png)
@@ -14,7 +14,7 @@ for convenience, the current IPFS build of QSD dashboard can be accessed here: [
 
 ## install & run locally
 ```shell
-git clone https://github.com/qsd-finance/dashboard.git
+git clone https://github.com/SCD-finance/dashboard.git
 cd dashboard
 npm install
 
@@ -26,11 +26,11 @@ npm start
 ### mainnet
 - `0xEc9dCB3DC47FF5edc02666cE4Db459841853B7B4` **Root / Bootstrapping rewards**
 - `0x9B1B24EB741B435074D8e8c21D62DAeF12b5733d` **Implementation**
-- `0x35b4EBBb9bD9d967B1EFE4ccDDCe38F22E38198c` **QSD**
+- `0x35b4EBBb9bD9d967B1EFE4ccDDCe38F22E38198c` **SCD**
 - `0x9f54B1E1122AE6978A70fdE254CA95Ae6Df35459` **QSG**
 - `0xD9122DB4cB0E1c42dA965Ee5D25606C7ef607145` **QSG Rewards**
 - `0xDBAf2265C74AD30a90B08D14E8097D13B891a2cF` **LP Rewards**
-- `0xCd72c0A874782d7D5c85208c1bbAE46c409478dd` **QSD Rewards**
+- `0xCd72c0A874782d7D5c85208c1bbAE46c409478dd` **SCD Rewards**
 
 ## disclaimer
 this project is an experiment, and its contracts are unaudited - we've put a significant amount of work into testing, as well as generally de-risking the design of its core mechanism, however participants should take great caution as bugs resulting in loss of funds are always a possibility.

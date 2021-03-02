@@ -1,7 +1,7 @@
 import { Button, IconToken, TextInput } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
-import { QSDS } from '../../constants/tokens';
+import { SCDS } from '../../constants/tokens';
 import { canPropose } from '../../utils/gov';
 import { recordVote } from '../../utils/web3';
 import { TopBorderSection } from '../common';
@@ -53,7 +53,7 @@ function ProposeCandidate({
             label='Propose'
             onClick={() => {
               recordVote(
-                QSDS.addr,
+                SCDS.addr,
                 candidate,
                 1 // APPROVE
               );

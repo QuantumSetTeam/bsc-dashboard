@@ -7,7 +7,7 @@ import {
 } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
-import { QSD, QSDS } from '../../constants/tokens';
+import { SCD, SCDS } from '../../constants/tokens';
 import { MAX_UINT256 } from '../../constants/values';
 import { isPos, toBaseUnitBN } from '../../utils/number';
 import { approve, deposit, withdraw } from '../../utils/web3';
@@ -48,16 +48,16 @@ function WithdrawDeposit({
               <BalanceBlock
                 asset='Staged'
                 balance={stagedBalance}
-                suffix={'QSD'}
+                suffix={'SCD'}
               />
             </div>
-            {/* Deposit QSD into DAO */}
+            {/* Deposit SCD into DAO */}
             <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
               <div style={{ display: 'flex' }}>
                 <div style={{ width: '60%', minWidth: '6em' }}>
                   <>
                     <BigNumberInput
-                      adornment='QSD'
+                      adornment='SCD'
                       value={depositAmount}
                       setter={setDepositAmount}
                       disabled={status !== 0}
@@ -76,8 +76,8 @@ function WithdrawDeposit({
                     label='Deposit'
                     onClick={() => {
                       deposit(
-                        QSDS.addr,
-                        toBaseUnitBN(depositAmount, QSD.decimals)
+                        SCDS.addr,
+                        toBaseUnitBN(depositAmount, SCD.decimals)
                       );
                     }}
                     disabled={
@@ -90,13 +90,13 @@ function WithdrawDeposit({
               </div>
             </div>
             <div style={{ flexBasis: '2%' }} />
-            {/* Withdraw QSD from DAO */}
+            {/* Withdraw SCD from DAO */}
             <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
               <div style={{ display: 'flex' }}>
                 <div style={{ width: '60%', minWidth: '7em' }}>
                   <>
                     <BigNumberInput
-                      adornment='QSD'
+                      adornment='SCD'
                       value={withdrawAmount}
                       setter={setWithdrawAmount}
                       disabled={status !== 0}
@@ -115,8 +115,8 @@ function WithdrawDeposit({
                     label='Withdraw'
                     onClick={() => {
                       withdraw(
-                        QSDS.addr,
-                        toBaseUnitBN(withdrawAmount, QSD.decimals)
+                        SCDS.addr,
+                        toBaseUnitBN(withdrawAmount, SCD.decimals)
                       );
                     }}
                     disabled={
@@ -136,18 +136,18 @@ function WithdrawDeposit({
               <BalanceBlock
                 asset='Staged'
                 balance={stagedBalance}
-                suffix={'QSD'}
+                suffix={'SCD'}
               />
             </div>
             <div style={{ flexBasis: '35%' }} />
-            {/* Approve DAO to spend QSD */}
+            {/* Approve DAO to spend SCD */}
             <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
               <Button
                 wide
                 icon={<IconCirclePlus />}
                 label='Approve'
                 onClick={() => {
-                  approve(QSD.addr, QSDS.addr);
+                  approve(SCD.addr, SCDS.addr);
                 }}
                 disabled={user === ''}
               />

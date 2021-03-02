@@ -3,7 +3,7 @@ import { Header, Layout } from '@aragon/ui';
 
 import {getEpoch, getEpochTime,
 } from '../../utils/infura';
-import {QSDS} from "../../constants/tokens";
+import {SCDS} from "../../constants/tokens";
 import AdvanceEpoch from './AdvanceEpoch';
 import EpochPageHeader from "./Header";
 import IconHeader from "../common/IconHeader";
@@ -17,8 +17,8 @@ function EpochDetail({ user }: {user: string}) {
 
     async function updateUserInfo() {
       const [epochStr, epochTimeStr] = await Promise.all([
-        getEpoch(QSDS.addr),
-        getEpochTime(QSDS.addr),
+        getEpoch(SCDS.addr),
+        getEpochTime(SCDS.addr),
       ]);
 
       if (!isCancelled) {

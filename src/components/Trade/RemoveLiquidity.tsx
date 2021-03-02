@@ -8,12 +8,12 @@ import { removeLiquidity } from '../../utils/web3';
 import { BalanceBlock, MaxButton, PriceSection } from '../common/index';
 import { toBaseUnitBN } from '../../utils/number';
 import {decreaseWithSlippage} from "../../utils/calculation";
-import {QSD, UNI, DAI} from "../../constants/tokens";
+import {SCD, UNI, DAI} from "../../constants/tokens";
 import BigNumberInput from "../common/BigNumberInput";
 
 type RemoveLiquidityProps = {
   userBalanceUNI: BigNumber,
-  pairBalanceQSD: BigNumber,
+  pairBalanceSCD: BigNumber,
   pairBalanceDAI: BigNumber,
   pairTotalSupplyUNI: BigNumber,
 }
@@ -21,7 +21,7 @@ type RemoveLiquidityProps = {
 
 function RemoveLiquidity({
   userBalanceUNI,
-  pairBalanceQSD,
+  pairBalanceSCD,
   pairBalanceDAI,
   pairTotalSupplyUNI,
 }: RemoveLiquidityProps) {
@@ -29,10 +29,10 @@ function RemoveLiquidity({
 
   const poolPortion = withdrawAmountUNI.div(pairTotalSupplyUNI);
   const estimatedDAIReceived = pairBalanceDAI.times(poolPortion);
-  const estimatedQSDReceived = pairBalanceQSD.times(poolPortion);
+  const estimatedSCDReceived = pairBalanceSCD.times(poolPortion);
 
   const minDAIReceived = decreaseWithSlippage(estimatedDAIReceived);
-  const minQSDReceived = decreaseWithSlippage(estimatedQSDReceived);
+  const minSCDReceived = decreaseWithSlippage(estimatedSCDReceived);
 
   const onChangeWithdrawAmountUNI = (amountUNI) => {
     if (!amountUNI) {
@@ -66,7 +66,7 @@ function RemoveLiquidity({
             <div style={{ width: '35%', marginRight: '5%' }}>
               <>
                 <PriceSection label="You get " amt={estimatedDAIReceived} symbol=" DAI" />
-                <PriceSection label="+ " amt={estimatedQSDReceived} symbol=" QSD" />
+                <PriceSection label="+ " amt={estimatedSCDReceived} symbol=" SCD" />
               </>
             </div>
             <div style={{ width: '30%' }}>
@@ -77,7 +77,7 @@ function RemoveLiquidity({
                 onClick={() => {
                   removeLiquidity(
                     toBaseUnitBN(withdrawAmountUNI, UNI.decimals),
-                    toBaseUnitBN(minQSDReceived, QSD.decimals),
+                    toBaseUnitBN(minSCDReceived, SCD.decimals),
                     toBaseUnitBN(minDAIReceived, DAI.decimals),
                   );
                 }}

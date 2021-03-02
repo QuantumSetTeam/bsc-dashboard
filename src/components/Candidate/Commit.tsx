@@ -1,6 +1,6 @@
 import { Button, IconUpload } from '@aragon/ui';
 import React from 'react';
-import { QSDS } from '../../constants/tokens';
+import { SCDS } from '../../constants/tokens';
 import { commit } from '../../utils/web3';
 import TextBlock from '../common/TextBlock';
 
@@ -64,7 +64,7 @@ function Commit({
             icon={<IconUpload />}
             label='Commit'
             onClick={() => {
-              commit(QSDS.addr, candidate);
+              commit(SCDS.addr, candidate);
             }}
             disabled={user === '' || s !== 'Approved'}
           />

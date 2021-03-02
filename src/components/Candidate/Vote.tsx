@@ -6,7 +6,7 @@ import {
 } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { QSDS } from '../../constants/tokens';
+import { SCDS } from '../../constants/tokens';
 import { recordVote } from '../../utils/web3';
 import { BalanceBlock, TopBorderSection } from '../common/index';
 import TextBlock from '../common/TextBlock';
@@ -39,7 +39,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
             label='Unvote'
             onClick={() => {
               recordVote(
-                QSDS.addr,
+                SCDS.addr,
                 candidate,
                 0 // UNDECIDED
               );
@@ -56,7 +56,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
             label='Accept'
             onClick={() => {
               recordVote(
-                QSDS.addr,
+                SCDS.addr,
                 candidate,
                 1 // APPROVE
               );
@@ -74,7 +74,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
               label='Reject'
               onClick={() => {
                 recordVote(
-                  QSDS.addr,
+                  SCDS.addr,
                   candidate,
                   2 // REJECT
                 );

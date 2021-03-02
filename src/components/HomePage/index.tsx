@@ -5,11 +5,11 @@ import { NavLink } from 'react-router-dom';
 // import { Layout } from '@aragon/ui';
 import { IconHeader, Row, Tile, TopBorderBox , BRow, BCol , BContainer } from '../common';
 import Regulation from '../Regulation';
-import { QSD, QSDS } from '../../constants/tokens';
+import { SCD, SCDS } from '../../constants/tokens';
 import {
   getDaoIsBootstrapping,
   getExpansionAmount,
-  getInstantaneousQSDPrice,
+  getInstantaneousSCDPrice,
   getLPBondedLiquidity,
   getPoolTotalBonded,
   getTokenTotalSupply,
@@ -28,12 +28,12 @@ type HomePageProps = {
 function HomePage({ user }: HomePageProps) {
   const [epochTime, setEpochTime] = useState('0-00:00:00');
   const [totalSupply, setTotalSupply] = useState<BigNumber | null>(null);
-  const [qsdPrice, setQSDPrice] = useState<BigNumber | null>(null);
-  const [qsdLiquidity, setQSDLiquidity] = useState<BigNumber | null>(null);
+  const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
+  const [SCDLiquidity, setSCDLiquidity] = useState<BigNumber | null>(null);
   const [daiLiquidity, setDAILiquidity] = useState<BigNumber | null>(null);
 
   const [daoBonded, setDaoBonded] = useState<BigNumber | null>(null);
-  const [lpQsdLiquidity, setLpQsdLiquidity] = useState<number | null>(null);
+  const [lpSCDLiquidity, setLpSCDLiquidity] = useState<number | null>(null);
   const [lpDaiLiquidity, setLpDaiLiquidity] = useState<number | null>(null);
   const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
@@ -53,21 +53,21 @@ function HomePage({ user }: HomePageProps) {
         daoBonded,
         bondingBonded,
       ] = await Promise.all([
-        getTokenTotalSupply(QSD.addr),
-        getInstantaneousQSDPrice(),
+        getTokenTotalSupply(SCD.addr),
+        getInstantaneousSCDPrice(),
         getUniswapLiquidity(),
         getLPBondedLiquidity(),
         getExpansionAmount(),
         getDaoIsBootstrapping(),
-        getTotalBonded(QSDS.addr),
+        getTotalBonded(SCDS.addr),
         getPoolTotalBonded(poolBonding),
       ]);
 
       setTotalSupply(toTokenUnitsBN(supply, 18));
-      setQSDPrice(toTokenUnitsBN(tokenPrice, 18));
-      setQSDLiquidity(toTokenUnitsBN(liquidity.qsd, 18));
+      setSCDPrice(toTokenUnitsBN(tokenPrice, 18));
+      setSCDLiquidity(toTokenUnitsBN(liquidity.SCD, 18));
       setDAILiquidity(toTokenUnitsBN(liquidity.dai, 18));
-      setLpQsdLiquidity(liquidityLp.qsd);
+      setLpSCDLiquidity(liquidityLp.SCD);
       setLpDaiLiquidity(liquidityLp.dai);
       setExpansionAmount(expansion);
 
@@ -112,9 +112,9 @@ function HomePage({ user }: HomePageProps) {
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
   // Calculate LP APR (4 hrs)
-  if (qsdPrice && lpQsdLiquidity && lpDaiLiquidity && expansionAmount) {
-    const totalDAI = lpQsdLiquidity * toFloat(qsdPrice) + lpDaiLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(qsdPrice);
+  if (SCDPrice && lpSCDLiquidity && lpDaiLiquidity && expansionAmount) {
+    const totalDAI = lpSCDLiquidity * toFloat(SCDPrice) + lpDaiLiquidity;
+    const daiToAdd = (expansionAmount / 2) * toFloat(SCDPrice);
 
     const lpYield = (daiToAdd / totalDAI) * 100;
 
@@ -125,11 +125,11 @@ function HomePage({ user }: HomePageProps) {
   }
 
   // Calculate DAO APR (4 hrs)
-  if (qsdPrice && daoBonded && expansionAmount) {
-    const totalQSD = toFloat(daoBonded);
-    const qsdToAdd = expansionAmount / 2;
+  if (SCDPrice && daoBonded && expansionAmount) {
+    const totalSCD = toFloat(daoBonded);
+    const SCDToAdd = expansionAmount / 2;
 
-    const daoYield = (qsdToAdd / totalQSD) * 100;
+    const daoYield = (SCDToAdd / totalSCD) * 100;
 
     //daoHourlyYield = numberFormat.format(daoYield / 4) + '%';
     daoDailyYield = numberFormat.format(daoYield * 6) + '%';
@@ -162,7 +162,7 @@ function HomePage({ user }: HomePageProps) {
             line3={`${
               Number(epochTime.split('-')[0]) < 108
                 ? 'Bootstrapping phase'
-                : qsdPrice?.isGreaterThan(
+                : SCDPrice?.isGreaterThan(
                     new BigNumber(10).pow(new BigNumber(18))
                   )
                 ? 'Above Peg'
@@ -175,8 +175,8 @@ function HomePage({ user }: HomePageProps) {
             style={{height : '200px'}}
             line1='Market Cap'
             line2={`${
-              totalSupply !== null && qsdPrice !== null
-                ? '$' + formatBN(totalSupply.multipliedBy(qsdPrice), 2)
+              totalSupply !== null && SCDPrice !== null
+                ? '$' + formatBN(totalSupply.multipliedBy(SCDPrice), 2)
                 : '...'
             }`}
             line3=''
@@ -193,31 +193,31 @@ function HomePage({ user }: HomePageProps) {
           />
           <Row>
             <TopBorderBox
-              title='QSD Price'
-              body={qsdPrice ? formatBN(qsdPrice, 2) + ' DAI' : '...'}
+              title='SCD Price'
+              body={SCDPrice ? formatBN(SCDPrice, 2) + ' DAI' : '...'}
               action={
                 <Button>
                   <a
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://app.uniswap.org/#/swap?outputCurrency=${QSD.addr}`}
+                    href={`https://app.uniswap.org/#/swap?outputCurrency=${SCD.addr}`}
                   >
-                    Trade QSD
+                    Trade SCD
                   </a>
                 </Button>
               }
             />
             <TopBorderBox
-              title='QSD in LP pool'
-              body={qsdLiquidity ? formatBN(qsdLiquidity, 2) + ' QSD' : '...'}
+              title='SCD in LP pool'
+              body={SCDLiquidity ? formatBN(SCDLiquidity, 2) + ' SCD' : '...'}
               action={
                 <Button>
                   <a
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://info.uniswap.org/token/${QSD.addr}`}
+                    href={`https://info.uniswap.org/token/${SCD.addr}`}
                   >
                     Trade Info
                   </a>
@@ -225,7 +225,7 @@ function HomePage({ user }: HomePageProps) {
               }
             />
             <TopBorderBox
-              title='QSD Liquidity'
+              title='SCD Liquidity'
               body={daiLiquidity ? formatBN(daiLiquidity, 2) + ' DAI' : '...'}
               action={
                 <Button>
@@ -233,7 +233,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://app.uniswap.org/#/add/${QSD.addr}/0x6b175474e89094c44da98b954eedeac495271d0f`}
+                    href={`https://app.uniswap.org/#/add/${SCD.addr}/0x6b175474e89094c44da98b954eedeac495271d0f`}
                   >
                     Add Liquidity
                   </a>
@@ -250,21 +250,21 @@ function HomePage({ user }: HomePageProps) {
           />
           <Row>
             <TopBorderBox
-              title='Bonded QSD APR'
+              title='Bonded SCD APR'
               body={
                 <>
-                  <div>QSD Daily: {daoDailyYield} </div>
-                  <div>QSD Weekly: {daoWeeklyYield} </div>
-                  <div>QSD Monthly: {daoMonthlyYield} </div>
+                  <div>SCD Daily: {daoDailyYield} </div>
+                  <div>SCD Weekly: {daoWeeklyYield} </div>
+                  <div>SCD Monthly: {daoMonthlyYield} </div>
                 </>
               }
               action={
                 <NavLink
                   component={Button}
-                  to={curEpoch < 72 ? '/bootstrapping' : '/qsd'}
+                  to={curEpoch < 72 ? '/bootstrapping' : '/SCD'}
                   {...{ external: false }}
                 >
-                  Add QSD
+                  Add SCD
                 </NavLink>
               }
             />

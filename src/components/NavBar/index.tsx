@@ -110,8 +110,7 @@ function NavBar({ hasWeb3, user, setUser }: NavbarProps) {
             </NavLink>
             <div style={{ textAlign: 'center' }}>
               <LinkButton title='Dashboard' to='/dashboard/' />
-              <LinkButton title='Bootstrapping' to='/bootstrapping/' />
-              <LinkButton title='QSD' to='/qsd/' />
+              <LinkButton title='SCD' to='/SCD/' />
               <LinkButton title='LP' to='/lp/' />
               <LinkButton title='QSG' to='/qsg/' />
               {/* <LinkButton title="Regulation" to="/regulation/" /> */}

@@ -3,7 +3,7 @@
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { QSD, QSG } from '../../constants/tokens';
+import { SCD, QSG } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import { Layout } from '@aragon/ui';
 import {
@@ -48,8 +48,8 @@ function PoolGov({ user }: { user: string }) {
   const [userStatus, setUserStatus] = useState(0);
   const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
   const [lockup, setLockup] = useState(0);
-  const [userRewardedQSD, setUserRewardedQSD] = useState(new BigNumber(0));
-  const [userClaimableQSD, setUserClaimableQSD] = useState(new BigNumber(0));
+  const [userRewardedSCD, setUserRewardedSCD] = useState(new BigNumber(0));
+  const [userClaimableSCD, setUserClaimableSCD] = useState(new BigNumber(0));
 
   //Update User balances
   useEffect(() => {
@@ -77,8 +77,8 @@ function PoolGov({ user }: { user: string }) {
         status,
         fluidUntilStr,
         lockedUntilStr,
-        qsdRewardedStr,
-        qsdClaimableStr,
+        SCDRewardedStr,
+        SCDClaimableStr,
       ] = await Promise.all([
         getPoolTotalBonded(poolAddress),
         getTokenBalance(QSG.addr, user),
@@ -92,8 +92,8 @@ function PoolGov({ user }: { user: string }) {
         getPoolBalanceOfClaimable(poolAddress, user),
       ]);
 
-      const qsdRewarded = toTokenUnitsBN(qsdRewardedStr, QSD.decimals);
-      const qsdClaimable = toTokenUnitsBN(qsdClaimableStr, QSD.decimals);
+      const SCDRewarded = toTokenUnitsBN(SCDRewardedStr, SCD.decimals);
+      const SCDClaimable = toTokenUnitsBN(SCDClaimableStr, SCD.decimals);
       const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, QSG.decimals);
       const userQSGBalance = toTokenUnitsBN(QSGBalance, QSG.decimals);
       const userStagedBalance = toTokenUnitsBN(stagedBalance, QSG.decimals);
@@ -111,8 +111,8 @@ function PoolGov({ user }: { user: string }) {
         setTotalQSGSupply(new BigNumber(totalQSGSupply));
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
-        setUserRewardedQSD(new BigNumber(qsdRewarded));
-        setUserClaimableQSD(new BigNumber(qsdClaimable));
+        setUserRewardedSCD(new BigNumber(SCDRewarded));
+        setUserClaimableSCD(new BigNumber(SCDClaimable));
         setUserStatus(userStatus);
         setUserStatusUnlocked(Math.max(fluidUntil, lockedUntil));
         setLockup(POOL_EXIT_LOCKUP_EPOCHS);
@@ -133,7 +133,7 @@ function PoolGov({ user }: { user: string }) {
       <Guide
         bodyInstructions={
           <p>
-            Step 1. Earn QSG by bonding QSD when TWAP is &lt; 1
+            Step 1. Earn QSG by bonding SCD when TWAP is &lt; 1
             <br />
             Step 2. Stage your QSG into the Governance Pool
             <br />
@@ -211,10 +211,10 @@ function PoolGov({ user }: { user: string }) {
       <Claim
         userStatus={userStatus}
         poolAddress={poolGovAddress}
-        amountQSD={userClaimableQSD}
+        amountSCD={userClaimableSCD}
       />
 
-      <Rewards poolAddress={poolGovAddress} amountQSD={userRewardedQSD} />
+      <Rewards poolAddress={poolGovAddress} amountSCD={userRewardedSCD} />
     </Layout>
   );
 }

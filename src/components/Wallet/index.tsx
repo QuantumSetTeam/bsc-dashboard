@@ -9,7 +9,7 @@ import {
   getEpoch,
   getExpansionAmount,
   getFluidUntil,
-  getInstantaneousQSDPrice,
+  getInstantaneousSCDPrice,
   getLockedUntil,
   getStatusOf,
   getTokenAllowance,
@@ -17,7 +17,7 @@ import {
   getTokenTotalSupply,
   getTotalBonded,
 } from '../../utils/infura';
-import { QSD, QSDS } from '../../constants/tokens';
+import { SCD, SCDS } from '../../constants/tokens';
 import { DAO_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import { toTokenUnitsBN, toBaseUnitBN, toFloat } from '../../utils/number';
 import {
@@ -38,12 +38,12 @@ function Wallet({ user }: { user: string }) {
   }
 
   const [epoch, setEpoch] = useState<number>(0);
-  const [qsdPrice, setQSDPrice] = useState<BigNumber | null>(null);
+  const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
   const [totalBonded, setTotalBonded] = useState(new BigNumber(0));
-  const [userQSDBalance, setUserQSDBalance] = useState(new BigNumber(0));
-  const [userQSDAllowance, setUserQSDAllowance] = useState(new BigNumber(0));
-  const [userQSDSBalance, setUserQSDSBalance] = useState(new BigNumber(0));
-  const [totalQSDSSupply, setTotalQSDSSupply] = useState(new BigNumber(0));
+  const [userSCDBalance, setUserSCDBalance] = useState(new BigNumber(0));
+  const [userSCDAllowance, setUserSCDAllowance] = useState(new BigNumber(0));
+  const [userSCDSBalance, setUserSCDSBalance] = useState(new BigNumber(0));
+  const [totalSCDSSupply, setTotalSCDSSupply] = useState(new BigNumber(0));
   const [userStagedBalance, setUserStagedBalance] = useState(new BigNumber(0));
   const [userBondedBalance, setUserBondedBalance] = useState(new BigNumber(0));
   const [userStatus, setUserStatus] = useState(0);
@@ -56,26 +56,26 @@ function Wallet({ user }: { user: string }) {
     const updateAPR = async () => {
       const [
         epoch,
-        qsdPrice,
+        SCDPrice,
         expansionAmount,
         esdsSupply,
         esdsBonded,
       ] = await Promise.all([
-        getEpoch(QSDS.addr),
-        getInstantaneousQSDPrice(),
+        getEpoch(SCDS.addr),
+        getInstantaneousSCDPrice(),
         getExpansionAmount(),
-        getTokenTotalSupply(QSDS.addr),
-        getTotalBonded(QSDS.addr),
+        getTokenTotalSupply(SCDS.addr),
+        getTotalBonded(SCDS.addr),
       ]);
 
-      const totalQSDSSupply = toTokenUnitsBN(esdsSupply, QSDS.decimals);
+      const totalSCDSSupply = toTokenUnitsBN(esdsSupply, SCDS.decimals);
 
       setEpoch(parseInt(epoch, 10));
       setLockup(DAO_EXIT_LOCKUP_EPOCHS);
-      setQSDPrice(qsdPrice);
+      setSCDPrice(SCDPrice);
       setExpansionAmount(expansionAmount);
-      setTotalQSDSSupply(new BigNumber(totalQSDSSupply));
-      setTotalBonded(toTokenUnitsBN(esdsBonded, QSD.decimals));
+      setTotalSCDSSupply(new BigNumber(totalSCDSSupply));
+      setTotalBonded(toTokenUnitsBN(esdsBonded, SCD.decimals));
     };
 
     updateAPR();
@@ -84,10 +84,10 @@ function Wallet({ user }: { user: string }) {
   //Update User balances
   useEffect(() => {
     if (user === '') {
-      setUserQSDBalance(new BigNumber(0));
-      setUserQSDAllowance(new BigNumber(0));
-      setUserQSDSBalance(new BigNumber(0));
-      setTotalQSDSSupply(new BigNumber(0));
+      setUserSCDBalance(new BigNumber(0));
+      setUserSCDAllowance(new BigNumber(0));
+      setUserSCDSBalance(new BigNumber(0));
+      setTotalSCDSSupply(new BigNumber(0));
       setUserStagedBalance(new BigNumber(0));
       setUserBondedBalance(new BigNumber(0));
       setUserStatus(0);
@@ -106,29 +106,29 @@ function Wallet({ user }: { user: string }) {
         fluidUntilStr,
         lockedUntilStr,
       ] = await Promise.all([
-        getTokenBalance(QSD.addr, user),
-        getTokenAllowance(QSD.addr, user, QSDS.addr),
-        getTokenBalance(QSDS.addr, user),
-        getBalanceOfStaged(QSDS.addr, user),
-        getBalanceBonded(QSDS.addr, user),
-        getStatusOf(QSDS.addr, user),
+        getTokenBalance(SCD.addr, user),
+        getTokenAllowance(SCD.addr, user, SCDS.addr),
+        getTokenBalance(SCDS.addr, user),
+        getBalanceOfStaged(SCDS.addr, user),
+        getBalanceBonded(SCDS.addr, user),
+        getStatusOf(SCDS.addr, user),
 
-        getFluidUntil(QSDS.addr, user),
-        getLockedUntil(QSDS.addr, user),
+        getFluidUntil(SCDS.addr, user),
+        getLockedUntil(SCDS.addr, user),
       ]);
 
-      const userQSDBalance = toTokenUnitsBN(esdBalance, QSD.decimals);
-      const userQSDSBalance = toTokenUnitsBN(esdsBalance, QSDS.decimals);
-      const userStagedBalance = toTokenUnitsBN(stagedBalance, QSDS.decimals);
-      const userBondedBalance = toTokenUnitsBN(bondedBalance, QSDS.decimals);
+      const userSCDBalance = toTokenUnitsBN(esdBalance, SCD.decimals);
+      const userSCDSBalance = toTokenUnitsBN(esdsBalance, SCDS.decimals);
+      const userStagedBalance = toTokenUnitsBN(stagedBalance, SCDS.decimals);
+      const userBondedBalance = toTokenUnitsBN(bondedBalance, SCDS.decimals);
       const userStatus = parseInt(status, 10);
       const fluidUntil = parseInt(fluidUntilStr, 10);
       const lockedUntil = parseInt(lockedUntilStr, 10);
 
       if (!isCancelled) {
-        setUserQSDBalance(new BigNumber(userQSDBalance));
-        setUserQSDAllowance(new BigNumber(esdAllowance));
-        setUserQSDSBalance(new BigNumber(userQSDSBalance));
+        setUserSCDBalance(new BigNumber(userSCDBalance));
+        setUserSCDAllowance(new BigNumber(esdAllowance));
+        setUserSCDSBalance(new BigNumber(userSCDSBalance));
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
         setUserStatus(userStatus);
@@ -156,12 +156,12 @@ function Wallet({ user }: { user: string }) {
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
   // Calculate DAO APR (4 hrs)
-  if (qsdPrice && totalBonded && expansionAmount) {
+  if (SCDPrice && totalBonded && expansionAmount) {
     if (epoch <= 72) {
-      const totalQSD = toFloat(totalBonded);
-      const qsdToAdd = expansionAmount / 2;
+      const totalSCD = toFloat(totalBonded);
+      const SCDToAdd = expansionAmount / 2;
 
-      const daoYield = (qsdToAdd / totalQSD) * 100;
+      const daoYield = (SCDToAdd / totalSCD) * 100;
 
       daoHourlyYield = numberFormat.format(daoYield / 4) + '%';
       daoDailyYield = numberFormat.format(daoYield * 6) + '%';
@@ -187,13 +187,13 @@ function Wallet({ user }: { user: string }) {
         bodyInstructions={
           <p>
               <p style={{ color: 'red' }}>            
-              <b><u>WARNING: </u>Bootstrapping period has ended. Please remove any remaining QSD from this section</b></p>
+              <b><u>WARNING: </u>Bootstrapping period has ended. Please remove any remaining SCD from this section</b></p>
 
             <br />
             <br />
-            Step 1: Stage your QSD
+            Step 1: Stage your SCD
             <br />
-            Step 2: Bond your QSD
+            Step 2: Bond your SCD
             <br />
             Step 3: Unbond any amount of rewards you wish to claim
             <br />
@@ -201,10 +201,10 @@ function Wallet({ user }: { user: string }) {
             <br />
             <br />
             <b>
-              Note: Please unbond your QSD during epoch 73. At the beginning of
-              epoch 74 withdraw your QSD to your wallet and then stage and bond
-              your tokens on the QSD page to continue receiving rewards. (You
-              will be unable to bond QSD when TWAP is above peg from Epoch 75
+              Note: Please unbond your SCD during epoch 73. At the beginning of
+              epoch 74 withdraw your SCD to your wallet and then stage and bond
+              your tokens on the SCD page to continue receiving rewards. (You
+              will be unable to bond SCD when TWAP is above peg from Epoch 75
               onwards)
             </b>
           </p>
@@ -217,9 +217,9 @@ function Wallet({ user }: { user: string }) {
       />
 
       <AccountPageHeader
-        accountQSDBalance={userQSDBalance}
-        accountQSDSBalance={userQSDSBalance}
-        totalQSDSSupply={totalQSDSSupply}
+        accountSCDBalance={userSCDBalance}
+        accountSCDSBalance={userSCDSBalance}
+        totalSCDSSupply={totalSCDSSupply}
         accountStagedBalance={userStagedBalance}
         accountBondedBalance={userBondedBalance}
         accountStatus={userStatus}
@@ -228,27 +228,27 @@ function Wallet({ user }: { user: string }) {
 
       {/* <WithdrawDeposit
         user={user}
-        balance={userQSDBalance}
-        allowance={userQSDAllowance}
+        balance={userSCDBalance}
+        allowance={userSCDAllowance}
         stagedBalance={userStagedBalance}
         status={userStatus}
       /> */}
 
       <WithdrawDeposit
-        suffix='QSD'
-        balance={userQSDBalance}
-        allowance={userQSDAllowance}
+        suffix='SCD'
+        balance={userSCDBalance}
+        allowance={userSCDAllowance}
         stagedBalance={userStagedBalance}
         status={userStatus}
         disabled={!user}
         handleApprove={() => {
-          approve(QSD.addr, QSDS.addr);
+          approve(SCD.addr, SCDS.addr);
         }}
         handleDeposit={(depositAmount) => {
-          deposit(QSDS.addr, toBaseUnitBN(depositAmount, QSD.decimals));
+          deposit(SCDS.addr, toBaseUnitBN(depositAmount, SCD.decimals));
         }}
         handleWithdraw={(withdrawAmount) => {
-          withdraw(QSDS.addr, toBaseUnitBN(withdrawAmount, QSD.decimals));
+          withdraw(SCDS.addr, toBaseUnitBN(withdrawAmount, SCD.decimals));
         }}
       />
 
@@ -260,17 +260,17 @@ function Wallet({ user }: { user: string }) {
       /> */}
 
       <BondUnbond
-        suffix='QSD'
+        suffix='SCD'
         staged={userStagedBalance}
         bonded={userBondedBalance}
         status={userStatus}
         lockup={lockup}
         disabled={!user}
         handleBond={(bondAmount) => {
-          bond(QSDS.addr, toBaseUnitBN(bondAmount, QSD.decimals));
+          bond(SCDS.addr, toBaseUnitBN(bondAmount, SCD.decimals));
         }}
         handleUnbond={(unbondAmount) => {
-          unbondUnderlying(QSDS.addr, toBaseUnitBN(unbondAmount, QSD.decimals));
+          unbondUnderlying(SCDS.addr, toBaseUnitBN(unbondAmount, SCD.decimals));
         }}
       />
     </Layout>

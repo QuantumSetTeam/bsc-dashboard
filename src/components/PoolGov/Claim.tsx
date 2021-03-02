@@ -2,18 +2,18 @@ import BigNumber from 'bignumber.js';
 import React from 'react';
 import { BalanceBlock, TopBorderSection } from '../common';
 import { Button } from '@aragon/ui';
-import { claimRewards } from '../../utils/web3';
+import { claimGovRewards } from '../../utils/web3';
 
 interface ClaimProps {
   poolAddress: string | null;
   userStatus: number;
-  amountQSD: BigNumber;
+  amountSCD: BigNumber;
 }
 
 export const Claim: React.FC<ClaimProps> = ({
   userStatus,
   poolAddress,
-  amountQSD,
+  amountSCD,
 }) => (
   <TopBorderSection title='Claim'>
     <div
@@ -24,13 +24,13 @@ export const Claim: React.FC<ClaimProps> = ({
       }}
     >
       <div>
-        <BalanceBlock asset='Claimable' balance={amountQSD} suffix={'QSD'} />
+        <BalanceBlock asset='Claimable' balance={amountSCD} suffix={'SCD'} />
       </div>
       <Button
         // wide
         icon={<i className='far fa-hand-point-right' />}
         label='Claim'
-        onClick={() => claimRewards(poolAddress)}
+        onClick={() => claimGovRewards(poolAddress)}
         disabled={!poolAddress || (userStatus && userStatus !== 0)}
       />
     </div>

@@ -62,7 +62,7 @@ const RegulationHeader = ({
         />
 
         <TopBorderBox
-          title='Bonded QSD Breakdown'
+          title='Bonded SCD Breakdown'
           body={
             <Distribution
               heading={`${formatMoney(daoTotalSupply.toNumber())}`}

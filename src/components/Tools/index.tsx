@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { PoolBonding, TreasuryAddress } from '../../constants/contracts';
-import { QSD, QSDS, UNI } from '../../constants/tokens';
+import { SCD, SCDS, UNI } from '../../constants/tokens';
 import { epochformattedRemaining } from '../../utils/calculation';
 import {
   getBalanceBonded,
@@ -11,7 +11,7 @@ import {
   getDaoIsBootstrapping,
   getEpoch,
   getExpansionAmount,
-  getInstantaneousQSDPrice,
+  getInstantaneousSCDPrice,
   getLPBondedLiquidity,
   getLPStagedLiquidity,
   getPoolBalanceOfBonded,
@@ -45,22 +45,22 @@ function Tools({ user }: { user: string }) {
   const [estimatedEpoch, setEstimatedEpoch] = useState(0);
   const [nextEpochIn, setNextEpochIn] = useState('00:00:00');
   const [totalSupply, setTotalSupply] = useState<BigNumber | null>(null);
-  const [qsdPrice, setQSDPrice] = useState<BigNumber | null>(null);
+  const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
   const [twapPrice, setTwapPrice] = useState<null | number>(null);
   const [expansionAmount, setExpansionAmount] = useState<null | number>(null);
 
-  const [treasuryQSDAmount, setTreasuryQSDAmount] = useState<null | BigNumber>(
+  const [treasurySCDAmount, setTreasurySCDAmount] = useState<null | BigNumber>(
     null
   );
 
-  const [qsdBondedLiquidity, setQSDBondedLiquidity] = useState<number | null>(
+  const [SCDBondedLiquidity, setSCDBondedLiquidity] = useState<number | null>(
     null
   );
   const [daiBondedLiquidity, setDAIBondedLiquidity] = useState<number | null>(
     null
   );
 
-  const [qsdStagedLiquidity, setQSDStagedLiquidity] = useState<number | null>(
+  const [SCDStagedLiquidity, setSCDStagedLiquidity] = useState<number | null>(
     null
   );
   const [daiStagedLiquidity, setDAIStagedLiquidity] = useState<number | null>(
@@ -75,24 +75,24 @@ function Tools({ user }: { user: string }) {
   const [userLpStaged, setUserLpStaged] = useState<BigNumber | null>(null);
   const [userDaoBonded, setUserDaoBonded] = useState<BigNumber | null>(null);
   const [userDaoStaged, setUserDaoStaged] = useState<BigNumber | null>(null);
-  const [userQsdBal, setUserQsdBal] = useState<BigNumber | null>(null);
+  const [userSCDBal, setUserSCDBal] = useState<BigNumber | null>(null);
   const [userUniBal, setUserUniBal] = useState<BigNumber | null>(null);
 
-  const [userQsdWalletLiquidity, setUserQSDWalletLiquidity] = useState<
+  const [userSCDWalletLiquidity, setUserSCDWalletLiquidity] = useState<
     number | null
   >(null);
   const [userDaiWalletLiquidity, setUserDAIWalletLiquidity] = useState<
     number | null
   >(null);
 
-  const [userQsdBondedLiquidity, setUserQSDBondedLiquidity] = useState<
+  const [userSCDBondedLiquidity, setUserSCDBondedLiquidity] = useState<
     number | null
   >(null);
   const [userDaiBondedLiquidity, setUserDAIBondedLiquidity] = useState<
     number | null
   >(null);
 
-  const [userQsdStagedLiquidity, setUserQSDStagedLiquidity] = useState<
+  const [userSCDStagedLiquidity, setUserSCDStagedLiquidity] = useState<
     number | null
   >(null);
   const [userDaiStagedLiquidity, setUserDAIStagedLiquidity] = useState<
@@ -119,36 +119,36 @@ function Tools({ user }: { user: string }) {
         expansionAmount,
         bootstrapping,
         daoE,
-        treasuryQSD,
+        treasurySCD,
       ] = await Promise.all([
-        getInstantaneousQSDPrice(),
+        getInstantaneousSCDPrice(),
         getTWAPPrice(),
-        getTokenTotalSupply(QSD.addr),
+        getTokenTotalSupply(SCD.addr),
         getLPBondedLiquidity(),
         getLPStagedLiquidity(),
         getPoolTotalBonded(poolLP),
         getPoolTotalStaged(poolLP),
-        getTotalBonded(QSDS.addr),
-        getTotalStaged(QSDS.addr),
+        getTotalBonded(SCDS.addr),
+        getTotalStaged(SCDS.addr),
         getPoolTotalBonded(poolBonding),
         getPoolTotalStaged(poolBonding),
         getExpansionAmount(),
         getDaoIsBootstrapping(),
-        getEpoch(QSDS.addr),
-        getTokenBalance(QSD.addr, TreasuryAddress),
+        getEpoch(SCDS.addr),
+        getTokenBalance(SCD.addr, TreasuryAddress),
       ]);
 
       setTwapPrice(twap);
       setTotalSupply(toTokenUnitsBN(supply, 18));
-      setQSDPrice(toTokenUnitsBN(spot, 18));
-      setQSDStagedLiquidity(stagedLiquidity.qsd);
+      setSCDPrice(toTokenUnitsBN(spot, 18));
+      setSCDStagedLiquidity(stagedLiquidity.SCD);
       setDAIStagedLiquidity(stagedLiquidity.dai);
-      setQSDBondedLiquidity(bondedLiquidity.qsd);
+      setSCDBondedLiquidity(bondedLiquidity.SCD);
       setDAIBondedLiquidity(bondedLiquidity.dai);
       setLPBonded(toTokenUnitsBN(lpBonded, 18));
       setLPStaged(toTokenUnitsBN(lpStaged, 18));
       setDaoEpoch(parseInt(daoE, 10));
-      setTreasuryQSDAmount(toTokenUnitsBN(treasuryQSD, QSD.decimals));
+      setTreasurySCDAmount(toTokenUnitsBN(treasurySCD, SCD.decimals));
 
       // If is bootstrapping, then bonding will be referencing dao
       // otherwise it'll be referencing bonding
@@ -169,7 +169,7 @@ function Tools({ user }: { user: string }) {
       const poolLP = await getPoolLPAddress();
 
       const [
-        userQSDBal,
+        userSCDBal,
         userUniBal,
         userLpBonded,
         userLpStaged,
@@ -179,7 +179,7 @@ function Tools({ user }: { user: string }) {
         stagedLiquidity,
         bondedLiquidity,
       ] = await Promise.all([
-        getTokenBalance(QSD.addr, user),
+        getTokenBalance(SCD.addr, user),
         getTokenBalance(UNI.addr, user),
         getPoolBalanceOfBonded(poolLP, user),
         getPoolBalanceOfStaged(poolLP, user),
@@ -190,20 +190,20 @@ function Tools({ user }: { user: string }) {
         getUserLPBonded(user),
       ]);
 
-      setUserQsdBal(toTokenUnitsBN(userQSDBal, 18));
+      setUserSCDBal(toTokenUnitsBN(userSCDBal, 18));
       setUserUniBal(toTokenUnitsBN(userUniBal, 18));
       setUserLpBonded(toTokenUnitsBN(userLpBonded, 18));
       setUserLpStaged(toTokenUnitsBN(userLpStaged, 18));
       setUserDaoBonded(toTokenUnitsBN(userDaoBonded, 18));
       setUserDaoStaged(toTokenUnitsBN(userDaoStaged, 18));
 
-      setUserQSDWalletLiquidity(walletLiquidity.qsd);
+      setUserSCDWalletLiquidity(walletLiquidity.SCD);
       setUserDAIWalletLiquidity(walletLiquidity.dai);
 
-      setUserQSDStagedLiquidity(stagedLiquidity.qsd);
+      setUserSCDStagedLiquidity(stagedLiquidity.SCD);
       setUserDAIStagedLiquidity(stagedLiquidity.dai);
 
-      setUserQSDBondedLiquidity(bondedLiquidity.qsd);
+      setUserSCDBondedLiquidity(bondedLiquidity.SCD);
       setUserDAIBondedLiquidity(bondedLiquidity.dai);
     };
 
@@ -228,20 +228,20 @@ function Tools({ user }: { user: string }) {
   let lpStagedPercentage = '...';
   let daoBondedPercentage = '...';
   let daoStagedPercentage = '...';
-  let qsdMarketCap = '...';
+  let SCDMarketCap = '...';
   let daoAPR = '...';
   let daoExpansionYield = '...';
   let lpExpansionYield = '...';
   let lpAPR = '...';
 
-  let qsdBondedPrice = '$...';
-  let qsdStagedPrice = '$...';
+  let SCDBondedPrice = '$...';
+  let SCDStagedPrice = '$...';
   let lpBondedPrice = '$...';
   let lpStagedPrice = '$...';
 
-  let userQSDWalletPrice = '$0';
-  let userQSDBondedPrice = '$0';
-  let userQSDStagedPrice = '$0';
+  let userSCDWalletPrice = '$0';
+  let userSCDBondedPrice = '$0';
+  let userSCDStagedPrice = '$0';
 
   let userLPWalletPrice = '$0';
   let userLPBondedPrice = '$0';
@@ -255,78 +255,78 @@ function Tools({ user }: { user: string }) {
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
   // Calculate prices
-  if (qsdPrice && treasuryQSDAmount) {
-    const totalDAI = toFloat(treasuryQSDAmount) * toFloat(qsdPrice);
+  if (SCDPrice && treasurySCDAmount) {
+    const totalDAI = toFloat(treasurySCDAmount) * toFloat(SCDPrice);
 
     treasuryUSDValue = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && qsdStagedLiquidity && daiStagedLiquidity) {
+  if (SCDPrice && SCDStagedLiquidity && daiStagedLiquidity) {
     const totalDAI =
-      qsdStagedLiquidity * toFloat(qsdPrice) + daiStagedLiquidity;
+      SCDStagedLiquidity * toFloat(SCDPrice) + daiStagedLiquidity;
     lpStagedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && qsdBondedLiquidity && daiBondedLiquidity) {
+  if (SCDPrice && SCDBondedLiquidity && daiBondedLiquidity) {
     const totalDAI =
-      qsdBondedLiquidity * toFloat(qsdPrice) + daiBondedLiquidity;
+      SCDBondedLiquidity * toFloat(SCDPrice) + daiBondedLiquidity;
     lpBondedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && daoBonded) {
-    const totalDAI = toFloat(daoBonded) * toFloat(qsdPrice);
-    qsdBondedPrice = '$' + numberFormat.format(totalDAI);
+  if (SCDPrice && daoBonded) {
+    const totalDAI = toFloat(daoBonded) * toFloat(SCDPrice);
+    SCDBondedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && daoStaged) {
-    const totalDAI = toFloat(daoStaged) * toFloat(qsdPrice);
-    qsdStagedPrice = '$' + numberFormat.format(totalDAI);
+  if (SCDPrice && daoStaged) {
+    const totalDAI = toFloat(daoStaged) * toFloat(SCDPrice);
+    SCDStagedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userQsdWalletLiquidity && userDaiWalletLiquidity) {
+  if (SCDPrice && userSCDWalletLiquidity && userDaiWalletLiquidity) {
     const totalDAI =
-      userQsdWalletLiquidity * toFloat(qsdPrice) + userDaiWalletLiquidity;
+      userSCDWalletLiquidity * toFloat(SCDPrice) + userDaiWalletLiquidity;
 
     userLPWalletPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userQsdStagedLiquidity && userDaiStagedLiquidity) {
+  if (SCDPrice && userSCDStagedLiquidity && userDaiStagedLiquidity) {
     const totalDAI =
-      userQsdStagedLiquidity * toFloat(qsdPrice) + userDaiStagedLiquidity;
+      userSCDStagedLiquidity * toFloat(SCDPrice) + userDaiStagedLiquidity;
 
     userLPStagedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userQsdBondedLiquidity && userDaiBondedLiquidity) {
+  if (SCDPrice && userSCDBondedLiquidity && userDaiBondedLiquidity) {
     const totalDAI =
-      userQsdBondedLiquidity * toFloat(qsdPrice) + userDaiBondedLiquidity;
+      userSCDBondedLiquidity * toFloat(SCDPrice) + userDaiBondedLiquidity;
 
     userLPBondedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userQsdBal) {
-    const totalDAI = toFloat(userQsdBal) * toFloat(qsdPrice);
+  if (SCDPrice && userSCDBal) {
+    const totalDAI = toFloat(userSCDBal) * toFloat(SCDPrice);
 
-    userQSDWalletPrice = '$' + numberFormat.format(totalDAI);
+    userSCDWalletPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userDaoBonded) {
-    const totalDAI = toFloat(userDaoBonded) * toFloat(qsdPrice);
+  if (SCDPrice && userDaoBonded) {
+    const totalDAI = toFloat(userDaoBonded) * toFloat(SCDPrice);
 
-    userQSDBondedPrice = '$' + numberFormat.format(totalDAI);
+    userSCDBondedPrice = '$' + numberFormat.format(totalDAI);
   }
 
-  if (qsdPrice && userDaoStaged) {
-    const totalDAI = toFloat(userDaoStaged) * toFloat(qsdPrice);
+  if (SCDPrice && userDaoStaged) {
+    const totalDAI = toFloat(userDaoStaged) * toFloat(SCDPrice);
 
-    userQSDStagedPrice = '$' + numberFormat.format(totalDAI);
+    userSCDStagedPrice = '$' + numberFormat.format(totalDAI);
   }
 
   // Calculate LP APR (4 hrs)
-  if (qsdPrice && qsdBondedLiquidity && daiBondedLiquidity && expansionAmount) {
+  if (SCDPrice && SCDBondedLiquidity && daiBondedLiquidity && expansionAmount) {
     const totalDAI =
-      qsdBondedLiquidity * toFloat(qsdPrice) + daiBondedLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(qsdPrice);
+      SCDBondedLiquidity * toFloat(SCDPrice) + daiBondedLiquidity;
+    const daiToAdd = (expansionAmount / 2) * toFloat(SCDPrice);
 
     const lpYield = (daiToAdd / totalDAI) * 100;
 
@@ -342,11 +342,11 @@ function Tools({ user }: { user: string }) {
   }
 
   // Calculate DAO APR (4 hrs)
-  if (qsdPrice && daoBonded && expansionAmount) {
-    const totalQSD = toFloat(daoBonded);
-    const qsdToAdd = expansionAmount / 2;
+  if (SCDPrice && daoBonded && expansionAmount) {
+    const totalSCD = toFloat(daoBonded);
+    const SCDToAdd = expansionAmount / 2;
 
-    const daoYield = (qsdToAdd / totalQSD) * 100;
+    const daoYield = (SCDToAdd / totalSCD) * 100;
 
     daoExpansionYield = Intl.NumberFormat('en', {
       maximumFractionDigits: 0,
@@ -358,7 +358,7 @@ function Tools({ user }: { user: string }) {
     }).format(daoYield * 6 * 365) + '%';
   }
 
-  if (qsdPrice && qsdBondedLiquidity)
+  if (SCDPrice && SCDBondedLiquidity)
     if (lpBonded && lpStaged) {
       const lpBondedF = toFloat(lpBonded);
       const lpStagedF = toFloat(lpStaged);
@@ -383,13 +383,13 @@ function Tools({ user }: { user: string }) {
     }
   }
 
-  if (qsdPrice && totalSupply) {
+  if (SCDPrice && totalSupply) {
     
-    let qsdMarketCapNumber = 0;
+    let SCDMarketCapNumber = 0;
     
-    qsdMarketCapNumber = toFloat(qsdPrice) * toFloat(totalSupply);
+    SCDMarketCapNumber = toFloat(SCDPrice) * toFloat(totalSupply);
 
-    qsdMarketCap = numberFormat.format(qsdMarketCapNumber);
+    SCDMarketCap = numberFormat.format(SCDMarketCapNumber);
 
   }
 
@@ -413,13 +413,13 @@ function Tools({ user }: { user: string }) {
             expansionAmount && expansionAmount > 0
               ? `Total supply will increase by ${expansionAmount.toFixed(
                   2
-                )} QSD`
+                )} SCD`
               : 'No expansion rewards this epoch'
           }
           line3={
             expansionAmount && expansionAmount > 0
-              ? `Yielding ${lpExpansionYield} on LP TVL (${lpAPR} APR) and ${daoExpansionYield} to Bonded QSD (${daoAPR} APR)`
-              : 'QSG will be allocated to QSD stakers'
+              ? `Yielding ${lpExpansionYield} on LP TVL (${lpAPR} APR) and ${daoExpansionYield} to Bonded SCD (${daoAPR} APR)`
+              : 'QSG will be allocated to SCD stakers'
           }
         />
       </Section>
@@ -429,9 +429,9 @@ function Tools({ user }: { user: string }) {
           <InfoBox title='Epoch (Dao)'>{daoEpoch}</InfoBox>
           <InfoBox title='Next Epoch'>{nextEpochIn}</InfoBox>
           <InfoBox title='Treasury'>
-            {treasuryQSDAmount
-              ? formatBN(treasuryQSDAmount, 2) + ' QSD'
-              : '... QSD'}{' '}
+            {treasurySCDAmount
+              ? formatBN(treasurySCDAmount, 2) + ' SCD'
+              : '... SCD'}{' '}
             ({treasuryUSDValue})
           </InfoBox>
         </Row>
@@ -440,25 +440,25 @@ function Tools({ user }: { user: string }) {
         <Row>
           <InfoBox title='LP Yield'>{lpExpansionYield}</InfoBox>
           <InfoBox title='LP APR'>{lpAPR}</InfoBox>
-          <InfoBox title='QSD Yield'>{daoExpansionYield}</InfoBox>
-          <InfoBox title='QSD APR'>{daoAPR}</InfoBox>
+          <InfoBox title='SCD Yield'>{daoExpansionYield}</InfoBox>
+          <InfoBox title='SCD APR'>{daoAPR}</InfoBox>
         </Row>
       </BorderedSection>
       <BorderedSection>
         <Row>
           <InfoBox title='Spot Price'>
-            {qsdPrice ? '$' + formatBN(qsdPrice, 2) : '...'}
+            {SCDPrice ? '$' + formatBN(SCDPrice, 2) : '...'}
           </InfoBox>
           <InfoBox title='TWAP Price'>
             {twapPrice ? '$' + twapPrice.toFixed(2) : '...'}
           </InfoBox>
           <InfoBox title='Total Supply'>
             {totalSupply
-              ? numberFormat.format(toFloat(totalSupply)) + ' QSD'
+              ? numberFormat.format(toFloat(totalSupply)) + ' SCD'
               : '...'}
           </InfoBox>
 
-          <InfoBox title='Market Cap'>${qsdMarketCap}</InfoBox>
+          <InfoBox title='Market Cap'>${SCDMarketCap}</InfoBox>
         </Row>
       </BorderedSection>
       <Section>
@@ -469,28 +469,28 @@ function Tools({ user }: { user: string }) {
           <InfoBox title='LP Staged'>
             {lpStagedPercentage} ({lpStagedPrice})
           </InfoBox>
-          <InfoBox title='QSD Bonded'>
-            {daoBondedPercentage} ({qsdBondedPrice})
+          <InfoBox title='SCD Bonded'>
+            {daoBondedPercentage} ({SCDBondedPrice})
           </InfoBox>
-          <InfoBox title='QSD Staged'>
-            {daoStagedPercentage} ({qsdStagedPrice})
+          <InfoBox title='SCD Staged'>
+            {daoStagedPercentage} ({SCDStagedPrice})
           </InfoBox>
         </Row>
       </Section>
       <TopBorderSection title='User'>
         <BorderedSection>
           <Row>
-            <InfoBox title='QSD Wallet'>
-              {userQsdBal ? formatBN(userQsdBal, 2) + ' QSD' : '0'} (
-              {userQSDWalletPrice})
+            <InfoBox title='SCD Wallet'>
+              {userSCDBal ? formatBN(userSCDBal, 2) + ' SCD' : '0'} (
+              {userSCDWalletPrice})
             </InfoBox>
-            <InfoBox title='QSD Staged'>
-              {userDaoStaged ? formatBN(userDaoStaged, 2) + ' QSD' : '0'} (
-              {userQSDStagedPrice})
+            <InfoBox title='SCD Staged'>
+              {userDaoStaged ? formatBN(userDaoStaged, 2) + ' SCD' : '0'} (
+              {userSCDStagedPrice})
             </InfoBox>
-            <InfoBox title='QSD Bonded'>
-              {userDaoBonded ? formatBN(userDaoBonded, 2) + ' QSD' : '0'} (
-              {userQSDBondedPrice})
+            <InfoBox title='SCD Bonded'>
+              {userDaoBonded ? formatBN(userDaoBonded, 2) + ' SCD' : '0'} (
+              {userSCDBondedPrice})
             </InfoBox>
           </Row>
         </BorderedSection>
@@ -514,7 +514,7 @@ function Tools({ user }: { user: string }) {
           <Row>
             <Button
               onClick={() => {
-                advance(QSDS.addr);
+                advance(SCDS.addr);
               }}
               disabled={!user && daoEpoch < estimatedEpoch}
             >

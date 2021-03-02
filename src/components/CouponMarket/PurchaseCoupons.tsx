@@ -9,7 +9,7 @@ import {
 import {approve, purchaseCoupons} from '../../utils/web3';
 
 import {isPos, toBaseUnitBN, toTokenUnitsBN} from '../../utils/number';
-import {QSD, QSDS} from "../../constants/tokens";
+import {SCD, SCDS} from "../../constants/tokens";
 import {MAX_UINT256} from "../../constants/values";
 import {getCouponPremium} from "../../utils/infura";
 import BigNumberInput from "../common/BigNumberInput";
@@ -32,9 +32,9 @@ function PurchaseCoupons({
       setPremium(new BigNumber(0));
       return;
     }
-    const purchaseAmountBase = toBaseUnitBN(purchaseAmount, QSD.decimals);
-    const premium = await getCouponPremium(QSDS.addr, purchaseAmountBase)
-    const premiumFormatted = toTokenUnitsBN(premium, QSD.decimals);
+    const purchaseAmountBase = toBaseUnitBN(purchaseAmount, SCD.decimals);
+    const premium = await getCouponPremium(SCDS.addr, purchaseAmountBase)
+    const premiumFormatted = toTokenUnitsBN(premium, SCD.decimals);
     setPremium(premiumFormatted);
   };
 
@@ -44,7 +44,7 @@ function PurchaseCoupons({
         <div style={{display: 'flex', flexWrap: 'wrap'}}>
           {/* User balance */}
           <div style={{flexBasis: '30%'}}>
-            <BalanceBlock asset={`Balance`} balance={balance} suffix={" QSD"}/>
+            <BalanceBlock asset={`Balance`} balance={balance} suffix={" SCD"}/>
           </div>
           <div style={{flexBasis: '38%'}}/>
           {/* Purchase coupons */}
@@ -53,7 +53,7 @@ function PurchaseCoupons({
               <div style={{width: '60%', minWidth: '6em'}}>
                 <>
                   <BigNumberInput
-                    adornment="QSD"
+                    adornment="SCD"
                     value={purchaseAmount}
                     setter={(value) => {
                       setPurchaseAmount(value);
@@ -76,8 +76,8 @@ function PurchaseCoupons({
                   label="Burn"
                   onClick={() => {
                     purchaseCoupons(
-                      QSDS.addr,
-                      toBaseUnitBN(purchaseAmount, QSD.decimals),
+                      SCDS.addr,
+                      toBaseUnitBN(purchaseAmount, SCD.decimals),
                     );
                   }}
                   disabled={user === '' || debt.isZero() || balance.isZero() || !isPos(purchaseAmount)}
@@ -94,14 +94,14 @@ function PurchaseCoupons({
             <BalanceBlock asset={`Døllar Balance`} balance={balance}/>
           </div>
           <div style={{flexBasis: '40%'}}/>
-          {/* Approve DAO to spend QSD */}
+          {/* Approve DAO to spend SCD */}
           <div style={{flexBasis: '30%', paddingTop: '2%'}}>
             <Button
               wide
               icon={<IconCirclePlus/>}
               label="Approve"
               onClick={() => {
-                approve(QSD.addr, QSDS.addr);
+                approve(SCD.addr, SCDS.addr);
               }}
               disabled={user === ''}
             />

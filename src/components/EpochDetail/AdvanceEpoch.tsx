@@ -4,7 +4,7 @@ import {
 } from '@aragon/ui';
 import {advance} from '../../utils/web3';
 import NumberBlock from "../common/NumberBlock";
-import {QSDS} from "../../constants/tokens";
+import {SCDS} from "../../constants/tokens";
 
 type AdvanceEpochProps = {
   user: string,
@@ -32,7 +32,7 @@ function AdvanceEpoch({
             icon={<IconCirclePlus />}
             label="Advance"
             onClick={() => {
-              advance(QSDS.addr);
+              advance(SCDS.addr);
             }}
             disabled={user === '' || epoch >= epochTime}
           />

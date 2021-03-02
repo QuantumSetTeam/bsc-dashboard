@@ -11,7 +11,7 @@ import {
   getTokenTotalSupply,
   getTotalBondedAt,
 } from '../../utils/infura';
-import { QSDS } from '../../constants/tokens';
+import { SCDS } from '../../constants/tokens';
 import { AddressBlock } from '../common';
 import { proposalStatus } from '../../utils/gov';
 import BigNumber from 'bignumber.js';
@@ -34,21 +34,21 @@ async function formatProposals(
   proposals: any[]
 ): Promise<Proposal[]> {
 
-  const currentTotalStake = await getTokenTotalSupply(QSDS.addr);
+  const currentTotalStake = await getTokenTotalSupply(SCDS.addr);
   const initializeds = await Promise.all(
-    proposals.map((p) => getIsInitialized(QSDS.addr, p.candidate))
+    proposals.map((p) => getIsInitialized(SCDS.addr, p.candidate))
   );
   const approves = await Promise.all(
-    proposals.map((p) => getApproveFor(QSDS.addr, p.candidate))
+    proposals.map((p) => getApproveFor(SCDS.addr, p.candidate))
   );
   const rejecteds = await Promise.all(
-    proposals.map((p) => getRejectFor(QSDS.addr, p.candidate))
+    proposals.map((p) => getRejectFor(SCDS.addr, p.candidate))
   );
   const supplyAts = await Promise.all(
     proposals.map(async (p) => {
       const at = p.start + p.period - 1;
       if (epoch > at) {
-        return await getTotalBondedAt(QSDS.addr, at);
+        return await getTotalBondedAt(SCDS.addr, at);
       }
       return currentTotalStake;
     })
@@ -84,8 +84,8 @@ function CandidateHistory({ user }: CandidateHistoryProps) {
 
     async function updateUserInfo() {
       const [epochStr, allProposals] = await Promise.all([
-        getEpoch(QSDS.addr),
-        getAllProposals(QSDS.addr),
+        getEpoch(SCDS.addr),
+        getAllProposals(SCDS.addr),
       ]);
 
       if (!isCancelled) {

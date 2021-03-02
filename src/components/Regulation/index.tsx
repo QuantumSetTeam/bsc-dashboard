@@ -12,7 +12,7 @@ import {
   getTotalBonded,
   getTotalStaged,
 } from '../../utils/infura';
-import { QSD, QSDS, UNI } from '../../constants/tokens';
+import { SCD, SCDS, UNI } from '../../constants/tokens';
 import { toTokenUnitsBN } from '../../utils/number';
 import BigNumber from 'bignumber.js';
 import RegulationHeader from './Header';
@@ -54,12 +54,12 @@ function Regulation({
         poolTotalClaimableStr,
         bootstrapping,
       ] = await Promise.all([
-        getTokenTotalSupply(QSD.addr),
+        getTokenTotalSupply(SCD.addr),
 
-        getTotalBonded(QSDS.addr),
-        getTotalStaged(QSDS.addr),
+        getTotalBonded(SCDS.addr),
+        getTotalStaged(SCDS.addr),
 
-        getTokenBalance(QSD.addr, UNI.addr),
+        getTokenBalance(SCD.addr, UNI.addr),
 
         getPoolTotalBonded(poolBondingAddress),
         getPoolTotalStaged(poolBondingAddress),
@@ -71,22 +71,22 @@ function Regulation({
       ]);
 
       if (!isCancelled) {
-        setTotalSupply(toTokenUnitsBN(totalSupplyStr, QSD.decimals));
+        setTotalSupply(toTokenUnitsBN(totalSupplyStr, SCD.decimals));
 
         if (bootstrapping) {
-          setTotalBonded(toTokenUnitsBN(totalBondedStr, QSD.decimals));
-          setTotalStaged(toTokenUnitsBN(totalStagedStr, QSD.decimals));
+          setTotalBonded(toTokenUnitsBN(totalBondedStr, SCD.decimals));
+          setTotalStaged(toTokenUnitsBN(totalStagedStr, SCD.decimals));
         } else {
-          setTotalBonded(toTokenUnitsBN(poolTotalBondedStr, QSD.decimals));
-          setTotalStaged(toTokenUnitsBN(poolTotalStagedStr, QSD.decimals));
+          setTotalBonded(toTokenUnitsBN(poolTotalBondedStr, SCD.decimals));
+          setTotalStaged(toTokenUnitsBN(poolTotalStagedStr, SCD.decimals));
         }
 
-        setPoolLiquidity(toTokenUnitsBN(poolLiquidityStr, QSD.decimals));
+        setPoolLiquidity(toTokenUnitsBN(poolLiquidityStr, SCD.decimals));
         setPoolTotalRewarded(
-          toTokenUnitsBN(poolTotalRewardedStr, QSD.decimals)
+          toTokenUnitsBN(poolTotalRewardedStr, SCD.decimals)
         );
         setPoolTotalClaimable(
-          toTokenUnitsBN(poolTotalClaimableStr, QSD.decimals)
+          toTokenUnitsBN(poolTotalClaimableStr, SCD.decimals)
         );
       }
     }

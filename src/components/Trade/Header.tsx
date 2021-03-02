@@ -4,23 +4,23 @@ import BigNumber from 'bignumber.js';
 import { BalanceBlock, AddressBlock } from '../common/index';
 
 type TradePageHeaderProps = {
-  pairBalanceQSD: BigNumber,
+  pairBalanceSCD: BigNumber,
   pairBalanceDAI: BigNumber,
   uniswapPair: string,
 };
 
 const TradePageHeader = ({
-  pairBalanceQSD, pairBalanceDAI, uniswapPair,
+  pairBalanceSCD, pairBalanceDAI, uniswapPair,
 }: TradePageHeaderProps) => {
-  const price = pairBalanceDAI.dividedBy(pairBalanceQSD);
+  const price = pairBalanceDAI.dividedBy(pairBalanceSCD);
 
   return (
     <div style={{ padding: '2%', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
       <div style={{ flexBasis: '25%' }}>
-        <BalanceBlock asset="QSD Price" balance={price} suffix={"DAI"}/>
+        <BalanceBlock asset="SCD Price" balance={price} suffix={"DAI"}/>
       </div>
       <div style={{ flexBasis: '25%' }}>
-        <BalanceBlock asset="QSD Liquidity" balance={pairBalanceQSD} suffix={"QSD"}/>
+        <BalanceBlock asset="SCD Liquidity" balance={pairBalanceSCD} suffix={"SCD"}/>
       </div>
       <div style={{ flexBasis: '25%' }}>
         <BalanceBlock asset="DAI Liquidity" balance={pairBalanceDAI} suffix={"DAI"}/>

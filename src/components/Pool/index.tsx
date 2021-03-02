@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '@aragon/ui';
 import { useParams } from 'react-router-dom';
 import { DollarPool4 } from '../../constants/contracts';
-import { DAI, QSD, UNI } from '../../constants/tokens';
+import { DAI, SCD, UNI } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
   getExpansionAmount,
-  getInstantaneousQSDPrice,
+  getInstantaneousSCDPrice,
   getLPBondedLiquidity,
   getPoolBalanceOfBonded,
   getPoolBalanceOfClaimable,
@@ -48,14 +48,14 @@ function Pool({ user }: { user: string }) {
     user = override;
   }
 
-  const [qsdLiquidity, setQSDLiquidity] = useState<number | null>(null);
+  const [SCDLiquidity, setSCDLiquidity] = useState<number | null>(null);
   const [daiLiquidity, setDAILiquidity] = useState<number | null>(null);
-  const [qsdPrice, setQSDPrice] = useState<BigNumber | null>(null);
+  const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
   const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
   const [poolAddress, setPoolAddress] = useState('');
   const [poolTotalBonded, setPoolTotalBonded] = useState(new BigNumber(0));
-  const [pairBalanceQSD, setPairBalanceQSD] = useState(new BigNumber(0));
+  const [pairBalanceSCD, setPairBalanceSCD] = useState(new BigNumber(0));
   const [pairBalanceDAI, setPairBalanceDAI] = useState(new BigNumber(0));
   const [userUNIBalance, setUserUNIBalance] = useState(new BigNumber(0));
   const [userUNIAllowance, setUserUNIAllowance] = useState(new BigNumber(0));
@@ -77,13 +77,13 @@ function Pool({ user }: { user: string }) {
   useEffect(() => {
     const updateAPR = async () => {
       const [spot, expansionAmount, liquidity] = await Promise.all([
-        getInstantaneousQSDPrice(),
+        getInstantaneousSCDPrice(),
         getExpansionAmount(),
         getLPBondedLiquidity(),
       ]);
 
-      setQSDPrice(toTokenUnitsBN(spot, 18));
-      setQSDLiquidity(liquidity.qsd);
+      setSCDPrice(toTokenUnitsBN(spot, 18));
+      setSCDLiquidity(liquidity.SCD);
       setDAILiquidity(liquidity.dai);
       setExpansionAmount(expansionAmount);
     };
@@ -96,7 +96,7 @@ function Pool({ user }: { user: string }) {
     if (user === '') {
       setPoolAddress('');
       setPoolTotalBonded(new BigNumber(0));
-      setPairBalanceQSD(new BigNumber(0));
+      setPairBalanceSCD(new BigNumber(0));
       setPairBalanceDAI(new BigNumber(0));
       setUserUNIBalance(new BigNumber(0));
       setUserUNIAllowance(new BigNumber(0));
@@ -117,7 +117,7 @@ function Pool({ user }: { user: string }) {
 
       const [
         poolTotalBondedStr,
-        pairBalanceQSDStr,
+        pairBalanceSCDStr,
         pairBalanceDAIStr,
         balance,
         daiBalance,
@@ -131,7 +131,7 @@ function Pool({ user }: { user: string }) {
         fluidUntilStr,
       ] = await Promise.all([
         getPoolTotalBonded(poolAddressStr),
-        getTokenBalance(QSD.addr, UNI.addr),
+        getTokenBalance(SCD.addr, UNI.addr),
         getTokenBalance(DAI.addr, UNI.addr),
         getTokenBalance(UNI.addr, user),
         getTokenBalance(DAI.addr, user),
@@ -147,17 +147,17 @@ function Pool({ user }: { user: string }) {
         getPoolFluidUntil(poolAddressStr, user),
       ]);
 
-      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, QSD.decimals);
-      const pairQSDBalance = toTokenUnitsBN(pairBalanceQSDStr, QSD.decimals);
+      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, SCD.decimals);
+      const pairSCDBalance = toTokenUnitsBN(pairBalanceSCDStr, SCD.decimals);
       const pairDAIBalance = toTokenUnitsBN(pairBalanceDAIStr, DAI.decimals);
       const userUNIBalance = toTokenUnitsBN(balance, UNI.decimals);
       const userDAIBalance = toTokenUnitsBN(daiBalance, DAI.decimals);
       const userStagedBalance = toTokenUnitsBN(stagedBalance, UNI.decimals);
       const userBondedBalance = toTokenUnitsBN(bondedBalance, UNI.decimals);
-      const userRewardedBalance = toTokenUnitsBN(rewardedBalance, QSD.decimals);
+      const userRewardedBalance = toTokenUnitsBN(rewardedBalance, SCD.decimals);
       const userClaimableBalance = toTokenUnitsBN(
         claimableBalance,
-        QSD.decimals
+        SCD.decimals
       );
       const userStatus = parseInt(status, 10);
       const fluidUntil = parseInt(fluidUntilStr, 10);
@@ -165,7 +165,7 @@ function Pool({ user }: { user: string }) {
       if (!isCancelled) {
         setPoolAddress(poolAddressStr);
         setPoolTotalBonded(new BigNumber(poolTotalBonded));
-        setPairBalanceQSD(new BigNumber(pairQSDBalance));
+        setPairBalanceSCD(new BigNumber(pairSCDBalance));
         setPairBalanceDAI(new BigNumber(pairDAIBalance));
         setUserUNIBalance(new BigNumber(userUNIBalance));
         setUserUNIAllowance(new BigNumber(allowance));
@@ -200,9 +200,9 @@ function Pool({ user }: { user: string }) {
                 maximumFractionDigits: 2 };
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
-  if (qsdPrice && qsdLiquidity && daiLiquidity && expansionAmount) {
-    const totalDAI = qsdLiquidity * toFloat(qsdPrice) + daiLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(qsdPrice);
+  if (SCDPrice && SCDLiquidity && daiLiquidity && expansionAmount) {
+    const totalDAI = SCDLiquidity * toFloat(SCDPrice) + daiLiquidity;
+    const daiToAdd = (expansionAmount / 2) * toFloat(SCDPrice);
 
     const lpYield = (daiToAdd / totalDAI) * 100;
 
@@ -232,7 +232,7 @@ function Pool({ user }: { user: string }) {
             &nbsp;&nbsp; (Remember to re-bond your UNI-V2 to continue getting
             rewards)
             <br />
-            Step 4: Wait 1 epoch to claim claimable QSD
+            Step 4: Wait 1 epoch to claim claimable SCD
             <br />
             Step 5: Provide your rewards to compound your returns
             <br />
@@ -253,8 +253,8 @@ function Pool({ user }: { user: string }) {
       <PoolPageHeader
         accountUNIBalance={userUNIBalance}
         accountBondedBalance={userBondedBalance}
-        accountRewardedQSDBalance={userRewardedBalance}
-        accountClaimableQSDBalance={userClaimableBalance}
+        accountRewardedSCDBalance={userRewardedBalance}
+        accountClaimableSCDBalance={userClaimableBalance}
         poolTotalBonded={poolTotalBonded}
         accountPoolStatus={userStatus}
         unlocked={userStatusUnlocked}
@@ -333,14 +333,14 @@ function Pool({ user }: { user: string }) {
       /> */}
 
       <Claim
-        suffix='QSD'
+        suffix='SCD'
         claimable={userClaimableBalance}
         status={userStatus}
         disabled={!poolAddress}
         handleClaim={(claimAmount, callback) => {
           claimPool(
             poolAddress,
-            toBaseUnitBN(claimAmount, QSD.decimals),
+            toBaseUnitBN(claimAmount, SCD.decimals),
             callback
           );
         }}
@@ -351,7 +351,7 @@ function Pool({ user }: { user: string }) {
         user={user}
         rewarded={userRewardedBalance}
         status={userStatus}
-        pairBalanceQSD={pairBalanceQSD}
+        pairBalanceSCD={pairBalanceSCD}
         pairBalanceDAI={pairBalanceDAI}
         userDAIBalance={userDAIBalance}
         userDAIAllowance={userDAIAllowance}

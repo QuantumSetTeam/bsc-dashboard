@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { notify } from './txNotifier.ts';
 import { UniswapV2Router02 } from '../constants/contracts';
 
-import { QSD, DAI } from '../constants/tokens';
+import { SCD, DAI } from '../constants/tokens';
 
 const uniswapRouterAbi = require('../constants/abi/UniswapV2Router02.json');
 const testnetDAIAbi = require('../constants/abi/TestnetUSDC.json');
@@ -85,7 +85,7 @@ export const mintTestnetDAI = async (amount) => {
  * Uniswap Protocol
  */
 
-export const buyQSD = async (buyAmount, maxInputAmount) => {
+export const buySCD = async (buyAmount, maxInputAmount) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -97,7 +97,7 @@ export const buyQSD = async (buyAmount, maxInputAmount) => {
     .swapTokensForExactTokens(
       buyAmount,
       maxInputAmount,
-      [DAI.addr, QSD.addr],
+      [DAI.addr, SCD.addr],
       account,
       deadline
     )
@@ -107,7 +107,7 @@ export const buyQSD = async (buyAmount, maxInputAmount) => {
     });
 };
 
-export const sellQSD = async (sellAmount, minOutputAmount) => {
+export const sellSCD = async (sellAmount, minOutputAmount) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -119,7 +119,7 @@ export const sellQSD = async (sellAmount, minOutputAmount) => {
     .swapExactTokensForTokens(
       sellAmount,
       minOutputAmount,
-      [QSD.addr, DAI.addr],
+      [SCD.addr, DAI.addr],
       account,
       deadline
     )
@@ -129,7 +129,7 @@ export const sellQSD = async (sellAmount, minOutputAmount) => {
     });
 };
 
-export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
+export const addLiquidity = async (amountSCD, amountDAI, slippage) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -137,7 +137,7 @@ export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
   );
   const deadline = Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW;
   const slippageBN = new BigNumber(slippage);
-  const minAmountQSD = new BigNumber(amountQSD)
+  const minAmountSCD = new BigNumber(amountSCD)
     .multipliedBy(new BigNumber(1).minus(slippageBN))
     .integerValue(BigNumber.ROUND_FLOOR);
   const minAmountDAI = new BigNumber(amountDAI)
@@ -146,11 +146,11 @@ export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
 
   await router.methods
     .addLiquidity(
-      QSD.addr,
+      SCD.addr,
       DAI.addr,
-      new BigNumber(amountQSD).toFixed(),
+      new BigNumber(amountSCD).toFixed(),
       new BigNumber(amountDAI).toFixed(),
-      minAmountQSD,
+      minAmountSCD,
       minAmountDAI,
       account,
       deadline
@@ -163,7 +163,7 @@ export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
 
 export const removeLiquidity = async (
   liquidityAmount,
-  minAmountQSD,
+  minAmountSCD,
   minAmountDAI
 ) => {
   const account = await checkConnectedAndGetAddress();
@@ -175,10 +175,10 @@ export const removeLiquidity = async (
 
   await router.methods
     .removeLiquidity(
-      QSD.addr,
+      SCD.addr,
       DAI.addr,
       new BigNumber(liquidityAmount).toFixed(),
-      new BigNumber(minAmountQSD).toFixed(),
+      new BigNumber(minAmountSCD).toFixed(),
       new BigNumber(minAmountDAI).toFixed(),
       account,
       deadline
@@ -190,7 +190,7 @@ export const removeLiquidity = async (
 };
 
 /**
- * QSD Protocol
+ * SCD Protocol
  */
 
 export const advance = async (dao) => {
@@ -454,6 +454,20 @@ export const claimRewards = async (pool, callback) => {
   const poolContract = new window.web3.eth.Contract(poolBondingAbi, pool);
   await poolContract.methods
     .claimAll()
+    .send({ from: account })
+    .on('transactionHash', (hash) => {
+      notify.hash(hash);
+      if (callback) {
+        callback(hash);
+      }
+    });
+};
+
+export const claimGovRewards = async (pool, callback) => {
+  const account = await checkConnectedAndGetAddress();
+  const poolContract = new window.web3.eth.Contract(poolAbi, pool);
+  await poolContract.methods
+    .claim()
     .send({ from: account })
     .on('transactionHash', (hash) => {
       notify.hash(hash);

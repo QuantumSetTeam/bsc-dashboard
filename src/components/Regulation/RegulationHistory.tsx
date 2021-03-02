@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DataView, useTheme } from '@aragon/ui';
 
 import { getAllRegulations } from '../../utils/infura';
-import { QSD, QSDS } from '../../constants/tokens';
+import { SCD, SCDS } from '../../constants/tokens';
 import { formatBN, toTokenUnitsBN } from '../../utils/number';
 import BigNumber from 'bignumber.js';
 
@@ -26,13 +26,13 @@ type RegulationEntry = {
 function formatPrice(type, data) {
   return type === 'NEUTRAL'
     ? '1.00'
-    : formatBN(toTokenUnitsBN(new BigNumber(data.price), QSD.decimals), 3);
+    : formatBN(toTokenUnitsBN(new BigNumber(data.price), SCD.decimals), 3);
 }
 
 function formatDeltaBonded(type, data) {
   return type === 'INCREASE'
     ? '+' +
-        formatBN(toTokenUnitsBN(new BigNumber(data.newBonded), QSD.decimals), 2)
+        formatBN(toTokenUnitsBN(new BigNumber(data.newBonded), SCD.decimals), 2)
     : '+0.00';
 }
 
@@ -57,7 +57,7 @@ function RegulationHistory({ user }: RegulationHistoryProps) {
 
     async function updateUserInfo() {
       const [allRegulations] = await Promise.all([
-        getAllRegulations(QSDS.addr),
+        getAllRegulations(SCDS.addr),
       ]);
 
       if (!isCancelled) {

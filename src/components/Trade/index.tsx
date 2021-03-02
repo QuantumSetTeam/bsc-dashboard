@@ -6,12 +6,12 @@ import { getTokenBalance } from '../../utils/infura';
 import { toTokenUnitsBN } from '../../utils/number';
 
 import TradePageHeader from './Header';
-import {QSD, UNI, DAI} from "../../constants/tokens";
+import {SCD, UNI, DAI} from "../../constants/tokens";
 import IconHeader from "../common/IconHeader";
 
 
 function UniswapPool({ user }: {user: string}) {
-  const [pairBalanceQSD, setPairBalanceQSD] = useState(new BigNumber(0));
+  const [pairBalanceSCD, setPairBalanceSCD] = useState(new BigNumber(0));
   const [pairBalanceDAI, setPairBalanceDAI] = useState(new BigNumber(0));
 
   useEffect(() => {
@@ -19,14 +19,14 @@ function UniswapPool({ user }: {user: string}) {
 
     async function updateUserInfo() {
       const [
-        pairBalanceQSDStr, pairBalanceDAIStr,
+        pairBalanceSCDStr, pairBalanceDAIStr,
       ] = await Promise.all([
-        getTokenBalance(QSD.addr, UNI.addr),
+        getTokenBalance(SCD.addr, UNI.addr),
         getTokenBalance(DAI.addr, UNI.addr),
       ]);
 
       if (!isCancelled) {
-        setPairBalanceQSD(toTokenUnitsBN(pairBalanceQSDStr, QSD.decimals));
+        setPairBalanceSCD(toTokenUnitsBN(pairBalanceSCDStr, SCD.decimals));
         setPairBalanceDAI(toTokenUnitsBN(pairBalanceDAIStr, DAI.decimals));
       }
     }
@@ -46,7 +46,7 @@ function UniswapPool({ user }: {user: string}) {
       <IconHeader icon={<i className="fas fa-exchange-alt"/>} text="Trade"/>
 
       <TradePageHeader
-        pairBalanceQSD={pairBalanceQSD}
+        pairBalanceSCD={pairBalanceSCD}
         pairBalanceDAI={pairBalanceDAI}
         uniswapPair={UNI.addr}
       />
@@ -55,7 +55,7 @@ function UniswapPool({ user }: {user: string}) {
         <div style={{ flexBasis: '30%', marginRight: '3%', marginLeft: '2%'  }}>
           <MainButton
             title="Info"
-            description="View QSD-DAI pool stats."
+            description="View SCD-DAI pool stats."
             icon={<i className="fas fa-chart-area"/>}
             href={"https://uniswap.info/pair/0x88ff79eb2bc5850f27315415da8685282c7610f9"}
           />
@@ -64,7 +64,7 @@ function UniswapPool({ user }: {user: string}) {
         <div style={{ flexBasis: '30%' }}>
           <MainButton
             title="Trade"
-            description="Trade QSD tokens."
+            description="Trade SCD tokens."
             icon={<i className="fas fa-exchange-alt"/>}
             href={"https://uniswap.exchange/swap?inputCurrency=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&outputCurrency=0x36f3fd68e7325a35eb768f1aedaae9ea0689d723"}
           />

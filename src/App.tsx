@@ -124,7 +124,7 @@ function App() {
                         <Route path='/lp/'>
                           <Pool user={user} />
                         </Route>
-                        <Route path='/qsd/'>
+                        <Route path='/SCD/'>
                           <Bonding user={user} />
                         </Route>
                         <Route path='/qsg/'>
