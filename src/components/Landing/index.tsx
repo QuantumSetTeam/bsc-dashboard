@@ -60,7 +60,7 @@ export const Landing: React.FC = () => {
           </div>
 
           <div style={{ fontSize: 20 }}>
-            Quantum Set Dollar (QSD) is a decentralised, experimental
+            Smart Chain Dollar (QSD) is a decentralised, experimental
             stablecoin, using previous stablecoin designs as its foundation.
             Updated mechanics ensure improved peg stability and the ability to
             easily iterate provides an experimental edge for innovation limited
@@ -97,7 +97,7 @@ export const Landing: React.FC = () => {
 
         <img
           src='./about/lp.png'
-          alt='Quantum Set Dollar Hero'
+          alt='Smart Chain Dollar Hero'
           style={{
             zIndex: 1,
             position: 'absolute',
@@ -135,12 +135,12 @@ export const Landing: React.FC = () => {
           <Card
             underlineTitle={true}
             title='Incentives Below Peg'
-            body='When the price of QSD is below $1, holders will be able to earn rewards in the form of the Quantum Set Governance Token (QSG), by staking their QSD. Secondarily, the ability to bond QSD will only be available below peg.'
+            body='When the price of QSD is below $1, holders will be able to earn rewards in the form of the SCD Governance Token (QSG), by staking their QSD. Secondarily, the ability to bond QSD will only be available below peg.'
           />
           <Card
             underlineTitle={true}
             title='Community Ownership'
-            body='Quantum Set Dollar will be governed by holders of the Quantum Set Governance Token. QSG can be farmed by community members from Epoch 73 onwards, whilst QSD is below the peg of $1. QSG holders will also control the Treasury.'
+            body='Smart Chain Dollar will be governed by holders of the SCD Governance Token. QSG can be farmed by community members from Epoch 73 onwards, whilst QSD is below the peg of $1. QSG holders will also control the Treasury.'
           />
         </div>
         <div style={{ textAlign: 'center', marginTop: 24 }}>

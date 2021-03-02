@@ -106,7 +106,7 @@ function NavBar({ hasWeb3, user, setUser }: NavbarProps) {
                 alt='logo'
                 width={64}
               />
-              <div style={{ fontSize: 22 }}>Quantum Set Dollar</div>
+              <div style={{ fontSize: 22 }}>Smart Chain Dollar</div>
             </NavLink>
             <div style={{ textAlign: 'center' }}>
               <LinkButton title='Dashboard' to='/dashboard/' />

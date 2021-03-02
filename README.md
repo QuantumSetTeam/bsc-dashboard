@@ -36,7 +36,7 @@ npm start
 this project is an experiment, and its contracts are unaudited - we've put a significant amount of work into testing, as well as generally de-risking the design of its core mechanism, however participants should take great caution as bugs resulting in loss of funds are always a possibility.
 
 ```
-Copyright 2021 Quantum Set Team <quantumsetteam@protonmail.com>
+Copyright 2021 SCD Team <quantumsetteam@protonmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use the included code except in compliance with the License.
