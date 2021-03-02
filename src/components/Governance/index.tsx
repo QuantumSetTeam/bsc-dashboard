@@ -7,7 +7,7 @@ import {
   getTokenBalance,
   getTokenTotalSupply,
 } from '../../utils/infura';
-import { QSG } from '../../constants/tokens';
+import { SCDG } from '../../constants/tokens';
 import { toTokenUnitsBN } from '../../utils/number';
 import BigNumber from 'bignumber.js';
 import GovernanceHeader from './Header';
@@ -31,15 +31,15 @@ function Governance({ user }: { user: string }) {
     }
     let isCancelled = false;
 
-    // Changing to QSG stake
+    // Changing to SCDG stake
     async function updateUserInfo() {
       const [statusStr, stakeStr] = await Promise.all([
-        getStatusOf(QSG.addr, user),
-        getTokenBalance(QSG.addr, user),
+        getStatusOf(SCDG.addr, user),
+        getTokenBalance(SCDG.addr, user),
       ]);
 
       if (!isCancelled) {
-        setStake(toTokenUnitsBN(stakeStr, QSG.decimals));
+        setStake(toTokenUnitsBN(stakeStr, SCDG.decimals));
         setUserStatus(parseInt(statusStr, 10));
       }
     }
@@ -58,12 +58,12 @@ function Governance({ user }: { user: string }) {
 
     async function updateUserInfo() {
       const [totalStakeStr, implementationStr] = await Promise.all([
-        getTokenTotalSupply(QSG.addr),
-        getImplementation(QSG.addr),
+        getTokenTotalSupply(SCDG.addr),
+        getImplementation(SCDG.addr),
       ]);
 
       if (!isCancelled) {
-        setTotalStake(toTokenUnitsBN(totalStakeStr, QSG.decimals));
+        setTotalStake(toTokenUnitsBN(totalStakeStr, SCDG.decimals));
         setImplementation(implementationStr);
       }
     }

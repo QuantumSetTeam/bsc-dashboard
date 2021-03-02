@@ -8,14 +8,14 @@ interface ClaimProps {
   poolAddress: string | null;
   userStatus: number;
   amountSCD: BigNumber;
-  amountQSG: BigNumber;
+  amountSCDG: BigNumber;
 }
 
 export const Claim: React.FC<ClaimProps> = ({
   userStatus,
   poolAddress,
   amountSCD,
-  amountQSG,
+  amountSCDG,
 }) => (
   <TopBorderSection title='Claim'>
     <div
@@ -29,7 +29,7 @@ export const Claim: React.FC<ClaimProps> = ({
         <BalanceBlock asset='Claimable' balance={amountSCD} suffix={'SCD'} />
       </div>
       <div>
-        <BalanceBlock asset='Claimable' balance={amountQSG} suffix={'QSG'} />
+        <BalanceBlock asset='Claimable' balance={amountSCDG} suffix={'SCDG'} />
       </div>
       <Button
         // wide

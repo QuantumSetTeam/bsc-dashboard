@@ -4,7 +4,7 @@ import { Layout } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SCD, SCDS, QSG } from '../../constants/tokens';
+import { SCD, SCDS, SCDG } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
   getBalanceBonded,
@@ -57,9 +57,9 @@ function Bonding({ user }: { user: string }) {
   const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
   const [lockup, setLockup] = useState(0);
   const [userRewardedSCD, setUserRewardedSCD] = useState(new BigNumber(0));
-  const [userRewardedQSG, setUserRewardedQSG] = useState(new BigNumber(0));
+  const [userRewardedSCDG, setUserRewardedSCDG] = useState(new BigNumber(0));
   const [userClaimableSCD, setUserClaimableSCD] = useState(new BigNumber(0));
-  const [userClaimableQSG, setUserClaimableQSG] = useState(new BigNumber(0));
+  const [userClaimableSCDG, setUserClaimableSCDG] = useState(new BigNumber(0));
 
   const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
   const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
@@ -117,9 +117,9 @@ function Bonding({ user }: { user: string }) {
         status,
         fluidUntilStr,
         SCDRewardedStr,
-        qsgRewardedStr,
+        SCDGRewardedStr,
         SCDClaimableStr,
-        qsgClaimableStr,
+        SCDGClaimableStr,
         SCDsBalance,
       ] = await Promise.all([
         getPoolTotalBonded(poolAddress),
@@ -137,9 +137,9 @@ function Bonding({ user }: { user: string }) {
       ]);
 
       const SCDRewarded = toTokenUnitsBN(SCDRewardedStr, SCD.decimals);
-      const qsgRewarded = toTokenUnitsBN(qsgRewardedStr, QSG.decimals);
+      const SCDGRewarded = toTokenUnitsBN(SCDGRewardedStr, SCDG.decimals);
       const SCDClaimable = toTokenUnitsBN(SCDClaimableStr, SCD.decimals);
-      const qsgClaimable = toTokenUnitsBN(qsgClaimableStr, QSG.decimals);
+      const SCDGClaimable = toTokenUnitsBN(SCDGClaimableStr, SCDG.decimals);
       const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, SCD.decimals);
       const userSCDBalance = toTokenUnitsBN(SCDBalance, SCD.decimals);
       const userSCDSBalance = SCDsBalance;
@@ -158,9 +158,9 @@ function Bonding({ user }: { user: string }) {
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
         setUserRewardedSCD(new BigNumber(SCDRewarded));
-        setUserRewardedQSG(new BigNumber(qsgRewarded));
+        setUserRewardedSCDG(new BigNumber(SCDGRewarded));
         setUserClaimableSCD(new BigNumber(SCDClaimable));
-        setUserClaimableQSG(new BigNumber(qsgClaimable));
+        setUserClaimableSCDG(new BigNumber(SCDGClaimable));
         setUserStatus(userStatus);
         setUserStatusUnlocked(fluidUntil);
         setLockup(POOL_EXIT_LOCKUP_EPOCHS);
@@ -230,13 +230,13 @@ function Bonding({ user }: { user: string }) {
             Step 2: Bond your SCD *Note that you can only bond SCD when TWAP is
             &lt;1*
             <br />
-            &nbsp;&nbsp; 2.1: If TWAP is &lt;1, you'll be rewarded QSG
+            &nbsp;&nbsp; 2.1: If TWAP is &lt;1, you'll be rewarded SCDG
             <br />
             &nbsp;&nbsp; 2.2: If TWAP is &gt;=1, you'll be rewarded SCD
             <br />
             Step 3: Poke your rewards to move them to claimable
             <br />
-            Step 4: Wait 1 epoch to claim claimable SCD and/or QSG
+            Step 4: Wait 1 epoch to claim claimable SCD and/or SCDG
           </p>
         }
       />
@@ -307,13 +307,13 @@ function Bonding({ user }: { user: string }) {
         userStatus={userStatus}
         poolAddress={poolBondingAddress}
         amountSCD={userClaimableSCD}
-        amountQSG={userClaimableQSG}
+        amountSCDG={userClaimableSCDG}
       />
 
       <Rewards
         poolAddress={poolBondingAddress}
         amountSCD={userRewardedSCD}
-        amountQSG={userRewardedQSG}
+        amountSCDG={userRewardedSCDG}
       />
     </Layout>
   );

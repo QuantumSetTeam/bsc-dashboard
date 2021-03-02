@@ -135,12 +135,12 @@ export const Landing: React.FC = () => {
           <Card
             underlineTitle={true}
             title='Incentives Below Peg'
-            body='When the price of SCD is below $1, holders will be able to earn rewards in the form of the SCD Governance Token (QSG), by staking their SCD. Secondarily, the ability to bond SCD will only be available below peg.'
+            body='When the price of SCD is below $1, holders will be able to earn rewards in the form of the SCD Governance Token (SCDG), by staking their SCD. Secondarily, the ability to bond SCD will only be available below peg.'
           />
           <Card
             underlineTitle={true}
             title='Community Ownership'
-            body='Smart Chain Dollar will be governed by holders of the SCD Governance Token. QSG can be farmed by community members from Epoch 73 onwards, whilst SCD is below the peg of $1. QSG holders will also control the Treasury.'
+            body='Smart Chain Dollar will be governed by holders of the SCD Governance Token. SCDG can be farmed by community members from Epoch 73 onwards, whilst SCD is below the peg of $1. SCDG holders will also control the Treasury.'
           />
         </div>
         <div style={{ textAlign: 'center', marginTop: 24 }}>

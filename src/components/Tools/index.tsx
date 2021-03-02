@@ -419,7 +419,7 @@ function Tools({ user }: { user: string }) {
           line3={
             expansionAmount && expansionAmount > 0
               ? `Yielding ${lpExpansionYield} on LP TVL (${lpAPR} APR) and ${daoExpansionYield} to Bonded SCD (${daoAPR} APR)`
-              : 'QSG will be allocated to SCD stakers'
+              : 'SCDG will be allocated to SCD stakers'
           }
         />
       </Section>

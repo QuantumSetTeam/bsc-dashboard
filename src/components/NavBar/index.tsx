@@ -112,7 +112,7 @@ function NavBar({ hasWeb3, user, setUser }: NavbarProps) {
               <LinkButton title='Dashboard' to='/dashboard/' />
               <LinkButton title='SCD' to='/SCD/' />
               <LinkButton title='LP' to='/lp/' />
-              <LinkButton title='QSG' to='/qsg/' />
+              <LinkButton title='SCDG' to='/SCDG/' />
               {/* <LinkButton title="Regulation" to="/regulation/" /> */}
               <LinkButton title='Governance' to='/governance/' />
               {/* <LinkButton title="Trade" to="/trade/" /> */}

@@ -3,7 +3,7 @@
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SCD, QSG } from '../../constants/tokens';
+import { SCD, SCDG } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import { Layout } from '@aragon/ui';
 import {
@@ -40,9 +40,9 @@ function PoolGov({ user }: { user: string }) {
 
   const [totalBonded, setTotalBonded] = useState(new BigNumber(0));
   const [poolGovAddress, setPoolGovAddress] = useState<null | string>(null);
-  const [userQSGBalance, setUserQSGBalance] = useState(new BigNumber(0));
-  const [userQSGAllowance, setUserQSGAllowance] = useState(new BigNumber(0));
-  const [totalQSGSupply, setTotalQSGSupply] = useState(new BigNumber(0));
+  const [userSCDGBalance, setUserSCDGBalance] = useState(new BigNumber(0));
+  const [userSCDGAllowance, setUserSCDGAllowance] = useState(new BigNumber(0));
+  const [totalSCDGSupply, setTotalSCDGSupply] = useState(new BigNumber(0));
   const [userStagedBalance, setUserStagedBalance] = useState(new BigNumber(0));
   const [userBondedBalance, setUserBondedBalance] = useState(new BigNumber(0));
   const [userStatus, setUserStatus] = useState(0);
@@ -54,10 +54,10 @@ function PoolGov({ user }: { user: string }) {
   //Update User balances
   useEffect(() => {
     if (user === '') {
-      setUserQSGBalance(new BigNumber(0));
-      setUserQSGAllowance(new BigNumber(0));
-      setUserQSGBalance(new BigNumber(0));
-      setTotalQSGSupply(new BigNumber(0));
+      setUserSCDGBalance(new BigNumber(0));
+      setUserSCDGAllowance(new BigNumber(0));
+      setUserSCDGBalance(new BigNumber(0));
+      setTotalSCDGSupply(new BigNumber(0));
       setUserStagedBalance(new BigNumber(0));
       setUserBondedBalance(new BigNumber(0));
       setUserStatus(0);
@@ -70,8 +70,8 @@ function PoolGov({ user }: { user: string }) {
 
       const [
         poolTotalBondedStr,
-        QSGBalance,
-        QSGAllowance,
+        SCDGBalance,
+        SCDGAllowance,
         stagedBalance,
         bondedBalance,
         status,
@@ -81,8 +81,8 @@ function PoolGov({ user }: { user: string }) {
         SCDClaimableStr,
       ] = await Promise.all([
         getPoolTotalBonded(poolAddress),
-        getTokenBalance(QSG.addr, user),
-        getTokenAllowance(QSG.addr, user, poolAddress),
+        getTokenBalance(SCDG.addr, user),
+        getTokenAllowance(SCDG.addr, user, poolAddress),
         getBalanceOfStaged(poolAddress, user),
         getBalanceBonded(poolAddress, user),
         getPoolStatusOf(poolAddress, user),
@@ -94,10 +94,10 @@ function PoolGov({ user }: { user: string }) {
 
       const SCDRewarded = toTokenUnitsBN(SCDRewardedStr, SCD.decimals);
       const SCDClaimable = toTokenUnitsBN(SCDClaimableStr, SCD.decimals);
-      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, QSG.decimals);
-      const userQSGBalance = toTokenUnitsBN(QSGBalance, QSG.decimals);
-      const userStagedBalance = toTokenUnitsBN(stagedBalance, QSG.decimals);
-      const userBondedBalance = toTokenUnitsBN(bondedBalance, QSG.decimals);
+      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, SCDG.decimals);
+      const userSCDGBalance = toTokenUnitsBN(SCDGBalance, SCDG.decimals);
+      const userStagedBalance = toTokenUnitsBN(stagedBalance, SCDG.decimals);
+      const userBondedBalance = toTokenUnitsBN(bondedBalance, SCDG.decimals);
       const userStatus = parseInt(status, 10);
       const fluidUntil = parseInt(fluidUntilStr, 10);
       const lockedUntil = parseInt(lockedUntilStr, 10);
@@ -105,10 +105,10 @@ function PoolGov({ user }: { user: string }) {
       if (!isCancelled) {
         setTotalBonded(poolTotalBonded);
         setPoolGovAddress(poolAddress);
-        setUserQSGBalance(new BigNumber(userQSGBalance));
-        setUserQSGAllowance(new BigNumber(QSGAllowance));
-        setUserQSGBalance(new BigNumber(userQSGBalance));
-        setTotalQSGSupply(new BigNumber(totalQSGSupply));
+        setUserSCDGBalance(new BigNumber(userSCDGBalance));
+        setUserSCDGAllowance(new BigNumber(SCDGAllowance));
+        setUserSCDGBalance(new BigNumber(userSCDGBalance));
+        setTotalSCDGSupply(new BigNumber(totalSCDGSupply));
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
         setUserRewardedSCD(new BigNumber(SCDRewarded));
@@ -133,13 +133,13 @@ function PoolGov({ user }: { user: string }) {
       <Guide
         bodyInstructions={
           <p>
-            Step 1. Earn QSG by bonding SCD when TWAP is &lt; 1
+            Step 1. Earn SCDG by bonding SCD when TWAP is &lt; 1
             <br />
-            Step 2. Stage your QSG into the Governance Pool
+            Step 2. Stage your SCDG into the Governance Pool
             <br />
-            Step 3. Bond your QSG into the Governance Pool
+            Step 3. Bond your SCDG into the Governance Pool
             <br />
-            &nbsp;&nbsp; Note: If you'd like to submit a proposal your QSG needs
+            &nbsp;&nbsp; Note: If you'd like to submit a proposal your SCDG needs
             to remain bonded
           </p>
         }
@@ -147,11 +147,11 @@ function PoolGov({ user }: { user: string }) {
 
       <IconHeader
         icon={<i className='fas fa-university' />}
-        text='QSG Rewards'
+        text='SCDG Rewards'
       />
 
       <AccountPageHeader
-        accountQSGBalance={userQSGBalance}
+        accountSCDGBalance={userSCDGBalance}
         totalBonded={totalBonded}
         accountStagedBalance={userStagedBalance}
         accountBondedBalance={userBondedBalance}
@@ -160,33 +160,33 @@ function PoolGov({ user }: { user: string }) {
       />
 
       <WithdrawDeposit
-        suffix='QSG'
-        balance={userQSGBalance}
-        allowance={userQSGAllowance}
+        suffix='SCDG'
+        balance={userSCDGBalance}
+        allowance={userSCDGAllowance}
         stagedBalance={userStagedBalance}
         status={userStatus}
         disabled={!user}
         handleApprove={() => {
-          approve(QSG.addr, poolGovAddress);
+          approve(SCDG.addr, poolGovAddress);
         }}
         handleDeposit={(depositAmount) => {
           depositPool(
             poolGovAddress,
-            toBaseUnitBN(depositAmount, QSG.decimals),
+            toBaseUnitBN(depositAmount, SCDG.decimals),
             () => {}
           );
         }}
         handleWithdraw={(withdrawAmount) => {
           withdrawPool(
             poolGovAddress,
-            toBaseUnitBN(withdrawAmount, QSG.decimals),
+            toBaseUnitBN(withdrawAmount, SCDG.decimals),
             () => {}
           );
         }}
       />
 
       <BondUnbond
-        suffix='QSG'
+        suffix='SCDG'
         staged={userStagedBalance}
         bonded={userBondedBalance}
         status={userStatus}
@@ -195,14 +195,14 @@ function PoolGov({ user }: { user: string }) {
         handleBond={(bondAmount) => {
           bondPool(
             poolGovAddress,
-            toBaseUnitBN(bondAmount, QSG.decimals),
+            toBaseUnitBN(bondAmount, SCDG.decimals),
             () => {}
           );
         }}
         handleUnbond={(unbondAmount) => {
           unbondPool(
             poolGovAddress,
-            toBaseUnitBN(unbondAmount, QSG.decimals),
+            toBaseUnitBN(unbondAmount, SCDG.decimals),
             () => {}
           );
         }}

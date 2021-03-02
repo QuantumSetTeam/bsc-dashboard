@@ -24,8 +24,8 @@ export const SCDS = {
   symbol: 'SCDS',
 };
 
-export const QSG = {
+export const SCDG = {
   addr: GovernanceToken,
   decimals: 18,
-  symbol: 'QSG',
+  symbol: 'SCDG',
 };

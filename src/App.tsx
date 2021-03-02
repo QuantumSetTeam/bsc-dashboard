@@ -127,7 +127,7 @@ function App() {
                         <Route path='/SCD/'>
                           <Bonding user={user} />
                         </Route>
-                        <Route path='/qsg/'>
+                        <Route path='/SCDG/'>
                           <PoolGov user={user} />
                         </Route>
                         <Route path='/dashboard/'>

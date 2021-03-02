@@ -26,7 +26,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
       <div style={{ display: 'flex' }}>
         {/* User stake */}
         <div style={{ width: '20%' }}>
-          <BalanceBlock asset='My Stake' balance={stake} suffix={'QSG'} />
+          <BalanceBlock asset='My Stake' balance={stake} suffix={'SCDG'} />
         </div>
         <div style={{ width: '20%' }}>
           <TextBlock label='My Vote' text={VOTE_TYPE_MAP[vote]} />
