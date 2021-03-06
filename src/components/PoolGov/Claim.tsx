@@ -3,6 +3,8 @@ import React from 'react';
 import { BalanceBlock, TopBorderSection } from '../common';
 import { Button } from '@aragon/ui';
 import { claimGovRewards } from '../../utils/web3';
+import { toBaseUnitBN } from '../../utils/number';
+import { SCD } from '../../constants/tokens';
 
 interface ClaimProps {
   poolAddress: string | null;
@@ -30,7 +32,7 @@ export const Claim: React.FC<ClaimProps> = ({
         // wide
         icon={<i className='far fa-hand-point-right' />}
         label='Claim'
-        onClick={() => claimGovRewards(poolAddress)}
+        onClick={() => claimGovRewards(poolAddress, toBaseUnitBN(amountSCD, SCD.decimals))}
         disabled={!poolAddress || (userStatus && userStatus !== 0)}
       />
     </div>

@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 // import { Layout } from '@aragon/ui';
 import { IconHeader, Row, Tile, TopBorderBox , BRow, BCol , BContainer } from '../common';
 import Regulation from '../Regulation';
-import { SCD, SCDS } from '../../constants/tokens';
+import { SCD, SCDS, DAI } from '../../constants/tokens';
 import {
   getDaoIsBootstrapping,
   getExpansionAmount,
@@ -201,7 +201,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://app.uniswap.org/#/swap?outputCurrency=${SCD.addr}`}
+                    href={`https://narwhalswap.org/#/page/swap?outputCurrency=${SCD.addr}`}
                   >
                     Trade SCD
                   </a>
@@ -217,7 +217,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://info.uniswap.org/token/${SCD.addr}`}
+                    href={`https://info.narwhalswap.org/token/${SCD.addr}`}
                   >
                     Trade Info
                   </a>
@@ -233,7 +233,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://app.uniswap.org/#/add/${SCD.addr}/0x6b175474e89094c44da98b954eedeac495271d0f`}
+                    href={`https://narwhalswap.org/#/page/add/${SCD.addr}/${DAI.addr}`}
                   >
                     Add Liquidity
                   </a>

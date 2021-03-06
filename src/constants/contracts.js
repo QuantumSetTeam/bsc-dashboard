@@ -2,13 +2,13 @@
 // eslint-disable-next-line import/prefer-default-export
 export const UniswapV2Router02 = '0xE85C6ab56A3422E7bAfd71e81Eb7d0f290646078';
 
-export const Dao = '0xc370B3e80196b6f8eaA646Cf296aC649F31f728F'; // changed
-export const PoolBonding = '0x90E94135163563AEb0b433ad1C8ca9207B82C98d'; // changed
-export const PoolLP = '0xDE974464078Ae1123dF33AC2Ed8fdb6cE5f4De18'; // changed
-export const PoolGov = '0xBca156b1ea3C3d521a0d6f7Fd046c102C4AeE3E3'; // changed
-export const Dollar = '0xc8c0800d238E412D54f3F2DB2270Df1eB17544D0'; // changed
-export const GovernanceToken = '0x0B55cd3d4d5cD18564685c2c7e2eeb5e72AD234F'; // changed
-export const UniV2PairAddress = '0x357E5086C73370a34Ad4AB4174F75604b7a18d57'; // changed
+export const Dao = '0xD99828DD32B5b4e92a4b5A96a9A966BAe34c3056'; // changed
+export const PoolBonding = '0x999590E337643fd5b91eE0643bA8738d8d5bAaE2'; // changed
+export const PoolLP = '0x3e8330301C05d72cacf2A4f318225c9737dc53De'; // changed
+export const PoolGov = '0x5da4d1B23a20E07C8f2A2d6178432144f2F0c173'; // changed
+export const Dollar = '0x9e5422F72cDF5B37314943E61469c2735860Ad5a'; // changed
+export const GovernanceToken = '0x4f02DF35bAe10E7432a282C4a8F1EF526BD33134'; // changed
+export const UniV2PairAddress = '0xDcF7fAE2FF5Ab0A12DedDbB5482768eeb36CbC07'; // changed
 export const Implementation = '0x4a7688949a5c86daB0FdA290BD5F20c6a600a7C1';
 export const Dai = '0x33d000dfe25424ac6f87ac771728ff231d5b1e35'; // changed
 

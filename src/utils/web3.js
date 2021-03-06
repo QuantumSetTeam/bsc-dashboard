@@ -463,11 +463,11 @@ export const claimRewards = async (pool, callback) => {
     });
 };
 
-export const claimGovRewards = async (pool, callback) => {
+export const claimGovRewards = async (pool, amount, callback) => {
   const account = await checkConnectedAndGetAddress();
   const poolContract = new window.web3.eth.Contract(poolAbi, pool);
   await poolContract.methods
-    .claim()
+    .claim(new BigNumber(amount).toFixed())
     .send({ from: account })
     .on('transactionHash', (hash) => {
       notify.hash(hash);
