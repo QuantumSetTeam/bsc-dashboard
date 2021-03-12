@@ -5,10 +5,10 @@ import BigNumber from 'bignumber.js';
 import { notify } from './txNotifier.ts';
 import { UniswapV2Router02 } from '../constants/contracts';
 
-import { QSD, DAI } from '../constants/tokens';
+import { QSD, BUSD } from '../constants/tokens';
 
 const uniswapRouterAbi = require('../constants/abi/UniswapV2Router02.json');
-const testnetDAIAbi = require('../constants/abi/TestnetUSDC.json');
+const testnetBUSDAbi = require('../constants/abi/TestnetUSDC.json');
 const daoAbi = require('../constants/abi/Implementation.json');
 const poolAbi = require('../constants/abi/Pool.json');
 const poolBondingAbi = require('../constants/abi/PoolBonding.json');
@@ -60,7 +60,7 @@ export const checkConnectedAndGetAddress = async () => {
 
 export const approve = async (tokenAddr, spender, amt = UINT256_MAX) => {
   const account = await checkConnectedAndGetAddress();
-  const oToken = new window.web3.eth.Contract(testnetDAIAbi, tokenAddr);
+  const oToken = new window.web3.eth.Contract(testnetBUSDAbi, tokenAddr);
   await oToken.methods
     .approve(spender, amt)
     .send({ from: account })
@@ -69,9 +69,9 @@ export const approve = async (tokenAddr, spender, amt = UINT256_MAX) => {
     });
 };
 
-export const mintTestnetDAI = async (amount) => {
+export const mintTestnetBUSD = async (amount) => {
   const account = await checkConnectedAndGetAddress();
-  const usdc = new window.web3.eth.Contract(testnetDAIAbi, DAI.addr);
+  const usdc = new window.web3.eth.Contract(testnetBUSDAbi, BUSD.addr);
 
   await usdc.methods
     .mint(account, new BigNumber(amount).toFixed())
@@ -97,7 +97,7 @@ export const buyQSD = async (buyAmount, maxInputAmount) => {
     .swapTokensForExactTokens(
       buyAmount,
       maxInputAmount,
-      [DAI.addr, QSD.addr],
+      [BUSD.addr, QSD.addr],
       account,
       deadline
     )
@@ -119,7 +119,7 @@ export const sellQSD = async (sellAmount, minOutputAmount) => {
     .swapExactTokensForTokens(
       sellAmount,
       minOutputAmount,
-      [QSD.addr, DAI.addr],
+      [QSD.addr, BUSD.addr],
       account,
       deadline
     )
@@ -129,7 +129,7 @@ export const sellQSD = async (sellAmount, minOutputAmount) => {
     });
 };
 
-export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
+export const addLiquidity = async (amountQSD, amountBUSD, slippage) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -140,18 +140,18 @@ export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
   const minAmountQSD = new BigNumber(amountQSD)
     .multipliedBy(new BigNumber(1).minus(slippageBN))
     .integerValue(BigNumber.ROUND_FLOOR);
-  const minAmountDAI = new BigNumber(amountDAI)
+  const minAmountBUSD = new BigNumber(amountBUSD)
     .multipliedBy(new BigNumber(1).minus(slippageBN))
     .integerValue(BigNumber.ROUND_FLOOR);
 
   await router.methods
     .addLiquidity(
       QSD.addr,
-      DAI.addr,
+      BUSD.addr,
       new BigNumber(amountQSD).toFixed(),
-      new BigNumber(amountDAI).toFixed(),
+      new BigNumber(amountBUSD).toFixed(),
       minAmountQSD,
-      minAmountDAI,
+      minAmountBUSD,
       account,
       deadline
     )
@@ -164,7 +164,7 @@ export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
 export const removeLiquidity = async (
   liquidityAmount,
   minAmountQSD,
-  minAmountDAI
+  minAmountBUSD
 ) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
@@ -176,10 +176,10 @@ export const removeLiquidity = async (
   await router.methods
     .removeLiquidity(
       QSD.addr,
-      DAI.addr,
+      BUSD.addr,
       new BigNumber(liquidityAmount).toFixed(),
       new BigNumber(minAmountQSD).toFixed(),
-      new BigNumber(minAmountDAI).toFixed(),
+      new BigNumber(minAmountBUSD).toFixed(),
       account,
       deadline
     )

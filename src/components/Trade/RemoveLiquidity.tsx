@@ -8,13 +8,13 @@ import { removeLiquidity } from '../../utils/web3';
 import { BalanceBlock, MaxButton, PriceSection } from '../common/index';
 import { toBaseUnitBN } from '../../utils/number';
 import {decreaseWithSlippage} from "../../utils/calculation";
-import {QSD, UNI, DAI} from "../../constants/tokens";
+import {QSD, UNI, BUSD} from "../../constants/tokens";
 import BigNumberInput from "../common/BigNumberInput";
 
 type RemoveLiquidityProps = {
   userBalanceUNI: BigNumber,
   pairBalanceQSD: BigNumber,
-  pairBalanceDAI: BigNumber,
+  pairBalanceBUSD: BigNumber,
   pairTotalSupplyUNI: BigNumber,
 }
 
@@ -22,16 +22,16 @@ type RemoveLiquidityProps = {
 function RemoveLiquidity({
   userBalanceUNI,
   pairBalanceQSD,
-  pairBalanceDAI,
+  pairBalanceBUSD,
   pairTotalSupplyUNI,
 }: RemoveLiquidityProps) {
   const [withdrawAmountUNI, setWithdrawAmountUNI] = useState(new BigNumber(0));
 
   const poolPortion = withdrawAmountUNI.div(pairTotalSupplyUNI);
-  const estimatedDAIReceived = pairBalanceDAI.times(poolPortion);
+  const estimatedBUSDReceived = pairBalanceBUSD.times(poolPortion);
   const estimatedQSDReceived = pairBalanceQSD.times(poolPortion);
 
-  const minDAIReceived = decreaseWithSlippage(estimatedDAIReceived);
+  const minBUSDReceived = decreaseWithSlippage(estimatedBUSDReceived);
   const minQSDReceived = decreaseWithSlippage(estimatedQSDReceived);
 
   const onChangeWithdrawAmountUNI = (amountUNI) => {
@@ -65,7 +65,7 @@ function RemoveLiquidity({
             </div>
             <div style={{ width: '35%', marginRight: '5%' }}>
               <>
-                <PriceSection label="You get " amt={estimatedDAIReceived} symbol=" DAI" />
+                <PriceSection label="You get " amt={estimatedBUSDReceived} symbol=" BUSD" />
                 <PriceSection label="+ " amt={estimatedQSDReceived} symbol=" QSD" />
               </>
             </div>
@@ -78,7 +78,7 @@ function RemoveLiquidity({
                   removeLiquidity(
                     toBaseUnitBN(withdrawAmountUNI, UNI.decimals),
                     toBaseUnitBN(minQSDReceived, QSD.decimals),
-                    toBaseUnitBN(minDAIReceived, DAI.decimals),
+                    toBaseUnitBN(minBUSDReceived, BUSD.decimals),
                   );
                 }}
               />

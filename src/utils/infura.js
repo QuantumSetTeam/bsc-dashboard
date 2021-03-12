@@ -2,7 +2,7 @@ import Web3 from 'web3';
 
 import BigNumber from 'bignumber.js';
 import { Dao, UniswapV2Router02 } from '../constants/contracts';
-import { QSD, UNI, DAI, QSDS } from '../constants/tokens';
+import { QSD, UNI, BUSD, QSDS } from '../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../constants/values';
 import { formatBN, toTokenUnitsBN, toFloat } from './number';
 import { getPoolLPAddress } from './pool';
@@ -508,7 +508,7 @@ export const getCost = async (amount) => {
   const exchange = new web3.eth.Contract(uniswapRouterAbi, UniswapV2Router02);
   // eslint-disable-next-line no-unused-vars
   const [inputAmount, _] = await exchange.methods
-    .getAmountsIn(new BigNumber(amount).toFixed(), [DAI.addr, QSD.addr])
+    .getAmountsIn(new BigNumber(amount).toFixed(), [BUSD.addr, QSD.addr])
     .call();
   return inputAmount;
 };
@@ -517,7 +517,7 @@ export const getProceeds = async (amount) => {
   const exchange = new web3.eth.Contract(uniswapRouterAbi, UniswapV2Router02);
   // eslint-disable-next-line no-unused-vars
   const [_, outputAmount] = await exchange.methods
-    .getAmountsOut(new BigNumber(amount).toFixed(), [QSD.addr, DAI.addr])
+    .getAmountsOut(new BigNumber(amount).toFixed(), [QSD.addr, BUSD.addr])
     .call();
   return outputAmount;
 };
@@ -531,7 +531,7 @@ export const getInstantaneousQSDPrice = async () => {
   const [reserve, token0] = await Promise.all([getReserves(), getToken0()]);
   const token0Balance = new BigNumber(reserve.reserve0);
   const token1Balance = new BigNumber(reserve.reserve1);
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return token0Balance
       .multipliedBy(new BigNumber(10).pow(18))
       .dividedBy(token1Balance);
@@ -545,14 +545,14 @@ export const getUniswapLiquidity = async () => {
   const [reserve, token0] = await Promise.all([getReserves(), getToken0()]);
   const token0Balance = new BigNumber(reserve.reserve0);
   const token1Balance = new BigNumber(reserve.reserve1);
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance,
+      busd: token0Balance,
       QSD: token1Balance,
     };
   }
   return {
-    dai: token1Balance,
+    busd: token1Balance,
     QSD: token0Balance,
   };
 };
@@ -569,14 +569,14 @@ export const getUserLPWallet = async (user) => {
     toFloat(toTokenUnitsBN(uniBondedSupplyStr, 18)) /
     toFloat(toTokenUnitsBN(uniTotalSupplyStr, 18));
 
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance * ratio,
+      busd: token0Balance * ratio,
       QSD: token1Balance * ratio,
     };
   }
   return {
-    dai: token1Balance * ratio,
+    busd: token1Balance * ratio,
     QSD: token0Balance * ratio,
   };
 };
@@ -596,14 +596,14 @@ export const getUserLPBonded = async (user) => {
     toFloat(toTokenUnitsBN(uniBondedSupplyStr, 18)) /
     toFloat(toTokenUnitsBN(uniTotalSupplyStr, 18));
 
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance * ratio,
+      busd: token0Balance * ratio,
       QSD: token1Balance * ratio,
     };
   }
   return {
-    dai: token1Balance * ratio,
+    busd: token1Balance * ratio,
     QSD: token0Balance * ratio,
   };
 };
@@ -623,14 +623,14 @@ export const getUserLPStaged = async (user) => {
     toFloat(toTokenUnitsBN(uniBondedSupplyStr, 18)) /
     toFloat(toTokenUnitsBN(uniTotalSupplyStr, 18));
 
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance * ratio,
+      busd: token0Balance * ratio,
       QSD: token1Balance * ratio,
     };
   }
   return {
-    dai: token1Balance * ratio,
+    busd: token1Balance * ratio,
     QSD: token0Balance * ratio,
   };
 };
@@ -647,14 +647,14 @@ export const getLPStagedLiquidity = async () => {
     toFloat(toTokenUnitsBN(uniBondedSupplyStr, 18)) /
     toFloat(toTokenUnitsBN(uniTotalSupplyStr, 18));
 
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance * ratio,
+      busd: token0Balance * ratio,
       QSD: token1Balance * ratio,
     };
   }
   return {
-    dai: token1Balance * ratio,
+    busd: token1Balance * ratio,
     QSD: token0Balance * ratio,
   };
 };
@@ -671,14 +671,14 @@ export const getLPBondedLiquidity = async () => {
     toFloat(toTokenUnitsBN(uniBondedSupplyStr, 18)) /
     toFloat(toTokenUnitsBN(uniTotalSupplyStr, 18));
 
-  if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
+  if (token0.toLowerCase() === BUSD.addr.toLowerCase()) {
     return {
-      dai: token0Balance * ratio,
+      busd: token0Balance * ratio,
       QSD: token1Balance * ratio,
     };
   }
   return {
-    dai: token1Balance * ratio,
+    busd: token1Balance * ratio,
     QSD: token0Balance * ratio,
   };
 };

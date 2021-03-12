@@ -5,25 +5,25 @@ import { BalanceBlock, AddressBlock } from '../common/index';
 
 type TradePageHeaderProps = {
   pairBalanceQSD: BigNumber,
-  pairBalanceDAI: BigNumber,
+  pairBalanceBUSD: BigNumber,
   uniswapPair: string,
 };
 
 const TradePageHeader = ({
-  pairBalanceQSD, pairBalanceDAI, uniswapPair,
+  pairBalanceQSD, pairBalanceBUSD, uniswapPair,
 }: TradePageHeaderProps) => {
-  const price = pairBalanceDAI.dividedBy(pairBalanceQSD);
+  const price = pairBalanceBUSD.dividedBy(pairBalanceQSD);
 
   return (
     <div style={{ padding: '2%', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
       <div style={{ flexBasis: '25%' }}>
-        <BalanceBlock asset="QSD Price" balance={price} suffix={"DAI"}/>
+        <BalanceBlock asset="QSD Price" balance={price} suffix={"BUSD"}/>
       </div>
       <div style={{ flexBasis: '25%' }}>
         <BalanceBlock asset="QSD Liquidity" balance={pairBalanceQSD} suffix={"QSD"}/>
       </div>
       <div style={{ flexBasis: '25%' }}>
-        <BalanceBlock asset="DAI Liquidity" balance={pairBalanceDAI} suffix={"DAI"}/>
+        <BalanceBlock asset="BUSD Liquidity" balance={pairBalanceBUSD} suffix={"BUSD"}/>
       </div>
       <div style={{ flexBasis: '25%' }}>
         <>

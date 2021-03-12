@@ -5,47 +5,47 @@ import { addLiquidity } from '../../utils/web3';
 
 import { BalanceBlock, MaxButton, PriceSection } from '../common/index';
 import {toBaseUnitBN, toTokenUnitsBN} from '../../utils/number';
-import {QSD, UNI, DAI} from "../../constants/tokens";
+import {QSD, UNI, BUSD} from "../../constants/tokens";
 import {SLIPPAGE} from "../../utils/calculation";
 import BigNumberInput from "../common/BigNumberInput";
 
 type AddliquidityProps = {
   userBalanceQSD: BigNumber,
-  userBalanceDAI: BigNumber,
+  userBalanceBUSD: BigNumber,
   pairBalanceQSD: BigNumber,
-  pairBalanceDAI: BigNumber,
+  pairBalanceBUSD: BigNumber,
   pairTotalSupplyUNI: BigNumber,
 }
 
 function AddLiquidity({
   userBalanceQSD,
-  userBalanceDAI,
+  userBalanceBUSD,
   pairBalanceQSD,
-  pairBalanceDAI,
+  pairBalanceBUSD,
   pairTotalSupplyUNI,
 }: AddliquidityProps) {
-  const [amountDAI, setAmountDAI] = useState(new BigNumber(0));
+  const [amountBUSD, setAmountBUSD] = useState(new BigNumber(0));
   const [amountQSD, setAmountQSD] = useState(new BigNumber(0));
   const [amountUNI, setAmountUNI] = useState(new BigNumber(0));
 
-  const DAIToQSDRatio = pairBalanceDAI.isZero() ? new BigNumber(1) : pairBalanceDAI.div(pairBalanceQSD);
-  const QSDToDAIRatio = pairBalanceQSD.isZero() ? new BigNumber(1) : pairBalanceQSD.div(pairBalanceDAI);
+  const BUSDToQSDRatio = pairBalanceBUSD.isZero() ? new BigNumber(1) : pairBalanceBUSD.div(pairBalanceQSD);
+  const QSDToBUSDRatio = pairBalanceQSD.isZero() ? new BigNumber(1) : pairBalanceQSD.div(pairBalanceBUSD);
 
-  const onChangeAmountDAI = (amountDAI) => {
-    if (!amountDAI) {
+  const onChangeAmountBUSD = (amountBUSD) => {
+    if (!amountBUSD) {
       setAmountQSD(new BigNumber(0));
-      setAmountDAI(new BigNumber(0));
+      setAmountBUSD(new BigNumber(0));
       setAmountUNI(new BigNumber(0));
       return;
     }
 
-    const amountDAIBN = new BigNumber(amountDAI)
-    setAmountDAI(amountDAIBN);
+    const amountBUSDBN = new BigNumber(amountBUSD)
+    setAmountBUSD(amountBUSDBN);
 
-    const amountDAIBU = toBaseUnitBN(amountDAIBN, DAI.decimals);
+    const amountBUSDBU = toBaseUnitBN(amountBUSDBN, BUSD.decimals);
     const newAmountQSD = toTokenUnitsBN(
-      amountDAIBU.multipliedBy(QSDToDAIRatio).integerValue(BigNumber.ROUND_FLOOR),
-      DAI.decimals);
+      amountBUSDBU.multipliedBy(QSDToBUSDRatio).integerValue(BigNumber.ROUND_FLOOR),
+      BUSD.decimals);
     setAmountQSD(newAmountQSD);
 
     const newAmountQSDBU = toBaseUnitBN(newAmountQSD, QSD.decimals);
@@ -59,7 +59,7 @@ function AddLiquidity({
   const onChangeAmountQSD = (amountQSD) => {
     if (!amountQSD) {
       setAmountQSD(new BigNumber(0));
-      setAmountDAI(new BigNumber(0));
+      setAmountBUSD(new BigNumber(0));
       setAmountUNI(new BigNumber(0));
       return;
     }
@@ -68,15 +68,15 @@ function AddLiquidity({
     setAmountQSD(amountQSDBN);
 
     const amountQSDBU = toBaseUnitBN(amountQSDBN, QSD.decimals);
-    const newAmountDAI = toTokenUnitsBN(
-      amountQSDBU.multipliedBy(DAIToQSDRatio).integerValue(BigNumber.ROUND_FLOOR),
+    const newAmountBUSD = toTokenUnitsBN(
+      amountQSDBU.multipliedBy(BUSDToQSDRatio).integerValue(BigNumber.ROUND_FLOOR),
       QSD.decimals);
-    setAmountDAI(newAmountDAI);
+    setAmountBUSD(newAmountBUSD);
 
-    const newAmountDAIBU = toBaseUnitBN(newAmountDAI, DAI.decimals);
+    const newAmountBUSDBU = toBaseUnitBN(newAmountBUSD, BUSD.decimals);
     const pairTotalSupplyBU = toBaseUnitBN(pairTotalSupplyUNI, UNI.decimals);
-    const pairBalanceDAIBU = toBaseUnitBN(pairBalanceDAI, DAI.decimals);
-    const newAmountUNIBU = pairTotalSupplyBU.multipliedBy(newAmountDAIBU).div(pairBalanceDAIBU).integerValue(BigNumber.ROUND_FLOOR);
+    const pairBalanceBUSDBU = toBaseUnitBN(pairBalanceBUSD, BUSD.decimals);
+    const newAmountUNIBU = pairTotalSupplyBU.multipliedBy(newAmountBUSDBU).div(pairBalanceBUSDBU).integerValue(BigNumber.ROUND_FLOOR);
     const newAmountUNI = toTokenUnitsBN(newAmountUNIBU, UNI.decimals);
     setAmountUNI(newAmountUNI)
   };
@@ -86,7 +86,7 @@ function AddLiquidity({
       <div style={{ display: 'flex' }}>
         {/* Pool Status */}
         <div style={{ width: '30%' }}>
-          <BalanceBlock asset="DAI Balance" balance={userBalanceDAI} />
+          <BalanceBlock asset="BUSD Balance" balance={userBalanceBUSD} />
         </div>
         {/* Add liquidity to pool */}
         <div style={{ width: '70%', paddingTop: '2%' }}>
@@ -107,9 +107,9 @@ function AddLiquidity({
             </div>
             <div style={{ width: '35%', marginRight: '5%' }}>
               <BigNumberInput
-                adornment="DAI"
-                value={amountDAI}
-                setter={onChangeAmountDAI}
+                adornment="BUSD"
+                value={amountBUSD}
+                setter={onChangeAmountBUSD}
               />
               <PriceSection label="Mint " amt={amountUNI} symbol=" Pool Tokens" />
             </div>
@@ -120,10 +120,10 @@ function AddLiquidity({
                 label="Add Liquidity"
                 onClick={() => {
                   const amountQSDBU = toBaseUnitBN(amountQSD, QSD.decimals);
-                  const amountDAIBU = toBaseUnitBN(amountDAI, DAI.decimals);
+                  const amountBUSDBU = toBaseUnitBN(amountBUSD, BUSD.decimals);
                   addLiquidity(
                     amountQSDBU,
-                    amountDAIBU,
+                    amountBUSDBU,
                     SLIPPAGE,
                   );
                 }}

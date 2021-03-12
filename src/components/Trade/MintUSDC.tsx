@@ -3,30 +3,30 @@ import {
   Box, Button, IconCirclePlus,
 } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
-import {mintTestnetDAI} from '../../utils/web3';
+import {mintTestnetBUSD} from '../../utils/web3';
 
 import { BalanceBlock } from '../common/index';
 import {isPos, toBaseUnitBN} from '../../utils/number';
-import {DAI} from "../../constants/tokens";
+import {BUSD} from "../../constants/tokens";
 import BigNumberInput from "../common/BigNumberInput";
 
-type MintDAIProps = {
+type MintBUSDProps = {
   user: string,
-  userBalanceDAI: BigNumber,
+  userBalanceBUSD: BigNumber,
 }
 
 
-function MintDAI({
-  user, userBalanceDAI
-}: MintDAIProps) {
+function MintBUSD({
+  user, userBalanceBUSD
+}: MintBUSDProps) {
   const [mintAmount, setMintAmount] = useState(new BigNumber(0));
 
   return (
     <Box heading="Mint">
       <div style={{ display: 'flex' }}>
-        {/* DAI balance */}
+        {/* BUSD balance */}
         <div style={{ width: '30%' }}>
-          <BalanceBlock asset="DAI Balance" balance={userBalanceDAI} />
+          <BalanceBlock asset="BUSD Balance" balance={userBalanceBUSD} />
         </div>
         {/* Mint */}
         <div style={{ width: '38%'}} />
@@ -34,7 +34,7 @@ function MintDAI({
           <div style={{display: 'flex'}}>
             <div style={{width: '60%'}}>
               <BigNumberInput
-                adornment="DAI"
+                adornment="BUSD"
                 value={mintAmount}
                 setter={setMintAmount}
               />
@@ -45,7 +45,7 @@ function MintDAI({
                 icon={<IconCirclePlus />}
                 label="Mint"
                 onClick={() => {
-                  mintTestnetDAI(toBaseUnitBN(mintAmount, DAI.decimals));
+                  mintTestnetBUSD(toBaseUnitBN(mintAmount, BUSD.decimals));
                 }}
                 disabled={user === '' || !isPos(mintAmount)}
               />
@@ -57,4 +57,4 @@ function MintDAI({
   );
 }
 
-export default MintDAI;
+export default MintBUSD;

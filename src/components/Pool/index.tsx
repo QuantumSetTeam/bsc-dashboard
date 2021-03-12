@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '@aragon/ui';
 import { useParams } from 'react-router-dom';
 import { DollarPool4 } from '../../constants/contracts';
-import { DAI, QSD, UNI } from '../../constants/tokens';
+import { BUSD, QSD, UNI } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
   getExpansionAmount,
@@ -49,18 +49,18 @@ function Pool({ user }: { user: string }) {
   }
 
   const [QSDLiquidity, setQSDLiquidity] = useState<number | null>(null);
-  const [daiLiquidity, setDAILiquidity] = useState<number | null>(null);
+  const [busdLiquidity, setBUSDLiquidity] = useState<number | null>(null);
   const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
   const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
   const [poolAddress, setPoolAddress] = useState('');
   const [poolTotalBonded, setPoolTotalBonded] = useState(new BigNumber(0));
   const [pairBalanceQSD, setPairBalanceQSD] = useState(new BigNumber(0));
-  const [pairBalanceDAI, setPairBalanceDAI] = useState(new BigNumber(0));
+  const [pairBalanceBUSD, setPairBalanceBUSD] = useState(new BigNumber(0));
   const [userUNIBalance, setUserUNIBalance] = useState(new BigNumber(0));
   const [userUNIAllowance, setUserUNIAllowance] = useState(new BigNumber(0));
-  const [userDAIBalance, setUserDAIBalance] = useState(new BigNumber(0));
-  const [userDAIAllowance, setUserDAIAllowance] = useState(new BigNumber(0));
+  const [userBUSDBalance, setUserBUSDBalance] = useState(new BigNumber(0));
+  const [userBUSDAllowance, setUserBUSDAllowance] = useState(new BigNumber(0));
   const [userStagedBalance, setUserStagedBalance] = useState(new BigNumber(0));
   const [userBondedBalance, setUserBondedBalance] = useState(new BigNumber(0));
   const [userRewardedBalance, setUserRewardedBalance] = useState(
@@ -84,7 +84,7 @@ function Pool({ user }: { user: string }) {
 
       setQSDPrice(toTokenUnitsBN(spot, 18));
       setQSDLiquidity(liquidity.QSD);
-      setDAILiquidity(liquidity.dai);
+      setBUSDLiquidity(liquidity.busd);
       setExpansionAmount(expansionAmount);
     };
 
@@ -97,11 +97,11 @@ function Pool({ user }: { user: string }) {
       setPoolAddress('');
       setPoolTotalBonded(new BigNumber(0));
       setPairBalanceQSD(new BigNumber(0));
-      setPairBalanceDAI(new BigNumber(0));
+      setPairBalanceBUSD(new BigNumber(0));
       setUserUNIBalance(new BigNumber(0));
       setUserUNIAllowance(new BigNumber(0));
-      setUserDAIBalance(new BigNumber(0));
-      setUserDAIAllowance(new BigNumber(0));
+      setUserBUSDBalance(new BigNumber(0));
+      setUserBUSDAllowance(new BigNumber(0));
       setUserStagedBalance(new BigNumber(0));
       setUserBondedBalance(new BigNumber(0));
       setUserRewardedBalance(new BigNumber(0));
@@ -118,9 +118,9 @@ function Pool({ user }: { user: string }) {
       const [
         poolTotalBondedStr,
         pairBalanceQSDStr,
-        pairBalanceDAIStr,
+        pairBalanceBUSDStr,
         balance,
-        daiBalance,
+        busdBalance,
         allowance,
         usdcAllowance,
         stagedBalance,
@@ -132,12 +132,12 @@ function Pool({ user }: { user: string }) {
       ] = await Promise.all([
         getPoolTotalBonded(poolAddressStr),
         getTokenBalance(QSD.addr, UNI.addr),
-        getTokenBalance(DAI.addr, UNI.addr),
+        getTokenBalance(BUSD.addr, UNI.addr),
         getTokenBalance(UNI.addr, user),
-        getTokenBalance(DAI.addr, user),
+        getTokenBalance(BUSD.addr, user),
 
         getTokenAllowance(UNI.addr, user, poolAddressStr),
-        getTokenAllowance(DAI.addr, user, poolAddressStr),
+        getTokenAllowance(BUSD.addr, user, poolAddressStr),
         getPoolBalanceOfStaged(poolAddressStr, user),
         getPoolBalanceOfBonded(poolAddressStr, user),
 
@@ -149,9 +149,9 @@ function Pool({ user }: { user: string }) {
 
       const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, QSD.decimals);
       const pairQSDBalance = toTokenUnitsBN(pairBalanceQSDStr, QSD.decimals);
-      const pairDAIBalance = toTokenUnitsBN(pairBalanceDAIStr, DAI.decimals);
+      const pairBUSDBalance = toTokenUnitsBN(pairBalanceBUSDStr, BUSD.decimals);
       const userUNIBalance = toTokenUnitsBN(balance, UNI.decimals);
-      const userDAIBalance = toTokenUnitsBN(daiBalance, DAI.decimals);
+      const userBUSDBalance = toTokenUnitsBN(busdBalance, BUSD.decimals);
       const userStagedBalance = toTokenUnitsBN(stagedBalance, UNI.decimals);
       const userBondedBalance = toTokenUnitsBN(bondedBalance, UNI.decimals);
       const userRewardedBalance = toTokenUnitsBN(rewardedBalance, QSD.decimals);
@@ -166,11 +166,11 @@ function Pool({ user }: { user: string }) {
         setPoolAddress(poolAddressStr);
         setPoolTotalBonded(new BigNumber(poolTotalBonded));
         setPairBalanceQSD(new BigNumber(pairQSDBalance));
-        setPairBalanceDAI(new BigNumber(pairDAIBalance));
+        setPairBalanceBUSD(new BigNumber(pairBUSDBalance));
         setUserUNIBalance(new BigNumber(userUNIBalance));
         setUserUNIAllowance(new BigNumber(allowance));
-        setUserDAIAllowance(new BigNumber(usdcAllowance));
-        setUserDAIBalance(new BigNumber(userDAIBalance));
+        setUserBUSDAllowance(new BigNumber(usdcAllowance));
+        setUserBUSDBalance(new BigNumber(userBUSDBalance));
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
         setUserRewardedBalance(new BigNumber(userRewardedBalance));
@@ -200,11 +200,11 @@ function Pool({ user }: { user: string }) {
                 maximumFractionDigits: 2 };
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
-  if (QSDPrice && QSDLiquidity && daiLiquidity && expansionAmount) {
-    const totalDAI = QSDLiquidity * toFloat(QSDPrice) + daiLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
+  if (QSDPrice && QSDLiquidity && busdLiquidity && expansionAmount) {
+    const totalBUSD = QSDLiquidity * toFloat(QSDPrice) + busdLiquidity;
+    const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
 
-    const lpYield = (daiToAdd / totalDAI) * 100;
+    const lpYield = (busdToAdd / totalBUSD) * 100;
 
     lpHourlyAPR = numberFormat.format(lpYield / 4) + '%';
     lpDailyAPR = numberFormat.format(lpYield * 6) + '%';
@@ -236,7 +236,7 @@ function Pool({ user }: { user: string }) {
             <br />
             Step 5: Provide your rewards to compound your returns
             <br />
-            &nbsp;&nbsp; 5.1: Dual Supply - Match your rewards with DAI from
+            &nbsp;&nbsp; 5.1: Dual Supply - Match your rewards with BUSD from
             your wallet and add to LP
             <br />
             &nbsp;&nbsp; 5.2: Single Sided Supply - Add your rewards directly to
@@ -352,9 +352,9 @@ function Pool({ user }: { user: string }) {
         rewarded={userRewardedBalance}
         status={userStatus}
         pairBalanceQSD={pairBalanceQSD}
-        pairBalanceDAI={pairBalanceDAI}
-        userDAIBalance={userDAIBalance}
-        userDAIAllowance={userDAIAllowance}
+        pairBalanceBUSD={pairBalanceBUSD}
+        userBUSDBalance={userBUSDBalance}
+        userBUSDAllowance={userBUSDAllowance}
       />
     </Layout>
   );

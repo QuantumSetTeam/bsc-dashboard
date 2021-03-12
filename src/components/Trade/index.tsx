@@ -6,28 +6,28 @@ import { getTokenBalance } from '../../utils/infura';
 import { toTokenUnitsBN } from '../../utils/number';
 
 import TradePageHeader from './Header';
-import {QSD, UNI, DAI} from "../../constants/tokens";
+import {QSD, UNI, BUSD} from "../../constants/tokens";
 import IconHeader from "../common/IconHeader";
 
 
 function UniswapPool({ user }: {user: string}) {
   const [pairBalanceQSD, setPairBalanceQSD] = useState(new BigNumber(0));
-  const [pairBalanceDAI, setPairBalanceDAI] = useState(new BigNumber(0));
+  const [pairBalanceBUSD, setPairBalanceBUSD] = useState(new BigNumber(0));
 
   useEffect(() => {
     let isCancelled = false;
 
     async function updateUserInfo() {
       const [
-        pairBalanceQSDStr, pairBalanceDAIStr,
+        pairBalanceQSDStr, pairBalanceBUSDStr,
       ] = await Promise.all([
         getTokenBalance(QSD.addr, UNI.addr),
-        getTokenBalance(DAI.addr, UNI.addr),
+        getTokenBalance(BUSD.addr, UNI.addr),
       ]);
 
       if (!isCancelled) {
         setPairBalanceQSD(toTokenUnitsBN(pairBalanceQSDStr, QSD.decimals));
-        setPairBalanceDAI(toTokenUnitsBN(pairBalanceDAIStr, DAI.decimals));
+        setPairBalanceBUSD(toTokenUnitsBN(pairBalanceBUSDStr, BUSD.decimals));
       }
     }
 
@@ -47,7 +47,7 @@ function UniswapPool({ user }: {user: string}) {
 
       <TradePageHeader
         pairBalanceQSD={pairBalanceQSD}
-        pairBalanceDAI={pairBalanceDAI}
+        pairBalanceBUSD={pairBalanceBUSD}
         uniswapPair={UNI.addr}
       />
 
@@ -55,7 +55,7 @@ function UniswapPool({ user }: {user: string}) {
         <div style={{ flexBasis: '30%', marginRight: '3%', marginLeft: '2%'  }}>
           <MainButton
             title="Info"
-            description="View QSD-DAI pool stats."
+            description="View QSD-BUSD pool stats."
             icon={<i className="fas fa-chart-area"/>}
             href={"https://uniswap.info/pair/0x88ff79eb2bc5850f27315415da8685282c7610f9"}
           />

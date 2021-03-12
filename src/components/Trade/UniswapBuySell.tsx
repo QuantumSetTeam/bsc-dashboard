@@ -12,7 +12,7 @@ import { getCost, getProceeds } from '../../utils/infura';
 
 
 import {isPos, toBaseUnitBN, toTokenUnitsBN} from '../../utils/number';
-import {QSD, DAI} from "../../constants/tokens";
+import {QSD, BUSD} from "../../constants/tokens";
 import {decreaseWithSlippage, increaseWithSlippage} from "../../utils/calculation";
 import BigNumberInput from "../common/BigNumberInput";
 
@@ -40,7 +40,7 @@ function UniswapBuySell({
       return;
     }
     const cost = await getCost(toBaseUnitBN(buyAmountBN, QSD.decimals));
-    setCost(toTokenUnitsBN(new BigNumber(cost), DAI.decimals));
+    setCost(toTokenUnitsBN(new BigNumber(cost), BUSD.decimals));
   };
 
   const updateProceeds = async (sellAmount) => {
@@ -50,7 +50,7 @@ function UniswapBuySell({
       return;
     }
     const proceeds = await getProceeds(toBaseUnitBN(sellAmountBN, QSD.decimals));
-    setProceeds(toTokenUnitsBN(new BigNumber(proceeds), DAI.decimals));
+    setProceeds(toTokenUnitsBN(new BigNumber(proceeds), BUSD.decimals));
   };
 
   return (
@@ -83,13 +83,13 @@ function UniswapBuySell({
                 onClick={() => {
                   buyQSD(
                     toBaseUnitBN(buyAmount, QSD.decimals),
-                    increaseWithSlippage(toBaseUnitBN(cost, DAI.decimals)),
+                    increaseWithSlippage(toBaseUnitBN(cost, BUSD.decimals)),
                   );
                 }}
               />
             </div>
           </div>
-          <PriceSection label="Cost: " amt={cost} symbol=" DAI" />
+          <PriceSection label="Cost: " amt={cost} symbol=" BUSD" />
         </div>
         <div style={{ width: '6%' }} />
         {/* Sell Token on Uniswap */}
@@ -111,7 +111,7 @@ function UniswapBuySell({
                     updateProceeds(userBalanceQSD);
                   }}
                 />
-                <PriceSection label="Proceeds: " amt={proceeds} symbol=" DAI"/>
+                <PriceSection label="Proceeds: " amt={proceeds} symbol=" BUSD"/>
               </>
             </div>
             <div style={{ width: '40%' }}>
@@ -122,7 +122,7 @@ function UniswapBuySell({
                 onClick={() => {
                   sellQSD(
                     toBaseUnitBN(sellAmount, QSD.decimals),
-                    decreaseWithSlippage(toBaseUnitBN(proceeds, DAI.decimals)),
+                    decreaseWithSlippage(toBaseUnitBN(proceeds, BUSD.decimals)),
                   );
                 }}
               />

@@ -5,18 +5,18 @@ import {
 import BigNumber from 'bignumber.js';
 import { approve } from '../../utils/web3';
 
-import {QSD, DAI} from "../../constants/tokens";
+import {QSD, BUSD} from "../../constants/tokens";
 import {MAX_UINT256} from "../../constants/values";
 import {UniswapV2Router02} from "../../constants/contracts";
 
 type UniswapApproveCollateralProps = {
   user: string,
   userAllowanceQSD: BigNumber
-  userAllowanceDAI: BigNumber
+  userAllowanceBUSD: BigNumber
 };
 
 function UniswapApproveCollateral({
-  user, userAllowanceQSD, userAllowanceDAI,
+  user, userAllowanceQSD, userAllowanceBUSD,
 }: UniswapApproveCollateralProps) {
   return (
     <Box heading="Unlock for Uniswap">
@@ -34,17 +34,17 @@ function UniswapApproveCollateral({
             disabled={user === '' || userAllowanceQSD.comparedTo(MAX_UINT256) === 0}
           />
         </div>
-        {/* Approve Uniswap Router to spend DAI */}
+        {/* Approve Uniswap Router to spend BUSD */}
         <div style={{width: '6%'}} />
         <div style={{width: '27%', paddingTop: '2%'}}>
           <Button
             wide
             icon={<IconCirclePlus />}
-            label="Unlock DAI"
+            label="Unlock BUSD"
             onClick={() => {
-              approve(DAI.addr, UniswapV2Router02);
+              approve(BUSD.addr, UniswapV2Router02);
             }}
-            disabled={user === '' || userAllowanceDAI.comparedTo(MAX_UINT256.dividedBy(2)) > 0}
+            disabled={user === '' || userAllowanceBUSD.comparedTo(MAX_UINT256.dividedBy(2)) > 0}
           />
         </div>
       </div>

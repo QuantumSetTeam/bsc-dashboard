@@ -19,7 +19,7 @@ import {
   providePoolOptimalOneSided,
 } from '../../utils/web3';
 import { isPos, toBaseUnitBN, toTokenUnitsBN } from '../../utils/number';
-import { QSD, DAI } from '../../constants/tokens';
+import { QSD, BUSD } from '../../constants/tokens';
 import { MAX_UINT256 } from '../../constants/values';
 import BigNumberInput from '../common/BigNumberInput';
 
@@ -28,9 +28,9 @@ type ProvideProps = {
   user: string;
   rewarded: BigNumber;
   pairBalanceQSD: BigNumber;
-  pairBalanceDAI: BigNumber;
-  userDAIBalance: BigNumber;
-  userDAIAllowance: BigNumber;
+  pairBalanceBUSD: BigNumber;
+  userBUSDBalance: BigNumber;
+  userBUSDAllowance: BigNumber;
   status: number;
 };
 
@@ -39,9 +39,9 @@ function Provide({
   user,
   rewarded,
   pairBalanceQSD,
-  pairBalanceDAI,
-  userDAIBalance,
-  userDAIAllowance,
+  pairBalanceBUSD,
+  userBUSDBalance,
+  userBUSDAllowance,
   status,
 }: ProvideProps) {
   const theme = useTheme();
@@ -50,9 +50,9 @@ function Provide({
   const [provideAmount, setProvideAmount] = useState(new BigNumber(0));
   const [usdcAmount, setUsdcAmount] = useState(new BigNumber(0));
 
-  const DAIToQSDRatio = pairBalanceDAI.isZero()
+  const BUSDToQSDRatio = pairBalanceBUSD.isZero()
     ? new BigNumber(1)
-    : pairBalanceDAI.div(pairBalanceQSD);
+    : pairBalanceBUSD.div(pairBalanceQSD);
 
   const onChangeAmountQSD = (amountQSD) => {
     if (!amountQSD) {
@@ -65,13 +65,13 @@ function Provide({
     setProvideAmount(amountQSDBN);
 
     const amountQSDBU = toBaseUnitBN(amountQSDBN, QSD.decimals);
-    const newAmountDAI = toTokenUnitsBN(
+    const newAmountBUSD = toTokenUnitsBN(
       amountQSDBU
-        .multipliedBy(DAIToQSDRatio)
+        .multipliedBy(BUSDToQSDRatio)
         .integerValue(BigNumber.ROUND_FLOOR),
       QSD.decimals
     );
-    setUsdcAmount(newAmountDAI);
+    setUsdcAmount(newAmountBUSD);
   };
 
   return (
@@ -81,12 +81,12 @@ function Provide({
         className={isDark ? 'tabs-container-dark' : undefined}
       >
         <Tabs
-          items={['Dual Supply (with DAI)', 'Single Supply']}
+          items={['Dual Supply (with BUSD)', 'Single Supply']}
           selected={useQSD}
           onChange={setUseQSD}
         />
       </div>
-      {userDAIAllowance.comparedTo(MAX_UINT256.dividedBy(2)) > 0 || useQSD ? (
+      {userBUSDAllowance.comparedTo(MAX_UINT256.dividedBy(2)) > 0 || useQSD ? (
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {/* total rewarded */}
           <div style={{ flexBasis: '32%' }}>
@@ -108,7 +108,7 @@ function Provide({
                     <PriceSection
                       label='Requires '
                       amt={usdcAmount}
-                      symbol=' DAI'
+                      symbol=' BUSD'
                     />
                   )}
                   <MaxButton
@@ -157,20 +157,20 @@ function Provide({
           </div>
           <div style={{ flexBasis: '33%' }}>
             <BalanceBlock
-              asset='DAI Balance'
-              balance={userDAIBalance}
-              suffix={'DAI'}
+              asset='BUSD Balance'
+              balance={userBUSDBalance}
+              suffix={'BUSD'}
             />
           </div>
           <div style={{ flexBasis: '2%' }} />
-          {/* Approve Pool to spend DAI */}
+          {/* Approve Pool to spend BUSD */}
           <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
             <Button
               wide
               icon={<IconCirclePlus />}
               label='Approve'
               onClick={() => {
-                approve(DAI.addr, poolAddress);
+                approve(BUSD.addr, poolAddress);
               }}
               disabled={poolAddress === '' || user === ''}
             />
@@ -181,7 +181,7 @@ function Provide({
         <span style={{ opacity: 0.5 }}>
           {useQSD
             ? 'Zap your rewards directly'
-            : 'Zap your rewards directly to LP by providing more DAI'}
+            : 'Zap your rewards directly to LP by providing more BUSD'}
         </span>
       </div>
     </TopBorderSection>

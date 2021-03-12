@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 // import { Layout } from '@aragon/ui';
 import { IconHeader, Row, Tile, TopBorderBox , BRow, BCol , BContainer } from '../common';
 import Regulation from '../Regulation';
-import { QSD, QSDS, DAI } from '../../constants/tokens';
+import { QSD, QSDS, BUSD } from '../../constants/tokens';
 import {
   getDaoIsBootstrapping,
   getExpansionAmount,
@@ -30,7 +30,7 @@ function HomePage({ user }: HomePageProps) {
   const [totalSupply, setTotalSupply] = useState<BigNumber | null>(null);
   const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
   const [QSDLiquidity, setQSDLiquidity] = useState<BigNumber | null>(null);
-  const [daiLiquidity, setDAILiquidity] = useState<BigNumber | null>(null);
+  const [busdLiquidity, setBUSDLiquidity] = useState<BigNumber | null>(null);
 
   const [daoBonded, setDaoBonded] = useState<BigNumber | null>(null);
   const [lpQSDLiquidity, setLpQSDLiquidity] = useState<number | null>(null);
@@ -66,9 +66,9 @@ function HomePage({ user }: HomePageProps) {
       setTotalSupply(toTokenUnitsBN(supply, 18));
       setQSDPrice(toTokenUnitsBN(tokenPrice, 18));
       setQSDLiquidity(toTokenUnitsBN(liquidity.QSD, 18));
-      setDAILiquidity(toTokenUnitsBN(liquidity.dai, 18));
+      setBUSDLiquidity(toTokenUnitsBN(liquidity.busd, 18));
       setLpQSDLiquidity(liquidityLp.QSD);
-      setLpDaiLiquidity(liquidityLp.dai);
+      setLpDaiLiquidity(liquidityLp.busd);
       setExpansionAmount(expansion);
 
       if (bootstrapping) {
@@ -113,10 +113,10 @@ function HomePage({ user }: HomePageProps) {
 
   // Calculate LP APR (4 hrs)
   if (QSDPrice && lpQSDLiquidity && lpDaiLiquidity && expansionAmount) {
-    const totalDAI = lpQSDLiquidity * toFloat(QSDPrice) + lpDaiLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
+    const totalBUSD = lpQSDLiquidity * toFloat(QSDPrice) + lpDaiLiquidity;
+    const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
 
-    const lpYield = (daiToAdd / totalDAI) * 100;
+    const lpYield = (busdToAdd / totalBUSD) * 100;
 
     //lpHourlyYield = numberFormat.format(lpYield / 4) + '%';
     lpDailyYield = numberFormat.format(lpYield * 6) + '%';
@@ -138,8 +138,6 @@ function HomePage({ user }: HomePageProps) {
   }
 
   const curEpoch = Number(epochTime.split('-')[0]);
-
-  console.log(QSDPrice?.toNumber);
 
   return (
     <BContainer>
@@ -194,7 +192,7 @@ function HomePage({ user }: HomePageProps) {
           <Row>
             <TopBorderBox
               title='QSD Price'
-              body={QSDPrice ? formatBN(QSDPrice, 2) + ' DAI' : '...'}
+              body={QSDPrice ? formatBN(QSDPrice, 2) + ' BUSD' : '...'}
               action={
                 <Button>
                   <a
@@ -226,14 +224,14 @@ function HomePage({ user }: HomePageProps) {
             />
             <TopBorderBox
               title='QSD Liquidity'
-              body={daiLiquidity ? formatBN(daiLiquidity, 2) + ' DAI' : '...'}
+              body={busdLiquidity ? formatBN(busdLiquidity, 2) + ' BUSD' : '...'}
               action={
                 <Button>
                   <a
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://narwhalswap.org/#/page/add/${QSD.addr}/${DAI.addr}`}
+                    href={`https://narwhalswap.org/#/page/add/${QSD.addr}/${BUSD.addr}`}
                   >
                     Add Liquidity
                   </a>

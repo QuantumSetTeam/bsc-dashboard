@@ -56,14 +56,14 @@ function Tools({ user }: { user: string }) {
   const [QSDBondedLiquidity, setQSDBondedLiquidity] = useState<number | null>(
     null
   );
-  const [daiBondedLiquidity, setDAIBondedLiquidity] = useState<number | null>(
+  const [busdBondedLiquidity, setBUSDBondedLiquidity] = useState<number | null>(
     null
   );
 
   const [QSDStagedLiquidity, setQSDStagedLiquidity] = useState<number | null>(
     null
   );
-  const [daiStagedLiquidity, setDAIStagedLiquidity] = useState<number | null>(
+  const [busdStagedLiquidity, setBUSDStagedLiquidity] = useState<number | null>(
     null
   );
 
@@ -81,21 +81,21 @@ function Tools({ user }: { user: string }) {
   const [userQSDWalletLiquidity, setUserQSDWalletLiquidity] = useState<
     number | null
   >(null);
-  const [userDaiWalletLiquidity, setUserDAIWalletLiquidity] = useState<
+  const [userDaiWalletLiquidity, setUserBUSDWalletLiquidity] = useState<
     number | null
   >(null);
 
   const [userQSDBondedLiquidity, setUserQSDBondedLiquidity] = useState<
     number | null
   >(null);
-  const [userDaiBondedLiquidity, setUserDAIBondedLiquidity] = useState<
+  const [userDaiBondedLiquidity, setUserBUSDBondedLiquidity] = useState<
     number | null
   >(null);
 
   const [userQSDStagedLiquidity, setUserQSDStagedLiquidity] = useState<
     number | null
   >(null);
-  const [userDaiStagedLiquidity, setUserDAIStagedLiquidity] = useState<
+  const [userDaiStagedLiquidity, setUserBUSDStagedLiquidity] = useState<
     number | null
   >(null);
 
@@ -142,9 +142,9 @@ function Tools({ user }: { user: string }) {
       setTotalSupply(toTokenUnitsBN(supply, 18));
       setQSDPrice(toTokenUnitsBN(spot, 18));
       setQSDStagedLiquidity(stagedLiquidity.QSD);
-      setDAIStagedLiquidity(stagedLiquidity.dai);
+      setBUSDStagedLiquidity(stagedLiquidity.busd);
       setQSDBondedLiquidity(bondedLiquidity.QSD);
-      setDAIBondedLiquidity(bondedLiquidity.dai);
+      setBUSDBondedLiquidity(bondedLiquidity.busd);
       setLPBonded(toTokenUnitsBN(lpBonded, 18));
       setLPStaged(toTokenUnitsBN(lpStaged, 18));
       setDaoEpoch(parseInt(daoE, 10));
@@ -198,13 +198,13 @@ function Tools({ user }: { user: string }) {
       setUserDaoStaged(toTokenUnitsBN(userDaoStaged, 18));
 
       setUserQSDWalletLiquidity(walletLiquidity.QSD);
-      setUserDAIWalletLiquidity(walletLiquidity.dai);
+      setUserBUSDWalletLiquidity(walletLiquidity.busd);
 
       setUserQSDStagedLiquidity(stagedLiquidity.QSD);
-      setUserDAIStagedLiquidity(stagedLiquidity.dai);
+      setUserBUSDStagedLiquidity(stagedLiquidity.busd);
 
       setUserQSDBondedLiquidity(bondedLiquidity.QSD);
-      setUserDAIBondedLiquidity(bondedLiquidity.dai);
+      setUserBUSDBondedLiquidity(bondedLiquidity.busd);
     };
 
     async function updateEpoch() {
@@ -256,79 +256,79 @@ function Tools({ user }: { user: string }) {
 
   // Calculate prices
   if (QSDPrice && treasuryQSDAmount) {
-    const totalDAI = toFloat(treasuryQSDAmount) * toFloat(QSDPrice);
+    const totalBUSD = toFloat(treasuryQSDAmount) * toFloat(QSDPrice);
 
-    treasuryUSDValue = '$' + numberFormat.format(totalDAI);
+    treasuryUSDValue = '$' + numberFormat.format(totalBUSD);
   }
 
-  if (QSDPrice && QSDStagedLiquidity && daiStagedLiquidity) {
-    const totalDAI =
-      QSDStagedLiquidity * toFloat(QSDPrice) + daiStagedLiquidity;
-    lpStagedPrice = '$' + numberFormat.format(totalDAI);
+  if (QSDPrice && QSDStagedLiquidity && busdStagedLiquidity) {
+    const totalBUSD =
+      QSDStagedLiquidity * toFloat(QSDPrice) + busdStagedLiquidity;
+    lpStagedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
-  if (QSDPrice && QSDBondedLiquidity && daiBondedLiquidity) {
-    const totalDAI =
-      QSDBondedLiquidity * toFloat(QSDPrice) + daiBondedLiquidity;
-    lpBondedPrice = '$' + numberFormat.format(totalDAI);
+  if (QSDPrice && QSDBondedLiquidity && busdBondedLiquidity) {
+    const totalBUSD =
+      QSDBondedLiquidity * toFloat(QSDPrice) + busdBondedLiquidity;
+    lpBondedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && daoBonded) {
-    const totalDAI = toFloat(daoBonded) * toFloat(QSDPrice);
-    QSDBondedPrice = '$' + numberFormat.format(totalDAI);
+    const totalBUSD = toFloat(daoBonded) * toFloat(QSDPrice);
+    QSDBondedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && daoStaged) {
-    const totalDAI = toFloat(daoStaged) * toFloat(QSDPrice);
-    QSDStagedPrice = '$' + numberFormat.format(totalDAI);
+    const totalBUSD = toFloat(daoStaged) * toFloat(QSDPrice);
+    QSDStagedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userQSDWalletLiquidity && userDaiWalletLiquidity) {
-    const totalDAI =
+    const totalBUSD =
       userQSDWalletLiquidity * toFloat(QSDPrice) + userDaiWalletLiquidity;
 
-    userLPWalletPrice = '$' + numberFormat.format(totalDAI);
+    userLPWalletPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userQSDStagedLiquidity && userDaiStagedLiquidity) {
-    const totalDAI =
+    const totalBUSD =
       userQSDStagedLiquidity * toFloat(QSDPrice) + userDaiStagedLiquidity;
 
-    userLPStagedPrice = '$' + numberFormat.format(totalDAI);
+    userLPStagedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userQSDBondedLiquidity && userDaiBondedLiquidity) {
-    const totalDAI =
+    const totalBUSD =
       userQSDBondedLiquidity * toFloat(QSDPrice) + userDaiBondedLiquidity;
 
-    userLPBondedPrice = '$' + numberFormat.format(totalDAI);
+    userLPBondedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userQSDBal) {
-    const totalDAI = toFloat(userQSDBal) * toFloat(QSDPrice);
+    const totalBUSD = toFloat(userQSDBal) * toFloat(QSDPrice);
 
-    userQSDWalletPrice = '$' + numberFormat.format(totalDAI);
+    userQSDWalletPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userDaoBonded) {
-    const totalDAI = toFloat(userDaoBonded) * toFloat(QSDPrice);
+    const totalBUSD = toFloat(userDaoBonded) * toFloat(QSDPrice);
 
-    userQSDBondedPrice = '$' + numberFormat.format(totalDAI);
+    userQSDBondedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   if (QSDPrice && userDaoStaged) {
-    const totalDAI = toFloat(userDaoStaged) * toFloat(QSDPrice);
+    const totalBUSD = toFloat(userDaoStaged) * toFloat(QSDPrice);
 
-    userQSDStagedPrice = '$' + numberFormat.format(totalDAI);
+    userQSDStagedPrice = '$' + numberFormat.format(totalBUSD);
   }
 
   // Calculate LP APR (4 hrs)
-  if (QSDPrice && QSDBondedLiquidity && daiBondedLiquidity && expansionAmount) {
-    const totalDAI =
-      QSDBondedLiquidity * toFloat(QSDPrice) + daiBondedLiquidity;
-    const daiToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
+  if (QSDPrice && QSDBondedLiquidity && busdBondedLiquidity && expansionAmount) {
+    const totalBUSD =
+      QSDBondedLiquidity * toFloat(QSDPrice) + busdBondedLiquidity;
+    const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
 
-    const lpYield = (daiToAdd / totalDAI) * 100;
+    const lpYield = (busdToAdd / totalBUSD) * 100;
 
     lpExpansionYield =
       Intl.NumberFormat('en', {

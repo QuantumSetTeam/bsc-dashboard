@@ -6,10 +6,10 @@ export const UNI = {
   symbol: 'UNI',
 };
 
-export const DAI = {
+export const BUSD = {
   addr: Dai,
   decimals: 18,
-  symbol: 'DAI',
+  symbol: 'BUSD',
 };
 
 export const QSD = {
