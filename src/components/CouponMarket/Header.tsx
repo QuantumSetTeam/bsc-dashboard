@@ -20,7 +20,7 @@ const CouponMarketHeader = ({
       <BalanceBlock asset="Debt Ratio" balance={ownership(debt, supply)} suffix={"%"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Total Debt" balance={debt} suffix={"SCD"}/>
+      <BalanceBlock asset="Total Debt" balance={debt} suffix={"QSD"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
       <BalanceBlock asset="Coupons" balance={coupons} />

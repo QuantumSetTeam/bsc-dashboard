@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BalanceBlock, MaxButton } from '../common/index';
 import { claimPool } from '../../utils/web3';
 import { isPos, toBaseUnitBN } from '../../utils/number';
-import { SCD } from '../../constants/tokens';
+import { QSD } from '../../constants/tokens';
 import BigNumberInput from '../common/BigNumberInput';
 
 type ClaimProps = {
@@ -21,7 +21,7 @@ function Claim({ poolAddress, claimable, status }: ClaimProps) {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {/* total Issued */}
         <div style={{ flexBasis: '32%' }}>
-          <BalanceBlock asset='Claimable' balance={claimable} suffix={'SCD'} />
+          <BalanceBlock asset='Claimable' balance={claimable} suffix={'QSD'} />
         </div>
         {/* Deposit UNI-V2 into Pool */}
         <div style={{ flexBasis: '35%' }} />
@@ -30,7 +30,7 @@ function Claim({ poolAddress, claimable, status }: ClaimProps) {
             <div style={{ width: '60%', minWidth: '6em' }}>
               <>
                 <BigNumberInput
-                  adornment='SCD'
+                  adornment='QSD'
                   value={claimAmount}
                   setter={setClaimAmount}
                   disabled={status !== 0}
@@ -50,7 +50,7 @@ function Claim({ poolAddress, claimable, status }: ClaimProps) {
                 onClick={() => {
                   claimPool(
                     poolAddress,
-                    toBaseUnitBN(claimAmount, SCD.decimals),
+                    toBaseUnitBN(claimAmount, QSD.decimals),
                     (hash) => setClaimAmount(new BigNumber(0))
                   );
                 }}

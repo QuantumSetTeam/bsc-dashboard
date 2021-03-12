@@ -7,15 +7,15 @@ import { claimRewards } from '../../utils/web3';
 interface ClaimProps {
   poolAddress: string | null;
   userStatus: number;
-  amountSCD: BigNumber;
-  amountSCDG: BigNumber;
+  amountQSD: BigNumber;
+  amountQSG: BigNumber;
 }
 
 export const Claim: React.FC<ClaimProps> = ({
   userStatus,
   poolAddress,
-  amountSCD,
-  amountSCDG,
+  amountQSD,
+  amountQSG,
 }) => (
   <TopBorderSection title='Claim'>
     <div
@@ -26,10 +26,10 @@ export const Claim: React.FC<ClaimProps> = ({
       }}
     >
       <div>
-        <BalanceBlock asset='Claimable' balance={amountSCD} suffix={'SCD'} />
+        <BalanceBlock asset='Claimable' balance={amountQSD} suffix={'QSD'} />
       </div>
       <div>
-        <BalanceBlock asset='Claimable' balance={amountSCDG} suffix={'SCDG'} />
+        <BalanceBlock asset='Claimable' balance={amountQSG} suffix={'QSG'} />
       </div>
       <Button
         // wide

@@ -106,13 +106,13 @@ function NavBar({ hasWeb3, user, setUser }: NavbarProps) {
                 alt='logo'
                 width={64}
               />
-              <div style={{ fontSize: 22 }}>Smart Chain Dollar</div>
+              <div style={{ fontSize: 22 }}>Quantum Set Dollar</div>
             </NavLink>
             <div style={{ textAlign: 'center' }}>
               <LinkButton title='Dashboard' to='/dashboard/' />
-              <LinkButton title='SCD' to='/SCD/' />
+              <LinkButton title='QSD' to='/QSD/' />
               <LinkButton title='LP' to='/lp/' />
-              <LinkButton title='SCDG' to='/SCDG/' />
+              <LinkButton title='QSG' to='/QSG/' />
               {/* <LinkButton title="Regulation" to="/regulation/" /> */}
               <LinkButton title='Governance' to='/governance/' />
               {/* <LinkButton title="Trade" to="/trade/" /> */}

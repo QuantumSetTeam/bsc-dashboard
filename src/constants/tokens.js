@@ -12,20 +12,20 @@ export const DAI = {
   symbol: 'DAI',
 };
 
-export const SCD = {
+export const QSD = {
   addr: Dollar,
   decimals: 18,
-  symbol: 'SCD',
+  symbol: 'QSD',
 };
 
-export const SCDS = {
+export const QSDS = {
   addr: Dao,
   decimals: 18,
-  symbol: 'SCDS',
+  symbol: 'QSDS',
 };
 
-export const SCDG = {
+export const QSG = {
   addr: GovernanceToken,
   decimals: 18,
-  symbol: 'SCDG',
+  symbol: 'QSG',
 };

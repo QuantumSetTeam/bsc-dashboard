@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { notify } from './txNotifier.ts';
 import { UniswapV2Router02 } from '../constants/contracts';
 
-import { SCD, DAI } from '../constants/tokens';
+import { QSD, DAI } from '../constants/tokens';
 
 const uniswapRouterAbi = require('../constants/abi/UniswapV2Router02.json');
 const testnetDAIAbi = require('../constants/abi/TestnetUSDC.json');
@@ -85,7 +85,7 @@ export const mintTestnetDAI = async (amount) => {
  * Uniswap Protocol
  */
 
-export const buySCD = async (buyAmount, maxInputAmount) => {
+export const buyQSD = async (buyAmount, maxInputAmount) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -97,7 +97,7 @@ export const buySCD = async (buyAmount, maxInputAmount) => {
     .swapTokensForExactTokens(
       buyAmount,
       maxInputAmount,
-      [DAI.addr, SCD.addr],
+      [DAI.addr, QSD.addr],
       account,
       deadline
     )
@@ -107,7 +107,7 @@ export const buySCD = async (buyAmount, maxInputAmount) => {
     });
 };
 
-export const sellSCD = async (sellAmount, minOutputAmount) => {
+export const sellQSD = async (sellAmount, minOutputAmount) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -119,7 +119,7 @@ export const sellSCD = async (sellAmount, minOutputAmount) => {
     .swapExactTokensForTokens(
       sellAmount,
       minOutputAmount,
-      [SCD.addr, DAI.addr],
+      [QSD.addr, DAI.addr],
       account,
       deadline
     )
@@ -129,7 +129,7 @@ export const sellSCD = async (sellAmount, minOutputAmount) => {
     });
 };
 
-export const addLiquidity = async (amountSCD, amountDAI, slippage) => {
+export const addLiquidity = async (amountQSD, amountDAI, slippage) => {
   const account = await checkConnectedAndGetAddress();
   const router = new window.web3.eth.Contract(
     uniswapRouterAbi,
@@ -137,7 +137,7 @@ export const addLiquidity = async (amountSCD, amountDAI, slippage) => {
   );
   const deadline = Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW;
   const slippageBN = new BigNumber(slippage);
-  const minAmountSCD = new BigNumber(amountSCD)
+  const minAmountQSD = new BigNumber(amountQSD)
     .multipliedBy(new BigNumber(1).minus(slippageBN))
     .integerValue(BigNumber.ROUND_FLOOR);
   const minAmountDAI = new BigNumber(amountDAI)
@@ -146,11 +146,11 @@ export const addLiquidity = async (amountSCD, amountDAI, slippage) => {
 
   await router.methods
     .addLiquidity(
-      SCD.addr,
+      QSD.addr,
       DAI.addr,
-      new BigNumber(amountSCD).toFixed(),
+      new BigNumber(amountQSD).toFixed(),
       new BigNumber(amountDAI).toFixed(),
-      minAmountSCD,
+      minAmountQSD,
       minAmountDAI,
       account,
       deadline
@@ -163,7 +163,7 @@ export const addLiquidity = async (amountSCD, amountDAI, slippage) => {
 
 export const removeLiquidity = async (
   liquidityAmount,
-  minAmountSCD,
+  minAmountQSD,
   minAmountDAI
 ) => {
   const account = await checkConnectedAndGetAddress();
@@ -175,10 +175,10 @@ export const removeLiquidity = async (
 
   await router.methods
     .removeLiquidity(
-      SCD.addr,
+      QSD.addr,
       DAI.addr,
       new BigNumber(liquidityAmount).toFixed(),
-      new BigNumber(minAmountSCD).toFixed(),
+      new BigNumber(minAmountQSD).toFixed(),
       new BigNumber(minAmountDAI).toFixed(),
       account,
       deadline
@@ -190,7 +190,7 @@ export const removeLiquidity = async (
 };
 
 /**
- * SCD Protocol
+ * QSD Protocol
  */
 
 export const advance = async (dao) => {

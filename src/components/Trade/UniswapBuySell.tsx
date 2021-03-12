@@ -6,23 +6,23 @@ import BigNumber from 'bignumber.js';
 import {
   BalanceBlock, MaxButton, PriceSection,
 } from '../common/index';
-import {buySCD, sellSCD} from '../../utils/web3';
+import {buyQSD, sellQSD} from '../../utils/web3';
 
 import { getCost, getProceeds } from '../../utils/infura';
 
 
 import {isPos, toBaseUnitBN, toTokenUnitsBN} from '../../utils/number';
-import {SCD, DAI} from "../../constants/tokens";
+import {QSD, DAI} from "../../constants/tokens";
 import {decreaseWithSlippage, increaseWithSlippage} from "../../utils/calculation";
 import BigNumberInput from "../common/BigNumberInput";
 
 type UniswapBuySellProps = {
-  userBalanceSCD: BigNumber,
-  pairBalanceSCD: BigNumber
+  userBalanceQSD: BigNumber,
+  pairBalanceQSD: BigNumber
 };
 
 function UniswapBuySell({
-  userBalanceSCD, pairBalanceSCD
+  userBalanceQSD, pairBalanceQSD
 }: UniswapBuySellProps) {
   const [buyAmount, setBuyAmount] = useState(new BigNumber(0));
   const [sellAmount, setSellAmount] = useState(new BigNumber(0));
@@ -35,11 +35,11 @@ function UniswapBuySell({
       setCost(new BigNumber(0));
       return;
     }
-    if (buyAmountBN.gte(pairBalanceSCD)) {
+    if (buyAmountBN.gte(pairBalanceQSD)) {
       setCost(new BigNumber(0));
       return;
     }
-    const cost = await getCost(toBaseUnitBN(buyAmountBN, SCD.decimals));
+    const cost = await getCost(toBaseUnitBN(buyAmountBN, QSD.decimals));
     setCost(toTokenUnitsBN(new BigNumber(cost), DAI.decimals));
   };
 
@@ -49,7 +49,7 @@ function UniswapBuySell({
       setProceeds(new BigNumber(0));
       return;
     }
-    const proceeds = await getProceeds(toBaseUnitBN(sellAmountBN, SCD.decimals));
+    const proceeds = await getProceeds(toBaseUnitBN(sellAmountBN, QSD.decimals));
     setProceeds(toTokenUnitsBN(new BigNumber(proceeds), DAI.decimals));
   };
 
@@ -58,7 +58,7 @@ function UniswapBuySell({
       <div style={{ display: 'flex' }}>
         {/* total Issued */}
         <div style={{ width: '30%' }}>
-          <BalanceBlock asset="Døllar Balance" balance={userBalanceSCD} suffix={" SCD"}/>
+          <BalanceBlock asset="Døllar Balance" balance={userBalanceQSD} suffix={" QSD"}/>
         </div>
         {/* Buy Token from Uniswap */}
         <div style={{ width: '32%', paddingTop: '2%' }}>
@@ -66,7 +66,7 @@ function UniswapBuySell({
             <div style={{ width: '60%' }}>
               <>
                 <BigNumberInput
-                  adornment="SCD"
+                  adornment="QSD"
                   value={buyAmount}
                   setter={(value) => {
                     setBuyAmount(value);
@@ -81,8 +81,8 @@ function UniswapBuySell({
                 icon={<IconCirclePlus />}
                 label="Buy"
                 onClick={() => {
-                  buySCD(
-                    toBaseUnitBN(buyAmount, SCD.decimals),
+                  buyQSD(
+                    toBaseUnitBN(buyAmount, QSD.decimals),
                     increaseWithSlippage(toBaseUnitBN(cost, DAI.decimals)),
                   );
                 }}
@@ -98,7 +98,7 @@ function UniswapBuySell({
             <div style={{ width: '60%' }}>
               <>
                 <BigNumberInput
-                  adornment="SCD"
+                  adornment="QSD"
                   value={sellAmount}
                   setter={(value) => {
                     setSellAmount(value);
@@ -107,8 +107,8 @@ function UniswapBuySell({
                 />
                 <MaxButton
                   onClick={() => {
-                    setSellAmount(userBalanceSCD);
-                    updateProceeds(userBalanceSCD);
+                    setSellAmount(userBalanceQSD);
+                    updateProceeds(userBalanceQSD);
                   }}
                 />
                 <PriceSection label="Proceeds: " amt={proceeds} symbol=" DAI"/>
@@ -120,8 +120,8 @@ function UniswapBuySell({
                 icon={<IconCircleMinus />}
                 label="Sell"
                 onClick={() => {
-                  sellSCD(
-                    toBaseUnitBN(sellAmount, SCD.decimals),
+                  sellQSD(
+                    toBaseUnitBN(sellAmount, QSD.decimals),
                     decreaseWithSlippage(toBaseUnitBN(proceeds, DAI.decimals)),
                   );
                 }}

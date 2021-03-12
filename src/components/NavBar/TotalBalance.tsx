@@ -7,7 +7,7 @@ import {
   getTokenBalance,
   getTokenTotalSupply
 } from "../../utils/infura";
-import {SCD, SCDS, UNI} from "../../constants/tokens";
+import {QSD, QSDS, UNI} from "../../constants/tokens";
 import { toTokenUnitsBN} from "../../utils/number";
 import {getPoolBondingAddress} from "../../utils/pool";
 import { formatBN } from '../../utils/number';
@@ -35,15 +35,15 @@ function TotalBalance({ user }: TotalBalanceProps) {
 
       const [
         esdBalance, stagedBalance, bondedBalance,
-        pairBalanceSCDStr, pairTotalSupplyUNIStr, userUNIBalanceStr,
+        pairBalanceQSDStr, pairTotalSupplyUNIStr, userUNIBalanceStr,
         userPoolBondedBalanceStr, userPoolStagedBalanceStr,
         userPoolRewardedBalanceStr, userPoolClaimableBalanceStr,
       ] = await Promise.all([
-        getTokenBalance(SCD.addr, user),
-        getBalanceOfStaged(SCDS.addr, user),
-        getBalanceBonded(SCDS.addr, user),
+        getTokenBalance(QSD.addr, user),
+        getBalanceOfStaged(QSDS.addr, user),
+        getBalanceBonded(QSDS.addr, user),
 
-        getTokenBalance(SCD.addr, UNI.addr),
+        getTokenBalance(QSD.addr, UNI.addr),
         getTokenTotalSupply(UNI.addr),
         getTokenBalance(UNI.addr, user),
         getPoolBalanceOfBonded(poolAddress, user),
@@ -52,22 +52,22 @@ function TotalBalance({ user }: TotalBalanceProps) {
         getPoolBalanceOfClaimable(poolAddress, user),
       ]);
 
-      const userBalance = toTokenUnitsBN(esdBalance, SCD.decimals);
-      const userStagedBalance = toTokenUnitsBN(stagedBalance, SCDS.decimals);
-      const userBondedBalance = toTokenUnitsBN(bondedBalance, SCDS.decimals);
+      const userBalance = toTokenUnitsBN(esdBalance, QSD.decimals);
+      const userStagedBalance = toTokenUnitsBN(stagedBalance, QSDS.decimals);
+      const userBondedBalance = toTokenUnitsBN(bondedBalance, QSDS.decimals);
 
-      const userUNIBalance = toTokenUnitsBN(userUNIBalanceStr, SCDS.decimals);
-      const userPoolBondedBalance = toTokenUnitsBN(userPoolBondedBalanceStr, SCDS.decimals);
-      const userPoolStagedBalance = toTokenUnitsBN(userPoolStagedBalanceStr, SCDS.decimals);
-      const userPoolRewardedBalance = toTokenUnitsBN(userPoolRewardedBalanceStr, SCDS.decimals);
-      const userPoolClaimableBalance = toTokenUnitsBN(userPoolClaimableBalanceStr, SCDS.decimals);
+      const userUNIBalance = toTokenUnitsBN(userUNIBalanceStr, QSDS.decimals);
+      const userPoolBondedBalance = toTokenUnitsBN(userPoolBondedBalanceStr, QSDS.decimals);
+      const userPoolStagedBalance = toTokenUnitsBN(userPoolStagedBalanceStr, QSDS.decimals);
+      const userPoolRewardedBalance = toTokenUnitsBN(userPoolRewardedBalanceStr, QSDS.decimals);
+      const userPoolClaimableBalance = toTokenUnitsBN(userPoolClaimableBalanceStr, QSDS.decimals);
 
-      const UNItoSCD = new BigNumber(pairBalanceSCDStr).dividedBy(new BigNumber(pairTotalSupplyUNIStr));
+      const UNItoQSD = new BigNumber(pairBalanceQSDStr).dividedBy(new BigNumber(pairTotalSupplyUNIStr));
 
       const daoTotalBalance = userStagedBalance.plus(userBondedBalance);
-      const poolTotalBalance = UNItoSCD.multipliedBy(userPoolStagedBalance.plus(userPoolBondedBalance))
+      const poolTotalBalance = UNItoQSD.multipliedBy(userPoolStagedBalance.plus(userPoolBondedBalance))
         .plus(userPoolRewardedBalance.plus(userPoolClaimableBalance));
-      const circulationBalance = UNItoSCD.multipliedBy(userUNIBalance).plus(userBalance)
+      const circulationBalance = UNItoQSD.multipliedBy(userUNIBalance).plus(userBalance)
 
       const totalBalance = daoTotalBalance.plus(poolTotalBalance).plus(circulationBalance)
 

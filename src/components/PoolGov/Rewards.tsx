@@ -4,10 +4,10 @@ import { BalanceBlock, TopBorderSection } from '../common';
 
 interface RewardsProps {
   poolAddress: string | null;
-  amountSCD: BigNumber;
+  amountQSD: BigNumber;
 }
 
-export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountSCD }) => (
+export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountQSD }) => (
   <TopBorderSection title='Rewards'>
     <div
       style={{
@@ -17,7 +17,7 @@ export const Rewards: React.FC<RewardsProps> = ({ poolAddress, amountSCD }) => (
       }}
     >
       <div>
-        <BalanceBlock asset='Rewarded' balance={amountSCD} suffix={'SCD'} />
+        <BalanceBlock asset='Rewarded' balance={amountQSD} suffix={'QSD'} />
       </div>
     </div>
     <div style={{ width: '100%', paddingTop: '2%', textAlign: 'center' }}>

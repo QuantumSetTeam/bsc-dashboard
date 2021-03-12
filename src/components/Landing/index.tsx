@@ -60,7 +60,7 @@ export const Landing: React.FC = () => {
           </div>
 
           <div style={{ fontSize: 20 }}>
-            Smart Chain Dollar (SCD) is a decentralised, experimental
+            Quantum Set Dollar (QSD) is a decentralised, experimental
             stablecoin, using previous stablecoin designs as its foundation.
             Updated mechanics ensure improved peg stability and the ability to
             easily iterate provides an experimental edge for innovation limited
@@ -97,7 +97,7 @@ export const Landing: React.FC = () => {
 
         <img
           src='./about/lp.png'
-          alt='Smart Chain Dollar Hero'
+          alt='Quantum Set Dollar Hero'
           style={{
             zIndex: 1,
             position: 'absolute',
@@ -118,7 +118,7 @@ export const Landing: React.FC = () => {
             marginBottom: 24,
           }}
         >
-          SCD Core Features
+          QSD Core Features
         </div>
         <div
           style={{
@@ -130,17 +130,17 @@ export const Landing: React.FC = () => {
           <Card
             underlineTitle={true}
             title='Expansion Above Peg'
-            body='When the price of SCD is above $1 the supply will expand at a maximum rate of 5.4% per epoch and rewards will be distributed between bonded SCD and LP. There are no lock-ups on rewards which encourages selling above the peg.'
+            body='When the price of QSD is above $1 the supply will expand at a maximum rate of 5.4% per epoch and rewards will be distributed between bonded QSD and LP. There are no lock-ups on rewards which encourages selling above the peg.'
           />
           <Card
             underlineTitle={true}
             title='Incentives Below Peg'
-            body='When the price of SCD is below $1, holders will be able to earn rewards in the form of the SCD Governance Token (SCDG), by staking their SCD. Secondarily, the ability to bond SCD will only be available below peg.'
+            body='When the price of QSD is below $1, holders will be able to earn rewards in the form of the QSD Governance Token (QSG), by staking their QSD. Secondarily, the ability to bond QSD will only be available below peg.'
           />
           <Card
             underlineTitle={true}
             title='Community Ownership'
-            body='Smart Chain Dollar will be governed by holders of the SCD Governance Token. SCDG can be farmed by community members from Epoch 73 onwards, whilst SCD is below the peg of $1. SCDG holders will also control the Treasury.'
+            body='Quantum Set Dollar will be governed by holders of the QSD Governance Token. QSG can be farmed by community members from Epoch 73 onwards, whilst QSD is below the peg of $1. QSG holders will also control the Treasury.'
           />
         </div>
         <div style={{ textAlign: 'center', marginTop: 24 }}>

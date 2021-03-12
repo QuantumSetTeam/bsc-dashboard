@@ -7,7 +7,7 @@ import {
   getBatchBalanceOfCoupons, getBatchBalanceOfCouponsUnderlying,
   getBatchCouponsExpiration, getCouponEpochs
 } from '../../utils/infura';
-import {SCD, SCDS} from "../../constants/tokens";
+import {QSD, QSDS} from "../../constants/tokens";
 import {formatBN, toBaseUnitBN, toTokenUnitsBN} from "../../utils/number";
 import BigNumber from "bignumber.js";
 import { redeemCoupons, migrateCoupons } from "../../utils/web3";
@@ -31,11 +31,11 @@ function PurchaseHistory({
     let isCancelled = false;
 
     async function updateUserInfo() {
-      const epochsFromEvents = await getCouponEpochs(SCDS.addr, user);
+      const epochsFromEvents = await getCouponEpochs(QSDS.addr, user);
       const epochNumbers = epochsFromEvents.map(e => parseInt(e.epoch));
-      const balanceOfCouponsPremium = await getBatchBalanceOfCoupons(SCDS.addr, user, epochNumbers);
-      const balanceOfCouponsPrincipal = await getBatchBalanceOfCouponsUnderlying(SCDS.addr, user, epochNumbers);
-      const couponsExpirations = await getBatchCouponsExpiration(SCDS.addr, epochNumbers);
+      const balanceOfCouponsPremium = await getBatchBalanceOfCoupons(QSDS.addr, user, epochNumbers);
+      const balanceOfCouponsPrincipal = await getBatchBalanceOfCouponsUnderlying(QSDS.addr, user, epochNumbers);
+      const couponsExpirations = await getBatchCouponsExpiration(QSDS.addr, epochNumbers);
 
       const couponEpochs = epochsFromEvents.map((epoch, i) => {
         epoch.principal = new BigNumber(balanceOfCouponsPrincipal[i]);
@@ -71,9 +71,9 @@ function PurchaseHistory({
       onPageChange={setPage}
       renderEntry={(epoch) => [
         epoch.epoch.toString(),
-        formatBN(toTokenUnitsBN(epoch.coupons, SCD.decimals), 2),
-        formatBN(toTokenUnitsBN(epoch.principal, SCD.decimals), 2),
-        formatBN(toTokenUnitsBN(epoch.premium, SCD.decimals), 2),
+        formatBN(toTokenUnitsBN(epoch.coupons, QSD.decimals), 2),
+        formatBN(toTokenUnitsBN(epoch.principal, QSD.decimals), 2),
+        formatBN(toTokenUnitsBN(epoch.premium, QSD.decimals), 2),
         epoch.expiration.toString(),
         <CouponAction coupon={epoch} totalRedeemable={totalRedeemable} />
       ]}
@@ -95,7 +95,7 @@ function CouponAction({coupon, totalRedeemable}:CouponActionProps) {
       <Button
         icon={<IconRefresh />}
         label="Migrate"
-        onClick={() => migrateCoupons(SCDS.addr, coupon.epoch)}
+        onClick={() => migrateCoupons(QSDS.addr, coupon.epoch)}
       />
       /* already redeemed coupons */
       : coupon.principal.isZero() ?
@@ -110,10 +110,10 @@ function CouponAction({coupon, totalRedeemable}:CouponActionProps) {
         icon={totalRedeemable.isZero() ? <IconLock /> : <IconCirclePlus />}
         label="Redeem"
         onClick={() => redeemCoupons(
-          SCDS.addr,
+          QSDS.addr,
           coupon.epoch,
-          coupon.principal.isGreaterThan(toBaseUnitBN(totalRedeemable, SCD.decimals))
-            ? toBaseUnitBN(totalRedeemable, SCD.decimals)
+          coupon.principal.isGreaterThan(toBaseUnitBN(totalRedeemable, QSD.decimals))
+            ? toBaseUnitBN(totalRedeemable, QSD.decimals)
             : coupon.principal
         )}
         disabled={totalRedeemable.isZero()}

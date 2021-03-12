@@ -19,7 +19,7 @@ import {
   providePoolOptimalOneSided,
 } from '../../utils/web3';
 import { isPos, toBaseUnitBN, toTokenUnitsBN } from '../../utils/number';
-import { SCD, DAI } from '../../constants/tokens';
+import { QSD, DAI } from '../../constants/tokens';
 import { MAX_UINT256 } from '../../constants/values';
 import BigNumberInput from '../common/BigNumberInput';
 
@@ -27,7 +27,7 @@ type ProvideProps = {
   poolAddress: string;
   user: string;
   rewarded: BigNumber;
-  pairBalanceSCD: BigNumber;
+  pairBalanceQSD: BigNumber;
   pairBalanceDAI: BigNumber;
   userDAIBalance: BigNumber;
   userDAIAllowance: BigNumber;
@@ -38,7 +38,7 @@ function Provide({
   poolAddress,
   user,
   rewarded,
-  pairBalanceSCD,
+  pairBalanceQSD,
   pairBalanceDAI,
   userDAIBalance,
   userDAIAllowance,
@@ -46,30 +46,30 @@ function Provide({
 }: ProvideProps) {
   const theme = useTheme();
   const isDark = theme._name === 'dark';
-  const [useSCD, setUseSCD] = useState(0);
+  const [useQSD, setUseQSD] = useState(0);
   const [provideAmount, setProvideAmount] = useState(new BigNumber(0));
   const [usdcAmount, setUsdcAmount] = useState(new BigNumber(0));
 
-  const DAIToSCDRatio = pairBalanceDAI.isZero()
+  const DAIToQSDRatio = pairBalanceDAI.isZero()
     ? new BigNumber(1)
-    : pairBalanceDAI.div(pairBalanceSCD);
+    : pairBalanceDAI.div(pairBalanceQSD);
 
-  const onChangeAmountSCD = (amountSCD) => {
-    if (!amountSCD) {
+  const onChangeAmountQSD = (amountQSD) => {
+    if (!amountQSD) {
       setProvideAmount(new BigNumber(0));
       setUsdcAmount(new BigNumber(0));
       return;
     }
 
-    const amountSCDBN = new BigNumber(amountSCD);
-    setProvideAmount(amountSCDBN);
+    const amountQSDBN = new BigNumber(amountQSD);
+    setProvideAmount(amountQSDBN);
 
-    const amountSCDBU = toBaseUnitBN(amountSCDBN, SCD.decimals);
+    const amountQSDBU = toBaseUnitBN(amountQSDBN, QSD.decimals);
     const newAmountDAI = toTokenUnitsBN(
-      amountSCDBU
-        .multipliedBy(DAIToSCDRatio)
+      amountQSDBU
+        .multipliedBy(DAIToQSDRatio)
         .integerValue(BigNumber.ROUND_FLOOR),
-      SCD.decimals
+      QSD.decimals
     );
     setUsdcAmount(newAmountDAI);
   };
@@ -82,15 +82,15 @@ function Provide({
       >
         <Tabs
           items={['Dual Supply (with DAI)', 'Single Supply']}
-          selected={useSCD}
-          onChange={setUseSCD}
+          selected={useQSD}
+          onChange={setUseQSD}
         />
       </div>
-      {userDAIAllowance.comparedTo(MAX_UINT256.dividedBy(2)) > 0 || useSCD ? (
+      {userDAIAllowance.comparedTo(MAX_UINT256.dividedBy(2)) > 0 || useQSD ? (
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {/* total rewarded */}
           <div style={{ flexBasis: '32%' }}>
-            <BalanceBlock asset='Rewarded' balance={rewarded} suffix={'SCD'} />
+            <BalanceBlock asset='Rewarded' balance={rewarded} suffix={'QSD'} />
           </div>
           <div style={{ flexBasis: '35%' }}></div>
           {/* Provide liquidity using Pool rewards */}
@@ -99,12 +99,12 @@ function Provide({
               <div style={{ width: '60%', minWidth: '6em' }}>
                 <>
                   <BigNumberInput
-                    adornment='SCD'
+                    adornment='QSD'
                     value={provideAmount}
-                    setter={onChangeAmountSCD}
+                    setter={onChangeAmountQSD}
                     disabled={status === 1}
                   />
-                  {!useSCD && (
+                  {!useQSD && (
                     <PriceSection
                       label='Requires '
                       amt={usdcAmount}
@@ -113,7 +113,7 @@ function Provide({
                   )}
                   <MaxButton
                     onClick={() => {
-                      onChangeAmountSCD(rewarded);
+                      onChangeAmountQSD(rewarded);
                     }}
                   />
                 </>
@@ -124,16 +124,16 @@ function Provide({
                   icon={<IconArrowUp />}
                   label='Provide'
                   onClick={() => {
-                    if (useSCD) {
+                    if (useQSD) {
                       providePoolOptimalOneSided(
                         poolAddress,
-                        toBaseUnitBN(provideAmount, SCD.decimals),
+                        toBaseUnitBN(provideAmount, QSD.decimals),
                         (hash) => setProvideAmount(new BigNumber(0))
                       );
                     } else {
                       providePool(
                         poolAddress,
-                        toBaseUnitBN(provideAmount, SCD.decimals),
+                        toBaseUnitBN(provideAmount, QSD.decimals),
                         (hash) => setProvideAmount(new BigNumber(0))
                       );
                     }
@@ -153,7 +153,7 @@ function Provide({
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {/* total rewarded */}
           <div style={{ flexBasis: '32%' }}>
-            <BalanceBlock asset='Rewarded' balance={rewarded} suffix={'SCD'} />
+            <BalanceBlock asset='Rewarded' balance={rewarded} suffix={'QSD'} />
           </div>
           <div style={{ flexBasis: '33%' }}>
             <BalanceBlock
@@ -179,7 +179,7 @@ function Provide({
       )}
       <div style={{ width: '100%', paddingTop: '2%', textAlign: 'center' }}>
         <span style={{ opacity: 0.5 }}>
-          {useSCD
+          {useQSD
             ? 'Zap your rewards directly'
             : 'Zap your rewards directly to LP by providing more DAI'}
         </span>

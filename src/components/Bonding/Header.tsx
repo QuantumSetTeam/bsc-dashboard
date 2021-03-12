@@ -6,8 +6,8 @@ import TextBlock from "../common/TextBlock";
 import {ownership} from "../../utils/number";
 
 type AccountPageHeaderProps = {
-  accountSCDBalance: BigNumber,
-  accountSCDSBalance: BigNumber,
+  accountQSDBalance: BigNumber,
+  accountQSDSBalance: BigNumber,
   totalBonded: BigNumber,
   accountStagedBalance: BigNumber,
   accountBondedBalance: BigNumber,
@@ -22,20 +22,20 @@ function status(accountStatus, unlocked) {
 }
 
 const AccountPageHeader = ({
-  accountSCDBalance, accountSCDSBalance, totalBonded, accountStagedBalance, accountBondedBalance, accountStatus, unlocked
+  accountQSDBalance, accountQSDSBalance, totalBonded, accountStagedBalance, accountBondedBalance, accountStatus, unlocked
 }: AccountPageHeaderProps) => (
   <div style={{ padding: '2%', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Balance" balance={accountSCDBalance} suffix={" SCD"}/>
+      <BalanceBlock asset="Balance" balance={accountQSDBalance} suffix={" QSD"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Staged" balance={accountStagedBalance}  suffix={" SCD"}/>
+      <BalanceBlock asset="Staged" balance={accountStagedBalance}  suffix={" QSD"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Bonded" balance={accountBondedBalance} suffix={" SCD"} />
+      <BalanceBlock asset="Bonded" balance={accountBondedBalance} suffix={" QSD"} />
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Pool Ownership" balance={ownership(accountSCDSBalance, totalBonded)}  suffix={"%"}/>
+      <BalanceBlock asset="Pool Ownership" balance={ownership(accountQSDSBalance, totalBonded)}  suffix={"%"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
       <TextBlock label="Status" text={status(accountStatus, unlocked)}/>

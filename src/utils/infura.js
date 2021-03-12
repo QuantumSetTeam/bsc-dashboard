@@ -2,7 +2,7 @@ import Web3 from 'web3';
 
 import BigNumber from 'bignumber.js';
 import { Dao, UniswapV2Router02 } from '../constants/contracts';
-import { SCD, UNI, DAI, SCDS } from '../constants/tokens';
+import { QSD, UNI, DAI, QSDS } from '../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../constants/values';
 import { formatBN, toTokenUnitsBN, toFloat } from './number';
 import { getPoolLPAddress } from './pool';
@@ -51,7 +51,7 @@ export const getTokenAllowance = async (token, account, spender) => {
   return tokenContract.methods.allowance(account, spender).call();
 };
 
-// SCD Protocol
+// QSD Protocol
 
 /**
  *
@@ -508,7 +508,7 @@ export const getCost = async (amount) => {
   const exchange = new web3.eth.Contract(uniswapRouterAbi, UniswapV2Router02);
   // eslint-disable-next-line no-unused-vars
   const [inputAmount, _] = await exchange.methods
-    .getAmountsIn(new BigNumber(amount).toFixed(), [DAI.addr, SCD.addr])
+    .getAmountsIn(new BigNumber(amount).toFixed(), [DAI.addr, QSD.addr])
     .call();
   return inputAmount;
 };
@@ -517,7 +517,7 @@ export const getProceeds = async (amount) => {
   const exchange = new web3.eth.Contract(uniswapRouterAbi, UniswapV2Router02);
   // eslint-disable-next-line no-unused-vars
   const [_, outputAmount] = await exchange.methods
-    .getAmountsOut(new BigNumber(amount).toFixed(), [SCD.addr, DAI.addr])
+    .getAmountsOut(new BigNumber(amount).toFixed(), [QSD.addr, DAI.addr])
     .call();
   return outputAmount;
 };
@@ -527,7 +527,7 @@ export const getReserves = async () => {
   return exchange.methods.getReserves().call();
 };
 
-export const getInstantaneousSCDPrice = async () => {
+export const getInstantaneousQSDPrice = async () => {
   const [reserve, token0] = await Promise.all([getReserves(), getToken0()]);
   const token0Balance = new BigNumber(reserve.reserve0);
   const token1Balance = new BigNumber(reserve.reserve1);
@@ -548,12 +548,12 @@ export const getUniswapLiquidity = async () => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance,
-      SCD: token1Balance,
+      QSD: token1Balance,
     };
   }
   return {
     dai: token1Balance,
-    SCD: token0Balance,
+    QSD: token0Balance,
   };
 };
 
@@ -572,12 +572,12 @@ export const getUserLPWallet = async (user) => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance * ratio,
-      SCD: token1Balance * ratio,
+      QSD: token1Balance * ratio,
     };
   }
   return {
     dai: token1Balance * ratio,
-    SCD: token0Balance * ratio,
+    QSD: token0Balance * ratio,
   };
 };
 
@@ -599,12 +599,12 @@ export const getUserLPBonded = async (user) => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance * ratio,
-      SCD: token1Balance * ratio,
+      QSD: token1Balance * ratio,
     };
   }
   return {
     dai: token1Balance * ratio,
-    SCD: token0Balance * ratio,
+    QSD: token0Balance * ratio,
   };
 };
 
@@ -626,12 +626,12 @@ export const getUserLPStaged = async (user) => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance * ratio,
-      SCD: token1Balance * ratio,
+      QSD: token1Balance * ratio,
     };
   }
   return {
     dai: token1Balance * ratio,
-    SCD: token0Balance * ratio,
+    QSD: token0Balance * ratio,
   };
 };
 
@@ -650,12 +650,12 @@ export const getLPStagedLiquidity = async () => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance * ratio,
-      SCD: token1Balance * ratio,
+      QSD: token1Balance * ratio,
     };
   }
   return {
     dai: token1Balance * ratio,
-    SCD: token0Balance * ratio,
+    QSD: token0Balance * ratio,
   };
 };
 
@@ -674,12 +674,12 @@ export const getLPBondedLiquidity = async () => {
   if (token0.toLowerCase() === DAI.addr.toLowerCase()) {
     return {
       dai: token0Balance * ratio,
-      SCD: token1Balance * ratio,
+      QSD: token1Balance * ratio,
     };
   }
   return {
     dai: token1Balance * ratio,
-    SCD: token0Balance * ratio,
+    QSD: token0Balance * ratio,
   };
 };
 
@@ -882,7 +882,7 @@ export const getPoolFluidUntil = async (pool, account) => {
 };
 
 export const getDaoIsBootstrapping = async () => {
-  const epoch = await getEpoch(SCDS.addr);
+  const epoch = await getEpoch(QSDS.addr);
   const daoContract = new web3.eth.Contract(daoAbi, Dao);
   const isBootstrapping = await daoContract.methods
     .bootstrappingAt(epoch)
@@ -895,8 +895,8 @@ export const getExpansionAmount = async () => {
   const price = await getTWAPPrice();
   const isBootstrapping = await getDaoIsBootstrapping();
 
-  const totalSupplyStr = await getTokenTotalSupply(SCD.addr);
-  const totalSupply = toFloat(toTokenUnitsBN(totalSupplyStr, SCD.decimals));
+  const totalSupplyStr = await getTokenTotalSupply(QSD.addr);
+  const totalSupply = toFloat(toTokenUnitsBN(totalSupplyStr, QSD.decimals));
 
   // 5.4% max supply
   const MAX_SUPPLY_EXPANSION = 0.054;
@@ -908,7 +908,7 @@ export const getExpansionAmount = async () => {
   const delta = Math.min(price - 1, MAX_SUPPLY_EXPANSION);
   const newSupply = totalSupply * delta;
 
-  if (price < 1) {
+  if (price < 1.02) {
     return 0;
   }
 
@@ -959,7 +959,7 @@ export const getTWAPPrice = async () => {
   const price1 =
     (((price1Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
 
-  if (token0.toLowerCase() === SCD.addr.toLowerCase()) {
+  if (token0.toLowerCase() === QSD.addr.toLowerCase()) {
     return price0;
   }
 

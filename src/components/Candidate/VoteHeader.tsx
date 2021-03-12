@@ -23,10 +23,10 @@ const VoteHeader = ({
 }: VoteHeaderProps) => (
   <div style={{ padding: '2%', display: 'flex', alignItems: 'center' }}>
     <div style={{ width: '25%' }}>
-      <BalanceBlock asset="Approve" balance={approveFor} suffix={ "SCDG"}/>
+      <BalanceBlock asset="Approve" balance={approveFor} suffix={ "QSG"}/>
     </div>
     <div style={{ width: '25%' }}>
-      <BalanceBlock asset="Reject" balance={rejectFor} suffix={ "SCDG"}/>
+      <BalanceBlock asset="Reject" balance={rejectFor} suffix={ "QSG"}/>
     </div>
     <div style={{ width: '25%' }}>
       <BalanceBlock asset="Approval" balance={approval(approveFor, rejectFor)} suffix="%" />

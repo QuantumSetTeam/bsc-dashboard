@@ -4,14 +4,14 @@ import { Layout } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SCD, SCDS, SCDG } from '../../constants/tokens';
+import { QSD, QSDS, QSG } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
   getBalanceBonded,
   getBalanceOfStaged,
   getEpoch,
   getExpansionAmount,
-  getInstantaneousSCDPrice,
+  getInstantaneousQSDPrice,
   getPoolBalanceOfClaimable1,
   getPoolBalanceOfClaimable2,
   getPoolBalanceOfRewarded1,
@@ -47,21 +47,21 @@ function Bonding({ user }: { user: string }) {
   const [poolBondingAddress, setPoolBondingAddress] = useState<null | string>(
     null
   );
-  const [userSCDBalance, setUserSCDBalance] = useState(new BigNumber(0));
-  const [userSCDAllowance, setUserSCDAllowance] = useState(new BigNumber(0));
-  const [userSCDSBalance, setUserSCDSBalance] = useState(new BigNumber(0));
-  const [totalSCDSSupply, setTotalSCDSSupply] = useState(new BigNumber(0));
+  const [userQSDBalance, setUserQSDBalance] = useState(new BigNumber(0));
+  const [userQSDAllowance, setUserQSDAllowance] = useState(new BigNumber(0));
+  const [userQSDSBalance, setUserQSDSBalance] = useState(new BigNumber(0));
+  const [totalQSDSSupply, setTotalQSDSSupply] = useState(new BigNumber(0));
   const [userStagedBalance, setUserStagedBalance] = useState(new BigNumber(0));
   const [userBondedBalance, setUserBondedBalance] = useState(new BigNumber(0));
   const [userStatus, setUserStatus] = useState(0);
   const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
   const [lockup, setLockup] = useState(0);
-  const [userRewardedSCD, setUserRewardedSCD] = useState(new BigNumber(0));
-  const [userRewardedSCDG, setUserRewardedSCDG] = useState(new BigNumber(0));
-  const [userClaimableSCD, setUserClaimableSCD] = useState(new BigNumber(0));
-  const [userClaimableSCDG, setUserClaimableSCDG] = useState(new BigNumber(0));
+  const [userRewardedQSD, setUserRewardedQSD] = useState(new BigNumber(0));
+  const [userRewardedQSG, setUserRewardedQSG] = useState(new BigNumber(0));
+  const [userClaimableQSD, setUserClaimableQSD] = useState(new BigNumber(0));
+  const [userClaimableQSG, setUserClaimableQSG] = useState(new BigNumber(0));
 
-  const [SCDPrice, setSCDPrice] = useState<BigNumber | null>(null);
+  const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
   const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
   //APR and stuff
@@ -71,21 +71,21 @@ function Bonding({ user }: { user: string }) {
 
       const [
         epoch,
-        SCDPrice,
+        QSDPrice,
         expansionAmount,
         totalBonded,
       ] = await Promise.all([
-        getEpoch(SCDS.addr),
-        getInstantaneousSCDPrice(),
+        getEpoch(QSDS.addr),
+        getInstantaneousQSDPrice(),
         getExpansionAmount(),
         getPoolTotalBonded(poolBonding),
       ]);
 
       setEpoch(parseInt(epoch, 10));
-      setSCDPrice(SCDPrice);
+      setQSDPrice(QSDPrice);
       setExpansionAmount(expansionAmount);
-      setTotalSCDSSupply(new BigNumber(totalSCDSSupply));
-      setTotalBonded(toTokenUnitsBN(totalBonded, SCD.decimals));
+      setTotalQSDSSupply(new BigNumber(totalQSDSSupply));
+      setTotalBonded(toTokenUnitsBN(totalBonded, QSD.decimals));
     };
 
     updateAPR();
@@ -94,10 +94,10 @@ function Bonding({ user }: { user: string }) {
   //Update User balances
   useEffect(() => {
     if (user === '') {
-      setUserSCDBalance(new BigNumber(0));
-      setUserSCDAllowance(new BigNumber(0));
-      setUserSCDSBalance(new BigNumber(0));
-      setTotalSCDSSupply(new BigNumber(0));
+      setUserQSDBalance(new BigNumber(0));
+      setUserQSDAllowance(new BigNumber(0));
+      setUserQSDSBalance(new BigNumber(0));
+      setTotalQSDSSupply(new BigNumber(0));
       setUserStagedBalance(new BigNumber(0));
       setUserBondedBalance(new BigNumber(0));
       setUserStatus(0);
@@ -110,21 +110,21 @@ function Bonding({ user }: { user: string }) {
 
       const [
         poolTotalBondedStr,
-        SCDBalance,
-        SCDAllowance,
+        QSDBalance,
+        QSDAllowance,
         stagedBalance,
         bondedBalance,
         status,
         fluidUntilStr,
-        SCDRewardedStr,
-        SCDGRewardedStr,
-        SCDClaimableStr,
-        SCDGClaimableStr,
-        SCDsBalance,
+        QSDRewardedStr,
+        QSGRewardedStr,
+        QSDClaimableStr,
+        QSGClaimableStr,
+        QSDsBalance,
       ] = await Promise.all([
         getPoolTotalBonded(poolAddress),
-        getTokenBalance(SCD.addr, user),
-        getTokenAllowance(SCD.addr, user, poolAddress),
+        getTokenBalance(QSD.addr, user),
+        getTokenAllowance(QSD.addr, user, poolAddress),
         getBalanceOfStaged(poolAddress, user),
         getBalanceBonded(poolAddress, user),
         getPoolStatusOf(poolAddress, user),
@@ -133,34 +133,34 @@ function Bonding({ user }: { user: string }) {
         getPoolBalanceOfRewarded2(poolAddress, user),
         getPoolBalanceOfClaimable1(poolAddress, user),
         getPoolBalanceOfClaimable2(poolAddress, user),
-        getTokenBalance(SCDS.addr, user),
+        getTokenBalance(QSDS.addr, user),
       ]);
 
-      const SCDRewarded = toTokenUnitsBN(SCDRewardedStr, SCD.decimals);
-      const SCDGRewarded = toTokenUnitsBN(SCDGRewardedStr, SCDG.decimals);
-      const SCDClaimable = toTokenUnitsBN(SCDClaimableStr, SCD.decimals);
-      const SCDGClaimable = toTokenUnitsBN(SCDGClaimableStr, SCDG.decimals);
-      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, SCD.decimals);
-      const userSCDBalance = toTokenUnitsBN(SCDBalance, SCD.decimals);
-      const userSCDSBalance = SCDsBalance;
-      const userStagedBalance = toTokenUnitsBN(stagedBalance, SCDS.decimals);
-      const userBondedBalance = toTokenUnitsBN(bondedBalance, SCDS.decimals);
+      const QSDRewarded = toTokenUnitsBN(QSDRewardedStr, QSD.decimals);
+      const QSGRewarded = toTokenUnitsBN(QSGRewardedStr, QSG.decimals);
+      const QSDClaimable = toTokenUnitsBN(QSDClaimableStr, QSD.decimals);
+      const QSGClaimable = toTokenUnitsBN(QSGClaimableStr, QSG.decimals);
+      const poolTotalBonded = toTokenUnitsBN(poolTotalBondedStr, QSD.decimals);
+      const userQSDBalance = toTokenUnitsBN(QSDBalance, QSD.decimals);
+      const userQSDSBalance = QSDsBalance;
+      const userStagedBalance = toTokenUnitsBN(stagedBalance, QSDS.decimals);
+      const userBondedBalance = toTokenUnitsBN(bondedBalance, QSDS.decimals);
       const userStatus = parseInt(status, 10);
       const fluidUntil = parseInt(fluidUntilStr, 10);
 
       if (!isCancelled) {
         setTotalBonded(poolTotalBonded);
         setPoolBondingAddress(poolAddress);
-        setUserSCDBalance(new BigNumber(userSCDBalance));
-        setUserSCDAllowance(new BigNumber(SCDAllowance));
-        setUserSCDSBalance(new BigNumber(userSCDSBalance));
-        setTotalSCDSSupply(new BigNumber(totalSCDSSupply));
+        setUserQSDBalance(new BigNumber(userQSDBalance));
+        setUserQSDAllowance(new BigNumber(QSDAllowance));
+        setUserQSDSBalance(new BigNumber(userQSDSBalance));
+        setTotalQSDSSupply(new BigNumber(totalQSDSSupply));
         setUserStagedBalance(new BigNumber(userStagedBalance));
         setUserBondedBalance(new BigNumber(userBondedBalance));
-        setUserRewardedSCD(new BigNumber(SCDRewarded));
-        setUserRewardedSCDG(new BigNumber(SCDGRewarded));
-        setUserClaimableSCD(new BigNumber(SCDClaimable));
-        setUserClaimableSCDG(new BigNumber(SCDGClaimable));
+        setUserRewardedQSD(new BigNumber(QSDRewarded));
+        setUserRewardedQSG(new BigNumber(QSGRewarded));
+        setUserClaimableQSD(new BigNumber(QSDClaimable));
+        setUserClaimableQSG(new BigNumber(QSGClaimable));
         setUserStatus(userStatus);
         setUserStatusUnlocked(fluidUntil);
         setLockup(POOL_EXIT_LOCKUP_EPOCHS);
@@ -187,12 +187,12 @@ function Bonding({ user }: { user: string }) {
   var numberFormat = new Intl.NumberFormat('en-US', options);
 
   // Calculate DAO APR (4 hrs)
-  if (SCDPrice && totalBonded && expansionAmount) {
+  if (QSDPrice && totalBonded && expansionAmount) {
     if (epoch > 72) {
-      const totalSCD = toFloat(totalBonded);
-      const SCDToAdd = expansionAmount / 2;
+      const totalQSD = toFloat(totalBonded);
+      const QSDToAdd = expansionAmount / 2;
 
-      const daoYield = (SCDToAdd / totalSCD) * 100;
+      const daoYield = (QSDToAdd / totalQSD) * 100;
 
       bondingHourlyYield = numberFormat.format(daoYield / 4) + '%';
       bondingDailyYield = numberFormat.format(daoYield * 6) + '%';
@@ -225,27 +225,27 @@ function Bonding({ user }: { user: string }) {
         bodyInstructions={
             <p>
 
-            Step 1: Stage your SCD
+            Step 1: Stage your QSD
             <br />
-            Step 2: Bond your SCD *Note that you can only bond SCD when TWAP is
-            &lt;1*
+            Step 2: Bond your QSD *Note that you can only bond QSD when TWAP is
+            &lt;1.02*
             <br />
-            &nbsp;&nbsp; 2.1: If TWAP is &lt;1, you'll be rewarded SCDG
+            &nbsp;&nbsp; 2.1: If TWAP is &lt;1.02, you'll be rewarded QSG
             <br />
-            &nbsp;&nbsp; 2.2: If TWAP is &gt;=1, you'll be rewarded SCD
+            &nbsp;&nbsp; 2.2: If TWAP is &gt;=1.02, you'll be rewarded QSD
             <br />
             Step 3: Poke your rewards to move them to claimable
             <br />
-            Step 4: Wait 1 epoch to claim claimable SCD and/or SCDG
+            Step 4: Wait 1 epoch to claim claimable QSD and/or QSG
           </p>
         }
       />
 
-      <IconHeader icon={<i className='fas fa-atom' />} text='SCD Rewards' />
+      <IconHeader icon={<i className='fas fa-atom' />} text='QSD Rewards' />
 
       <AccountPageHeader
-        accountSCDBalance={userSCDBalance}
-        accountSCDSBalance={userSCDSBalance}
+        accountQSDBalance={userQSDBalance}
+        accountQSDSBalance={userQSDSBalance}
         totalBonded={totalBonded}
         accountStagedBalance={userStagedBalance}
         accountBondedBalance={userBondedBalance}
@@ -254,34 +254,34 @@ function Bonding({ user }: { user: string }) {
       />
 
       <WithdrawDeposit
-        suffix='SCD'
-        balance={userSCDBalance}
-        allowance={userSCDAllowance}
+        suffix='QSD'
+        balance={userQSDBalance}
+        allowance={userQSDAllowance}
         stagedBalance={userStagedBalance}
         status={userStatus}
         disabled={!user}
         handleApprove={() => {
-          approve(SCD.addr, poolBondingAddress);
+          approve(QSD.addr, poolBondingAddress);
         }}
         handleDeposit={(depositAmount) => {
           depositPool(
             poolBondingAddress,
-            toBaseUnitBN(depositAmount, SCD.decimals),
+            toBaseUnitBN(depositAmount, QSD.decimals),
             () => {}
           );
         }}
         handleWithdraw={(withdrawAmount) => {
           withdrawPool(
             poolBondingAddress,
-            toBaseUnitBN(withdrawAmount, SCD.decimals),
+            toBaseUnitBN(withdrawAmount, QSD.decimals),
             () => {}
           );
         }}
       />
 
       <BondUnbond
-        extraTip={'Can only bond when SCD < 1 DAI.'}
-        suffix='SCD'
+        extraTip={'Can only bond when QSD < 1.02 BUSD.'}
+        suffix='QSD'
         staged={userStagedBalance}
         bonded={userBondedBalance}
         status={userStatus}
@@ -290,14 +290,14 @@ function Bonding({ user }: { user: string }) {
         handleBond={(bondAmount) => {
           bondPool(
             poolBondingAddress,
-            toBaseUnitBN(bondAmount, SCD.decimals),
+            toBaseUnitBN(bondAmount, QSD.decimals),
             () => {}
           );
         }}
         handleUnbond={(unbondAmount) => {
           unbondPool(
             poolBondingAddress,
-            toBaseUnitBN(unbondAmount, SCD.decimals),
+            toBaseUnitBN(unbondAmount, QSD.decimals),
             () => {}
           );
         }}
@@ -306,14 +306,14 @@ function Bonding({ user }: { user: string }) {
       <Claim
         userStatus={userStatus}
         poolAddress={poolBondingAddress}
-        amountSCD={userClaimableSCD}
-        amountSCDG={userClaimableSCDG}
+        amountQSD={userClaimableQSD}
+        amountQSG={userClaimableQSG}
       />
 
       <Rewards
         poolAddress={poolBondingAddress}
-        amountSCD={userRewardedSCD}
-        amountSCDG={userRewardedSCDG}
+        amountQSD={userRewardedQSD}
+        amountQSG={userRewardedQSG}
       />
     </Layout>
   );

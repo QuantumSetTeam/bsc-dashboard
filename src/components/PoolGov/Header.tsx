@@ -6,7 +6,7 @@ import TextBlock from "../common/TextBlock";
 import {ownership} from "../../utils/number";
 
 type AccountPageHeaderProps = {
-  accountSCDGBalance: BigNumber,
+  accountQSGBalance: BigNumber,
   totalBonded: BigNumber,
   accountStagedBalance: BigNumber,
   accountBondedBalance: BigNumber,
@@ -21,17 +21,17 @@ function status(accountStatus, unlocked) {
 }
 
 const AccountPageHeader = ({
-  accountSCDGBalance, totalBonded, accountStagedBalance, accountBondedBalance, accountStatus, unlocked
+  accountQSGBalance, totalBonded, accountStagedBalance, accountBondedBalance, accountStatus, unlocked
 }: AccountPageHeaderProps) => (
   <div style={{ padding: '2%', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Balance" balance={accountSCDGBalance} suffix={" SCDG"}/>
+      <BalanceBlock asset="Balance" balance={accountQSGBalance} suffix={" QSG"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Staged" balance={accountStagedBalance}  suffix={" SCDG"}/>
+      <BalanceBlock asset="Staged" balance={accountStagedBalance}  suffix={" QSG"}/>
     </div>
     <div style={{ flexBasis: '20%' }}>
-      <BalanceBlock asset="Bonded" balance={accountBondedBalance} suffix={" SCDG"} />
+      <BalanceBlock asset="Bonded" balance={accountBondedBalance} suffix={" QSG"} />
     </div>
     <div style={{ flexBasis: '20%' }}>
       <BalanceBlock asset="Pool Ownership" balance={ownership(accountBondedBalance, totalBonded)}  suffix={"%"}/>

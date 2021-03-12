@@ -6,7 +6,7 @@ import {
 } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { SCDS } from '../../constants/tokens';
+import { QSDS } from '../../constants/tokens';
 import { recordVote } from '../../utils/web3';
 import { BalanceBlock, TopBorderSection } from '../common/index';
 import TextBlock from '../common/TextBlock';
@@ -26,7 +26,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
       <div style={{ display: 'flex' }}>
         {/* User stake */}
         <div style={{ width: '20%' }}>
-          <BalanceBlock asset='My Stake' balance={stake} suffix={'SCDG'} />
+          <BalanceBlock asset='My Stake' balance={stake} suffix={'QSG'} />
         </div>
         <div style={{ width: '20%' }}>
           <TextBlock label='My Vote' text={VOTE_TYPE_MAP[vote]} />
@@ -39,7 +39,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
             label='Unvote'
             onClick={() => {
               recordVote(
-                SCDS.addr,
+                QSDS.addr,
                 candidate,
                 0 // UNDECIDED
               );
@@ -56,7 +56,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
             label='Accept'
             onClick={() => {
               recordVote(
-                SCDS.addr,
+                QSDS.addr,
                 candidate,
                 1 // APPROVE
               );
@@ -74,7 +74,7 @@ function Vote({ candidate, stake, vote, status }: VoteProps) {
               label='Reject'
               onClick={() => {
                 recordVote(
-                  SCDS.addr,
+                  QSDS.addr,
                   candidate,
                   2 // REJECT
                 );

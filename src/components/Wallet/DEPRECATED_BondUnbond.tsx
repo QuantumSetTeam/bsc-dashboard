@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 import { BalanceBlock, MaxButton } from '../common';
 import { bond, unbondUnderlying } from '../../utils/web3';
 import { isPos, toBaseUnitBN } from '../../utils/number';
-import { SCD, SCDS } from '../../constants/tokens';
+import { QSD, QSDS } from '../../constants/tokens';
 import BigNumberInput from '../common/BigNumberInput';
 import TextBlock from '../common/TextBlock';
 
@@ -30,7 +30,7 @@ function BondUnbond({ staged, bonded, status, lockup }: BondUnbondProps) {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {/* Total bonded */}
         <div style={{ flexBasis: '16%' }}>
-          <BalanceBlock asset='Bonded' balance={bonded} suffix={'SCD'} />
+          <BalanceBlock asset='Bonded' balance={bonded} suffix={'QSD'} />
         </div>
         {/* Total bonded */}
         <div style={{ flexBasis: '16%' }}>
@@ -41,13 +41,13 @@ function BondUnbond({ staged, bonded, status, lockup }: BondUnbondProps) {
             }
           />
         </div>
-        {/* Bond SCD within DAO */}
+        {/* Bond QSD within DAO */}
         <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
           <div style={{ display: 'flex' }}>
             <div style={{ width: '60%', minWidth: '6em' }}>
               <>
                 <BigNumberInput
-                  adornment='SCD'
+                  adornment='QSD'
                   value={bondAmount}
                   setter={setBondAmount}
                 />
@@ -64,7 +64,7 @@ function BondUnbond({ staged, bonded, status, lockup }: BondUnbondProps) {
                 icon={status === 0 ? <IconCirclePlus /> : <IconCaution />}
                 label='Bond'
                 onClick={() => {
-                  bond(SCDS.addr, toBaseUnitBN(bondAmount, SCD.decimals));
+                  bond(QSDS.addr, toBaseUnitBN(bondAmount, QSD.decimals));
                 }}
                 disabled={
                   status === 2 ||
@@ -76,13 +76,13 @@ function BondUnbond({ staged, bonded, status, lockup }: BondUnbondProps) {
           </div>
         </div>
         <div style={{ width: '2%' }} />
-        {/* Unbond SCD within DAO */}
+        {/* Unbond QSD within DAO */}
         <div style={{ flexBasis: '33%', paddingTop: '2%' }}>
           <div style={{ display: 'flex' }}>
             <div style={{ width: '60%', minWidth: '6em' }}>
               <>
                 <BigNumberInput
-                  adornment='SCD'
+                  adornment='QSD'
                   value={unbondAmount}
                   setter={setUnbondAmount}
                 />
@@ -100,8 +100,8 @@ function BondUnbond({ staged, bonded, status, lockup }: BondUnbondProps) {
                 label='Unbond'
                 onClick={() => {
                   unbondUnderlying(
-                    SCDS.addr,
-                    toBaseUnitBN(unbondAmount, SCD.decimals)
+                    QSDS.addr,
+                    toBaseUnitBN(unbondAmount, QSD.decimals)
                   );
                 }}
                 disabled={

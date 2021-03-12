@@ -124,10 +124,10 @@ function App() {
                         <Route path='/lp/'>
                           <Pool user={user} />
                         </Route>
-                        <Route path='/SCD/'>
+                        <Route path='/QSD/'>
                           <Bonding user={user} />
                         </Route>
-                        <Route path='/SCDG/'>
+                        <Route path='/QSG/'>
                           <PoolGov user={user} />
                         </Route>
                         <Route path='/dashboard/'>
