@@ -11,24 +11,35 @@ export const Landing: React.FC = () => {
   const Card: React.FC<{
     underlineTitle?: boolean;
     title: string;
-    body: string;
-  }> = ({ underlineTitle, title, body }) => (
+    body1: string;
+    body2?: string;
+    body3?: string;
+    body4?: string;
+    flexGrowSetting?:number;
+  }> = ({ underlineTitle, title, body1, body2, body3, body4, flexGrowSetting }) => (
     <div
       style={{
         margin: 12,
         padding: 24,
         borderRadius: 6,
         background: isDark ? Colors.CardDark : Colors.CardLight,
+        flex:flexGrowSetting
       }}
     >
-      <div style={{ fontSize: 20, marginBottom: 24 }}>
+      <div style={{ fontSize: 20, marginBottom: 24, alignSelf: 'flex-start', flex:flexGrowSetting  }}>
         {underlineTitle ? (
           <span style={{ textDecoration: 'underline' }}>{title}</span>
         ) : (
           { title }
         )}
       </div>
-      <div style={{ fontSize: 16, fontWeight: 300 }}>{body}</div>
+      <div style={{ fontSize: 16, fontWeight: 300 }}>{body1}</div>
+      <br/>
+      <div style={{ fontSize: 16, fontWeight: 300 }}>{body2}</div>
+      <br/>
+      <div style={{ fontSize: 16, fontWeight: 300 }}>{body3}</div>
+      <br/>
+      <div style={{ fontSize: 16, fontWeight: 300 }}>{body4}</div>
     </div>
   );
 
@@ -54,17 +65,13 @@ export const Landing: React.FC = () => {
               marginBottom: 40,
             }}
           >
-            <div>Experimental</div>
+            <div>2nd Generation</div>
+            <div>Algorithmic</div>
             <div>Stablecoin</div>
-            <div>Protocol</div>
           </div>
 
           <div style={{ fontSize: 20 }}>
-            Quantum Set Dollar (QSD) is a decentralised, experimental
-            stablecoin, using previous stablecoin designs as its foundation.
-            Updated mechanics ensure improved peg stability and the ability to
-            easily iterate provides an experimental edge for innovation limited
-            only by imagination.
+          Quantum Set Dollar is a second generation algorithmic stablecoin on Binance Smart Chain. Based on the original Empty Set Dollar design with an improved model and partially backed by a cashflow generating treasury reserve that operates a buyback and burn strategy below peg. 
           </div>
 
           <div style={{ marginTop: 24 }}>
@@ -124,24 +131,34 @@ export const Landing: React.FC = () => {
           style={{
             padding: '0 12px',
             display: 'flex',
-            flexWrap: above('medium') ? undefined : 'wrap',
+            flexWrap: above('medium') ? undefined : 'nowrap',
           }}
         >
           <Card
+            flexGrowSetting={0.8}
             underlineTitle={true}
-            title='Expansion Above Peg'
-            body='When the price of QSD is above $1 the supply will expand at a maximum rate of 5.4% per epoch and rewards will be distributed between bonded QSD and LP. There are no lock-ups on rewards which encourages selling above the peg.'
+            title='The Goldilocks Zone'
+
+            body1='The Goldilocks Zone is an area around the peg, created to better facilitate peg retention.'
+            body2='The Goldilocks Zone ($0.98 - $1.00) - Supply remains the same'
+            body3='Above the Goldilocks Zone ($1.02 - $1.10 +) - Supply expands up to a maximum of 5.4%'
+            body4='Below the Goldilock Zone (> $0.98) - Supply Contraction with Treasury Buyback & Burn'
+            
           />
           <Card
+            flexGrowSetting={0.7}
             underlineTitle={true}
-            title='Incentives Below Peg'
-            body='When the price of QSD is below $1, holders will be able to earn rewards in the form of the QSD Governance Token (QSG), by staking their QSD. Secondarily, the ability to bond QSD will only be available below peg.'
+            title='Cashflow Generating Reserve'
+            body1='The QSD Treasury is funded by receiving a 15% share of expansion rewards.' 
+            body2='These rewards are placed into high yield farms on BSC, the yield from which is used to buy back and burn QSD when it is below the Goldilocks Zone, ensuring long term peg support.'
           />
           <Card
+            flexGrowSetting={0.5}
             underlineTitle={true}
-            title='Community Ownership'
-            body='Quantum Set Dollar will be governed by holders of the QSD Governance Token. QSG can be farmed by community members from Epoch 73 onwards, whilst QSD is below the peg of $1. QSG holders will also control the Treasury.'
+            title='Farming'
+            body1='Within and below the Goldilocks zone (> $1.02) users can farm QSG the Governance Token of QSD, QSD holders receive voting rights and a 10% share of expansion rewards.'
           />
+          
         </div>
         <div style={{ textAlign: 'center', marginTop: 24 }}>
           <Button style={{ marginRight: 40 }}>

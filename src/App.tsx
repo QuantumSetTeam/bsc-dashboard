@@ -9,7 +9,7 @@ import NavBar from './components/NavBar';
 import HomePage from './components/HomePage';
 import Trade from './components/Trade/index';
 import Footer from './components/Footer';
-import Wallet from './components/Wallet';
+import ClaimBSC from './components/ClaimBSC';
 import EpochDetail from './components/EpochDetail';
 import CouponMarket from './components/CouponMarket';
 import Governance from './components/Governance';
@@ -91,11 +91,8 @@ function App() {
                   <div style={{ padding: '0 0 80px' }}>
                     {hasWeb3 ? (
                       <Switch>
-                        <Route path='/bootstrapping/:override'>
-                          <Wallet user={user} />
-                        </Route>
-                        <Route path='/bootstrapping/'>
-                          <Wallet user={user} />
+                        <Route path='/claim/'>
+                          <ClaimBSC user={user} />
                         </Route>
                         <Route path='/epoch/'>
                           <EpochDetail user={user} />

@@ -31,7 +31,7 @@ import {
 import AccountPageHeader from './Header';
 import { WithdrawDeposit, BondUnbond, IconHeader, Guide } from '../common';
 
-function Wallet({ user }: { user: string }) {
+function Claim({ user }: { user: string }) {
   const { override } = useParams();
   if (override) {
     user = override;
@@ -277,4 +277,4 @@ function Wallet({ user }: { user: string }) {
   );
 }
 
-export default Wallet;
+export default Claim;

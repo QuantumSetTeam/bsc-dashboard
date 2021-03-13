@@ -12,6 +12,8 @@ export const UniV2PairAddress = '0x58134a4551778E266723e775B4966D2617DA2aa7'; //
 export const Implementation = '0x810b4c4157980124Ae65193B884D4600082af6a0'; // changed
 export const Dai = '0x33d000dfe25424ac6f87ac771728ff231d5b1e35'; // changed (only once)
 
+export const claimAddress = '';
+
 export const TreasuryAddress = '0xD6F11BAEf82ceea8e6E7B29Dfc205e499d7ecee8';
 
 export const DollarPool1 = '0xdF0Ae5504A48ab9f913F8490fBef1b9333A68e68';

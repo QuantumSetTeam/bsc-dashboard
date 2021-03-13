@@ -110,6 +110,7 @@ function NavBar({ hasWeb3, user, setUser }: NavbarProps) {
             </NavLink>
             <div style={{ textAlign: 'center' }}>
               <LinkButton title='Dashboard' to='/dashboard/' />
+              <LinkButton title='BSC Migration' to='/claim/' />
               <LinkButton title='QSD' to='/QSD/' />
               <LinkButton title='LP' to='/lp/' />
               <LinkButton title='QSG' to='/QSG/' />

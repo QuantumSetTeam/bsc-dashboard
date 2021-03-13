@@ -10,6 +10,7 @@ import { QSD, BUSD } from '../constants/tokens';
 const uniswapRouterAbi = require('../constants/abi/UniswapV2Router02.json');
 const testnetBUSDAbi = require('../constants/abi/TestnetUSDC.json');
 const daoAbi = require('../constants/abi/Implementation.json');
+const claimAbi = require('../constants/abi/Claim.json');
 const poolAbi = require('../constants/abi/Pool.json');
 const poolBondingAbi = require('../constants/abi/PoolBonding.json');
 const poolLPAbi = require('../constants/abi/PoolLP.json');
@@ -198,6 +199,19 @@ export const advance = async (dao) => {
   const daoContract = new window.web3.eth.Contract(daoAbi, dao);
   await daoContract.methods
     .advance()
+    .send({
+      from: account,
+    })
+    .on('transactionHash', (hash) => {
+      notify.hash(hash);
+    });
+};
+
+export const claimBSC = async (claimAddress) => {
+  const account = await checkConnectedAndGetAddress();
+  const claimContract = new window.web3.eth.Contract(claimAbi, claimAddress);
+  await claimContract.methods
+    .claim()
     .send({
       from: account,
     })
