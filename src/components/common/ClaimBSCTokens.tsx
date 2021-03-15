@@ -1,9 +1,6 @@
-import { Button, IconArrowDown } from '@aragon/ui';
-import BigNumber from 'bignumber.js';
-import React, { useState } from 'react';
-import { isPos } from '../../utils/number';
-import BigNumberInput from './BigNumberInput';
-import { BalanceBlock, MaxButton, TopBorderSection } from './index';
+import { Button } from '@aragon/ui';
+import React from 'react';
+import { TopBorderSection } from './index';
 import { claimBSC } from '../../utils/web3';
 import { claimAddress } from '../../constants/contracts';
 

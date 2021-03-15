@@ -14,7 +14,7 @@ export const Dai = '0x33d000dfe25424ac6f87ac771728ff231d5b1e35'; // changed (onl
 
 export const claimAddress = '';
 
-export const TreasuryAddress = '0xD6F11BAEf82ceea8e6E7B29Dfc205e499d7ecee8';
+export const TreasuryAddress = '0x247C08e7f043B960457676516A3258484aD8e7Bb'; //changed
 
 export const DollarPool1 = '0xdF0Ae5504A48ab9f913F8490fBef1b9333A68e68';
 export const DollarPool2 = '0xA5976897BC0081e3895013B08654DfEc50Bcb33F';
