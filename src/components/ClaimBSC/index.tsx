@@ -76,7 +76,7 @@ function ClaimBSC({ user }: { user: string }) {
   // eslint-disable-next-line
   }, [user]);
 
-  
+
   return (
     <Layout>
       <MigrationInstructions
@@ -92,25 +92,23 @@ function ClaimBSC({ user }: { user: string }) {
             <br />
 
             <p>
-              On DATE (Ethereum block # BLOCK), we took a snapshot of every wallet that had QSD/QSG on the Ethereum network. <br/>
-              This includes tokens that were staked/bonded in QSD contracts, as well as tokens that were simply held in wallets. <br/>
-              We've minted the exact same token amounts on the BSC network, and in this page you can claim any QSD/QSG that you had prior to the migration.
+              On DATE (Ethereum block # BLOCK), we took a snapshot of every wallet that had QSD/QSG on the Ethereum network. <br/> <br/>
+              This included all QSD/QSG tokens that were staged/bonded in any contracts (including QSD as part of QSD:DAI LP). <br/> <br/>
+              We then minted the corresponding amount of QSD and QSG on the BSC network. <br/> <br/>
+              You can claim your QSD/QSG on Binance Smart Chain by following the instructions below. <br/>
             </p>
             <hr style={{color:'white'}} />
-            Before starting, make sure that your browser wallet is connected to Binance Smart Chain.  
-            <a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_blank" rel="noopener noreferrer">  <u>Click here for instructions on how to connect.</u></a>
+            <b><u>Step 1:</u></b> Connect your browser wallet to Binance Smart Chain.<a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_blank" rel="noopener noreferrer">  <u>Click here for instructions on how to connect.</u></a>
             <br />
             <br />
-            <b><u>Step 1:</u></b> Click on the "Claim" button below and submit the transaction
+            <b><u>Step 2:</u></b> Send BNB to your Wallet to pay for gas fees. You can send directly from www.binance.com or by using Binance Bridge<a href="https://www.binance.org/en/bridge" target="_blank" rel="noopener noreferrer">  <u>https://www.binance.org/en/bridge</u></a>
             <br />
             <br />
-            <b><u>Step 2:</u></b> You will receive in your wallet the corresponding amounts of QSD and QSG 
-            that you had on the Ethereum network, 
-            at the time of taking the snapshot.
+            <b><u>Step 3:</u></b> Click the “Claim all QSD + QSG” button below to receive your QSD/QSD on Binance Smart Chain.
             <br />
             <br />
               <p>
-              Note: you must use the same address that you had on the ETH network in order to receive your funds. 
+              Note: In order to retrieve your funds you must use the same wallet address on the BSC network that you used on the ETH network. 
               </p>
           </p>
         }

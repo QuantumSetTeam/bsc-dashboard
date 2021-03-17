@@ -25,7 +25,7 @@ export const ClaimBSCTokens: React.FC<ClaimBSCProps> = ({
               }}
               disabled={user === ''}
             >
-              Click Here To Claim
+              Claim all QSD + QSG
             </Button>
             </div>
           </div>

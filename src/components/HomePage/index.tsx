@@ -199,7 +199,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://narwhalswap.org/#/page/swap?outputCurrency=${QSD.addr}`}
+                    href={`https://exchange.pancakeswap.finance//#/page/swap?outputCurrency=${QSD.addr}`}
                   >
                     Trade QSD
                   </a>
@@ -215,7 +215,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://info.narwhalswap.org/token/${QSD.addr}`}
+                    href={`https://pancakeswap.info/token/${QSD.addr}`}
                   >
                     Trade Info
                   </a>
@@ -231,7 +231,7 @@ function HomePage({ user }: HomePageProps) {
                     target='_blank'
                     rel="noopener noreferrer" 
                     style={{ textDecoration: 'none' }}
-                    href={`https://narwhalswap.org/#/page/add/${QSD.addr}/${BUSD.addr}`}
+                    href={`https://exchange.pancakeswap.finance/#/add/${QSD.addr}/${BUSD.addr}`}
                   >
                     Add Liquidity
                   </a>

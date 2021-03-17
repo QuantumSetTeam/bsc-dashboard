@@ -59,11 +59,11 @@ function App() {
   return (
     <Router>
       <UseWalletProvider
-        chainId={97}
+        chainId={56}
         connectors={{
-          walletconnect: { rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545' },
+          walletconnect: { rpcUrl: 'https://bsc-dataseed.binance.org' },
           walletlink: {
-            url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+            url: 'https://bsc-dataseed.binance.org',
             appName: 'Coinbase Wallet',
             appLogoUrl: '',
           },
