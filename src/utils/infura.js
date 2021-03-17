@@ -856,7 +856,7 @@ export const getPoolFluidUntil = async (pool, account) => {
 
   // no need to look back further than the pool lockup period
   const blockNumber = await web3.eth.getBlockNumber();
-  const fromBlock = blockNumber - (POOL_EXIT_LOCKUP_EPOCHS + 1) * 8640;
+  const fromBlock = blockNumber - (POOL_EXIT_LOCKUP_EPOCHS + 1) * 1000;
   const bondP = poolContract.getPastEvents('Bond', {
     filter: { account: account },
     fromBlock: fromBlock,
