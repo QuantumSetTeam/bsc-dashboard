@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import BigNumber from "bignumber.js";
 import {
-  getBalanceBonded,
-  getBalanceOfStaged,
-  getPoolBalanceOfBonded, getPoolBalanceOfClaimable, getPoolBalanceOfRewarded, getPoolBalanceOfStaged,
+  getPoolBalanceOfBonded, getPoolBalanceOfClaimable1, getPoolBalanceOfRewarded1, getPoolBalanceOfStaged,
   getTokenBalance,
   getTokenTotalSupply
 } from "../../utils/infura";
 import {QSD, QSDS, UNI} from "../../constants/tokens";
 import { toTokenUnitsBN} from "../../utils/number";
-import {getPoolBondingAddress} from "../../utils/pool";
+// import {getPoolBondingAddress} from "../../utils/pool";
 import { formatBN } from '../../utils/number';
+//import Web3 from 'web3';
+import { getPoolBondingAddress } from '../../utils/pool';
 
 
 type TotalBalanceProps = {
@@ -31,30 +31,28 @@ function TotalBalance({ user }: TotalBalanceProps) {
     let isCancelled = false;
 
     async function updateUserInfo() {
+      //const poolAddress = Web3.utils.toChecksumAddress(PoolBondingAdd.addr);
       const poolAddress = await getPoolBondingAddress();
 
+
       const [
-        esdBalance, stagedBalance, bondedBalance,
+        esdBalance, 
         pairBalanceQSDStr, pairTotalSupplyUNIStr, userUNIBalanceStr,
         userPoolBondedBalanceStr, userPoolStagedBalanceStr,
         userPoolRewardedBalanceStr, userPoolClaimableBalanceStr,
       ] = await Promise.all([
         getTokenBalance(QSD.addr, user),
-        getBalanceOfStaged(QSDS.addr, user),
-        getBalanceBonded(QSDS.addr, user),
 
         getTokenBalance(QSD.addr, UNI.addr),
         getTokenTotalSupply(UNI.addr),
         getTokenBalance(UNI.addr, user),
         getPoolBalanceOfBonded(poolAddress, user),
         getPoolBalanceOfStaged(poolAddress, user),
-        getPoolBalanceOfRewarded(poolAddress, user),
-        getPoolBalanceOfClaimable(poolAddress, user),
+        getPoolBalanceOfRewarded1(poolAddress, user),
+        getPoolBalanceOfClaimable1(poolAddress, user),
       ]);
 
       const userBalance = toTokenUnitsBN(esdBalance, QSD.decimals);
-      const userStagedBalance = toTokenUnitsBN(stagedBalance, QSDS.decimals);
-      const userBondedBalance = toTokenUnitsBN(bondedBalance, QSDS.decimals);
 
       const userUNIBalance = toTokenUnitsBN(userUNIBalanceStr, QSDS.decimals);
       const userPoolBondedBalance = toTokenUnitsBN(userPoolBondedBalanceStr, QSDS.decimals);
@@ -64,12 +62,11 @@ function TotalBalance({ user }: TotalBalanceProps) {
 
       const UNItoQSD = new BigNumber(pairBalanceQSDStr).dividedBy(new BigNumber(pairTotalSupplyUNIStr));
 
-      const daoTotalBalance = userStagedBalance.plus(userBondedBalance);
       const poolTotalBalance = UNItoQSD.multipliedBy(userPoolStagedBalance.plus(userPoolBondedBalance))
         .plus(userPoolRewardedBalance.plus(userPoolClaimableBalance));
       const circulationBalance = UNItoQSD.multipliedBy(userUNIBalance).plus(userBalance)
 
-      const totalBalance = daoTotalBalance.plus(poolTotalBalance).plus(circulationBalance)
+      const totalBalance = poolTotalBalance.plus(circulationBalance)
 
       if (!isCancelled) {
         setTotalBalance(totalBalance);

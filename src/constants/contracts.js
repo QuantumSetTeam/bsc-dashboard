@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 // eslint-disable-next-line import/prefer-default-export
-export const UniswapV2Router02 = '0xE85C6ab56A3422E7bAfd71e81Eb7d0f290646078';
+export const UniswapV2Router02 = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'; //changed
 
 export const Dao = '0xB0eac3546Ac7C37Bfd07606bB02C48950A87784E'; // changed
 export const PoolBonding = '0x0c1D7c5466D1BeF622Ef01E161F5c4f3B57156Df'; // changed

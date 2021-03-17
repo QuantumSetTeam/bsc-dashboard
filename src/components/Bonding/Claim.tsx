@@ -36,7 +36,7 @@ export const Claim: React.FC<ClaimProps> = ({
         icon={<i className='far fa-hand-point-right' />}
         label='Claim'
         onClick={() => claimRewards(poolAddress)}
-        disabled={!poolAddress || (userStatus && userStatus !== 0)}
+        disabled={!poolAddress || (userStatus !== 0)}
       />
     </div>
     <div style={{ width: '100%', paddingTop: '2%', textAlign: 'center' }}>
