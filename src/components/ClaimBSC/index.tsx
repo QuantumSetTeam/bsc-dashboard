@@ -92,7 +92,7 @@ function ClaimBSC({ user }: { user: string }) {
             <br />
 
             <p>
-              On DATE (Ethereum block # BLOCK), we took a snapshot of every wallet that had QSD/QSG on the Ethereum network. <br/> <br/>
+              At 21:10:51 UTC of March 17, 2021 (Ethereum block 12058536), we took a snapshot of every wallet that had QSD/QSG on the Ethereum network. <br/> <br/>
               This included all QSD/QSG tokens that were staged/bonded in any contracts (including QSD as part of QSD:DAI LP). <br/> <br/>
               We then minted the corresponding amount of QSD and QSG on the BSC network. <br/> <br/>
               You can claim your QSD/QSG on Binance Smart Chain by following the instructions below. <br/>

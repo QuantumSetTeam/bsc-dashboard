@@ -60,6 +60,7 @@ function App() {
     <Router>
       <UseWalletProvider
         chainId={56}
+        // chainId={97} // BSC TESTNET
         connectors={{
           walletconnect: { rpcUrl: 'https://bsc-dataseed.binance.org' },
           walletlink: {
@@ -67,6 +68,13 @@ function App() {
             appName: 'Coinbase Wallet',
             appLogoUrl: '',
           },
+        //   connectors={{
+        //     walletconnect: { rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545' },
+        //     walletlink: {
+        //       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+        //       appName: 'Coinbase Wallet',
+        //       appLogoUrl: '',
+        //     },
         }}
       >
         <Main

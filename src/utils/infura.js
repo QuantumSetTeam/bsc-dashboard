@@ -905,7 +905,7 @@ export const getExpansionAmount = async () => {
     return totalSupply * MAX_SUPPLY_EXPANSION;
   }
 
-  const delta = Math.min(price - 1, MAX_SUPPLY_EXPANSION);
+  const delta = Math.min(price - 1.02, MAX_SUPPLY_EXPANSION);
   const newSupply = totalSupply * delta;
 
   if (price < 1.02) {
