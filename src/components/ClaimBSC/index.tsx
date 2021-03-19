@@ -110,7 +110,7 @@ function ClaimBSC({ user }: { user: string }) {
             <b><u>Step 4:</u></b> Stage + Bond your QSD/QSG/LP in the appropriate pool.
             <br />
             <br />
-            Keep in mind that can only make one deposit in each pool per epoch, so prior to launch ensure you deposit the total desired amount in one transaction.
+            Keep in mind that users can only make one deposit in each pool per epoch, so prior to launch ensure you deposit the total desired amount in one transaction.
             <br />
             <br />
             <br />
