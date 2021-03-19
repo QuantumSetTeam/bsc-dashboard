@@ -107,8 +107,16 @@ function ClaimBSC({ user }: { user: string }) {
             <b><u>Step 3:</u></b> Click the “Claim all QSD + QSG” button below to receive your QSD/QSD on Binance Smart Chain.
             <br />
             <br />
-              <p>
-              Note: In order to retrieve your funds you must use the same wallet address on the BSC network that you used on the ETH network. 
+            <b><u>Step 4:</u></b> Stage + Bond your QSD/QSG/LP in the appropriate pool.
+            <br />
+            <br />
+            Keep in mind that can only make one deposit in each pool per epoch, so prior to launch ensure you deposit the total desired amount in one transaction.
+            <br />
+            <br />
+            <br />
+              <p style={{textAlign:'center',
+                        fontSize: '16px'}}>
+              Note: In order to retrieve your funds you must use the <u>same wallet address</u> on the BSC network that you used on the ETH network. 
               </p>
           </p>
         }
