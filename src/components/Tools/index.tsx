@@ -30,7 +30,7 @@ import {
 import { formatBN, toTokenUnitsBN } from '../../utils/number';
 import { getPoolBondingAddress, getPoolLPAddress } from '../../utils/pool';
 import { advance } from '../../utils/web3';
-import { Row, Section, Tile, TopBorderSection } from '../common';
+import { Row, Section, Tile, TopBorderSection, IconHeader } from '../common';
 import { SectionProps } from '../common/Section';
 
 function Tools({ user }: { user: string }) {
@@ -406,6 +406,7 @@ function Tools({ user }: { user: string }) {
 
   return (
     <Layout>
+      <IconHeader icon={<i className='fas fa-clock' />} text='The system will resume on Epoch 300 - March 21st at 16:00 UTC' />
       <Section>
         <Tile
           line1='Next Epoch:'

@@ -214,6 +214,7 @@ function Pool({ user }: { user: string }) {
 
   return (
     <Layout>
+      <IconHeader icon={<i className='fas fa-clock' />} text='The system will resume on Epoch 300 - March 21st at 16:00 UTC' />
       <Guide
         aprs={{
           hourly: lpHourlyAPR,

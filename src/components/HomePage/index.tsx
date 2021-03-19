@@ -141,8 +141,10 @@ function HomePage({ user }: HomePageProps) {
 
   return (
     <BContainer>
+     
       {/*Commented By RDN*/}
     {/* <Layout> */}
+    <IconHeader icon={<i className='fas fa-clock' />} text='The system will resume on Epoch 300 - March 21st at 16:00 UTC' />
       <div style={{ margin: '60px 0' }}>
         
         <BRow >
