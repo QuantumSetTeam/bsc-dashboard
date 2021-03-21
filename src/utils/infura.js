@@ -482,14 +482,18 @@ export const getAllProposals = async (dao) => {
  */
 export const getAllRegulations = async (dao) => {
     const daoContract = new web3.eth.Contract(daoAbi, dao);
+
+    const blockNumber = await web3.eth.getBlockNumber();
+    const fromBlock = blockNumber - 4999;
+
     const increaseP = daoContract.getPastEvents('SupplyIncrease', {
-        fromBlock: 0,
+        fromBlock: fromBlock,
     });
     const decreaseP = daoContract.getPastEvents('SupplyDecrease', {
-        fromBlock: 0,
+        fromBlock: fromBlock,
     });
     const neutralP = daoContract.getPastEvents('SupplyNeutral', {
-        fromBlock: 0,
+        fromBlock: fromBlock,
     });
 
     const [increase, decrease, neutral] = await Promise.all([
