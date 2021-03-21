@@ -512,21 +512,21 @@ function Tools({ user }: { user: string }) {
                 </BorderedSection>
                 <Section>
                     <Row>
-                        <InfoBox title='UNI-V2 Wallet'>
+                        <InfoBox title='CAKE-LP Wallet'>
                             {userUniBal
-                                ? formatBN(userUniBal, 2) + ' UNI'
+                                ? formatBN(userUniBal, 2) + ' CAKE-LP'
                                 : '0'}{' '}
                             ({userLPWalletPrice})
                         </InfoBox>
                         <InfoBox title='LP Staged'>
                             {userLpStaged
-                                ? formatBN(userLpStaged, 2) + ' UNI'
+                                ? formatBN(userLpStaged, 2) + ' CAKE-LP'
                                 : '0'}{' '}
                             ({userLPStagedPrice})
                         </InfoBox>
                         <InfoBox title='LP Bonded'>
                             {userLpBonded
-                                ? formatBN(userLpBonded, 2) + ' UNI'
+                                ? formatBN(userLpBonded, 2) + ' CAKE-LP'
                                 : '0'}{' '}
                             ({userLPBondedPrice})
                         </InfoBox>

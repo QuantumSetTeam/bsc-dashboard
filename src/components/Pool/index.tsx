@@ -248,13 +248,13 @@ function Pool({ user }: { user: string }) {
                 }}
                 bodyInstructions={
                     <p>
-                        Step 1: Stage your UNI-V2
+                        Step 1: Stage your CAKE-LP
                         <br />
-                        Step 2: Bond your UNI-V2
+                        Step 2: Bond your CAKE-LP
                         <br />
-                        Step 3: Unbond your UNI-V2 to move rewards to claimable
+                        Step 3: Unbond your CAKE-LP to move rewards to claimable
                         <br />
-                        &nbsp;&nbsp; (Remember to re-bond your UNI-V2 to
+                        &nbsp;&nbsp; (Remember to re-bond your CAKE-LP to
                         continue getting rewards)
                         <br />
                         Step 4: Wait 1 epoch to claim claimable QSD
@@ -295,7 +295,7 @@ function Pool({ user }: { user: string }) {
       /> */}
 
             <WithdrawDeposit
-                suffix='UNI-V2'
+                suffix='CAKE-LP'
                 balance={userUNIBalance}
                 allowance={userUNIAllowance}
                 stagedBalance={userStagedBalance}
@@ -329,7 +329,7 @@ function Pool({ user }: { user: string }) {
       /> */}
 
             <BondUnbond
-                suffix='UNI-V2'
+                suffix='CAKE-LP'
                 staged={userStagedBalance}
                 bonded={userBondedBalance}
                 status={userStatus}
