@@ -58,6 +58,7 @@ function Bonding({ user }: { user: string }) {
         new BigNumber(0)
     );
     const [userStatus, setUserStatus] = useState(0);
+    // eslint-disable-next-line
     const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
     const [lockup, setLockup] = useState(0);
     const [userRewardedQSD, setUserRewardedQSD] = useState(new BigNumber(0));
@@ -266,7 +267,7 @@ function Bonding({ user }: { user: string }) {
                 accountStagedBalance={userStagedBalance}
                 accountBondedBalance={userBondedBalance}
                 accountStatus={userStatus}
-                unlocked={userStatusUnlocked}
+                unlocked={epoch + 1}
             />
 
             <WithdrawDeposit

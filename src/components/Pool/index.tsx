@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '@aragon/ui';
 import { useParams } from 'react-router-dom';
 import { DollarPool4 } from '../../constants/contracts';
-import { BUSD, QSD, UNI } from '../../constants/tokens';
+import { BUSD, QSD, UNI, QSDS } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
     getExpansionAmount,
@@ -18,6 +18,7 @@ import {
     getPoolTotalBonded,
     getTokenAllowance,
     getTokenBalance,
+    getEpoch,
 } from '../../utils/infura';
 import { toBaseUnitBN, toFloat, toTokenUnitsBN } from '../../utils/number';
 import { getPoolLPAddress } from '../../utils/pool';
@@ -48,6 +49,7 @@ function Pool({ user }: { user: string }) {
         user = override;
     }
 
+    const [epoch, setEpoch] = useState<number>(0);
     const [QSDLiquidity, setQSDLiquidity] = useState<number | null>(null);
     const [busdLiquidity, setBUSDLiquidity] = useState<number | null>(null);
     const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
@@ -76,7 +78,10 @@ function Pool({ user }: { user: string }) {
         new BigNumber(0)
     );
     const [userStatus, setUserStatus] = useState(0);
+
+    // eslint-disable-next-line
     const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
+
     const [lockup, setLockup] = useState(0);
 
     //APR
@@ -135,6 +140,7 @@ function Pool({ user }: { user: string }) {
                 claimableBalance,
                 status,
                 fluidUntilStr,
+                epoch,
             ] = await Promise.all([
                 getPoolTotalBonded(poolAddressStr),
                 getTokenBalance(QSD.addr, UNI.addr),
@@ -151,7 +157,10 @@ function Pool({ user }: { user: string }) {
                 getPoolBalanceOfClaimable(poolAddressStr, user),
                 getPoolStatusOf(poolAddressStr, user),
                 getPoolFluidUntil(poolAddressStr, user),
+                getEpoch(QSDS.addr),
             ]);
+
+            setEpoch(parseInt(epoch, 10));
 
             const poolTotalBonded = toTokenUnitsBN(
                 poolTotalBondedStr,
@@ -282,7 +291,7 @@ function Pool({ user }: { user: string }) {
                 accountClaimableQSDBalance={userClaimableBalance}
                 poolTotalBonded={poolTotalBonded}
                 accountPoolStatus={userStatus}
-                unlocked={userStatusUnlocked}
+                unlocked={epoch + 1}
             />
 
             {/* <WithdrawDeposit
