@@ -80,8 +80,8 @@ function Governance({ user }: { user: string }) {
     return (
         <Layout>
             <IconHeader
-                icon={<i className='fas fa-poll' />}
-                text='Governance'
+                icon={<i className="fas fa-poll" />}
+                text="Governance"
             />
 
             <GovernanceHeader
@@ -103,7 +103,7 @@ function Governance({ user }: { user: string }) {
             )}
 
             <Section>
-                <Header primary='Candidate History' />
+                <Header primary="Candidate History" />
 
                 <CandidateHistory user={user} />
             </Section>
