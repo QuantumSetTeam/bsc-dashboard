@@ -465,8 +465,8 @@ export const getAllProposals = async (dao) => {
     const daoContract = new web3.eth.Contract(daoAbi, dao);
     const payload = (
         await daoContract.getPastEvents('Proposal', {
-            fromBlock: 6416000,
-            toBlock: 6416090,
+            fromBlock: 6474378,
+            toBlock: 6475378,
         })
     ).map((event) => {
         const prop = event.returnValues;
