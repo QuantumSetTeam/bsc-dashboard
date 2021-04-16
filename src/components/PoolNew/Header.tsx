@@ -10,6 +10,8 @@ type PoolPageHeaderProps = {
     accountBondedBalance: BigNumber;
     accountRewardedQSDBalance: BigNumber;
     accountClaimableQSDBalance: BigNumber;
+    accountRewardedBUSDBalance: BigNumber;
+    accountClaimableBUSDBalance: BigNumber;
     poolTotalBonded: BigNumber;
     accountPoolStatus: number;
     unlocked: number;
@@ -29,6 +31,8 @@ const PoolPageHeader = ({
     accountBondedBalance,
     accountRewardedQSDBalance,
     accountClaimableQSDBalance,
+    accountRewardedBUSDBalance,
+    accountClaimableBUSDBalance,
     poolTotalBonded,
     accountPoolStatus,
     unlocked,
@@ -60,6 +64,20 @@ const PoolPageHeader = ({
                 asset='Claimable'
                 balance={accountClaimableQSDBalance}
                 suffix={' QSD'}
+            />
+        </div>
+        <div style={{ flexBasis: '20%' }}>
+            <BalanceBlock
+                asset='Rewarded'
+                balance={accountRewardedBUSDBalance}
+                suffix={' BUSD'}
+            />
+        </div>
+        <div style={{ flexBasis: '20%' }}>
+            <BalanceBlock
+                asset='Claimable'
+                balance={accountClaimableBUSDBalance}
+                suffix={' BUSD'}
             />
         </div>
         <div style={{ flexBasis: '20%' }}>

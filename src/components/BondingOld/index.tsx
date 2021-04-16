@@ -4,7 +4,7 @@ import { Layout } from '@aragon/ui';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { QSD, QSDS, QSG } from '../../constants/tokens';
+import { QSD, QSDS, QSG, PoolBondingAdd } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
     getBalanceBonded,
@@ -23,7 +23,6 @@ import {
     getTokenBalance,
 } from '../../utils/infura';
 import { toBaseUnitBN, toFloat, toTokenUnitsBN } from '../../utils/number';
-import { getPoolBondingAddress } from '../../utils/pool';
 import {
     approve,
     bondPool,
@@ -31,12 +30,18 @@ import {
     unbondPool,
     withdrawPool,
 } from '../../utils/web3';
-import { BondUnbond, Guide, IconHeader, WithdrawDeposit } from '../common';
+import {
+    BondUnbond,
+    Guide,
+    IconHeader,
+    WithdrawDeposit,
+    ScrollToTop,
+} from '../common';
 import { Claim } from './Claim';
 import AccountPageHeader from './Header';
 import { Rewards } from './Rewards';
 
-function Bonding({ user }: { user: string }) {
+function BondingOld({ user }: { user: string }) {
     const { override } = useParams();
     if (override) {
         user = override;
@@ -49,7 +54,7 @@ function Bonding({ user }: { user: string }) {
     );
     const [userQSDBalance, setUserQSDBalance] = useState(new BigNumber(0));
     const [userQSDAllowance, setUserQSDAllowance] = useState(new BigNumber(0));
-    const [userQSDSBalance, setUserQSDSBalance] = useState(new BigNumber(0));
+    // const [userQSDSBalance, setUserQSDSBalance] = useState(new BigNumber(0));
     const [totalQSDSSupply, setTotalQSDSSupply] = useState(new BigNumber(0));
     const [userStagedBalance, setUserStagedBalance] = useState(
         new BigNumber(0)
@@ -72,7 +77,7 @@ function Bonding({ user }: { user: string }) {
     //APR and stuff
     useEffect(() => {
         const updateAPR = async () => {
-            const poolBonding = await getPoolBondingAddress();
+            const poolBonding = PoolBondingAdd.addr;
 
             const [
                 epoch,
@@ -101,7 +106,7 @@ function Bonding({ user }: { user: string }) {
         if (user === '') {
             setUserQSDBalance(new BigNumber(0));
             setUserQSDAllowance(new BigNumber(0));
-            setUserQSDSBalance(new BigNumber(0));
+            // setUserQSDSBalance(new BigNumber(0));
             setTotalQSDSSupply(new BigNumber(0));
             setUserStagedBalance(new BigNumber(0));
             setUserBondedBalance(new BigNumber(0));
@@ -111,7 +116,7 @@ function Bonding({ user }: { user: string }) {
         let isCancelled = false;
 
         async function updateUserInfo() {
-            const poolAddress = await getPoolBondingAddress();
+            const poolAddress = PoolBondingAdd.addr;
 
             const [
                 poolTotalBondedStr,
@@ -125,7 +130,6 @@ function Bonding({ user }: { user: string }) {
                 QSGRewardedStr,
                 QSDClaimableStr,
                 QSGClaimableStr,
-                QSDsBalance,
             ] = await Promise.all([
                 getPoolTotalBonded(poolAddress),
                 getTokenBalance(QSD.addr, user),
@@ -138,19 +142,19 @@ function Bonding({ user }: { user: string }) {
                 getPoolBalanceOfRewarded2(poolAddress, user),
                 getPoolBalanceOfClaimable1(poolAddress, user),
                 getPoolBalanceOfClaimable2(poolAddress, user),
-                getTokenBalance(QSDS.addr, user),
             ]);
 
             const QSDRewarded = toTokenUnitsBN(QSDRewardedStr, QSD.decimals);
             const QSGRewarded = toTokenUnitsBN(QSGRewardedStr, QSG.decimals);
             const QSDClaimable = toTokenUnitsBN(QSDClaimableStr, QSD.decimals);
             const QSGClaimable = toTokenUnitsBN(QSGClaimableStr, QSG.decimals);
+
             const poolTotalBonded = toTokenUnitsBN(
                 poolTotalBondedStr,
                 QSD.decimals
             );
             const userQSDBalance = toTokenUnitsBN(QSDBalance, QSD.decimals);
-            const userQSDSBalance = QSDsBalance;
+            // const userQSDSBalance = QSDsBalance;
             const userStagedBalance = toTokenUnitsBN(
                 stagedBalance,
                 QSDS.decimals
@@ -167,7 +171,7 @@ function Bonding({ user }: { user: string }) {
                 setPoolBondingAddress(poolAddress);
                 setUserQSDBalance(new BigNumber(userQSDBalance));
                 setUserQSDAllowance(new BigNumber(QSDAllowance));
-                setUserQSDSBalance(new BigNumber(userQSDSBalance));
+                // setUserQSDSBalance(new BigNumber(userQSDSBalance));
                 setTotalQSDSSupply(new BigNumber(totalQSDSSupply));
                 setUserStagedBalance(new BigNumber(userStagedBalance));
                 setUserBondedBalance(new BigNumber(userBondedBalance));
@@ -221,6 +225,7 @@ function Bonding({ user }: { user: string }) {
 
     return (
         <Layout>
+            <ScrollToTop />
             <Guide
                 // bodyApr={
                 //   <>
@@ -237,20 +242,20 @@ function Bonding({ user }: { user: string }) {
                 }}
                 bodyInstructions={
                     <p>
-                        Step 1: Stage your QSD
-                        <br />
-                        Step 2: Bond your QSD *Note that you can only bond QSD
-                        when TWAP is &lt;1.02*
-                        <br />
-                        &nbsp;&nbsp; 2.1: If TWAP is &lt;1.02, you'll be
-                        rewarded QSG
-                        <br />
-                        &nbsp;&nbsp; 2.2: If TWAP is &gt;=1.02, you'll be
-                        rewarded QSD
-                        <br />
-                        Step 3: Poke your rewards to move them to claimable
-                        <br />
-                        Step 4: Wait 1 epoch to claim claimable QSD and/or QSG
+                        <p
+                            style={{
+                                color: 'red',
+                                textAlign: 'center',
+                                fontSize: '20px',
+                            }}
+                        >
+                            <b>
+                                Please unbond and then re-bond in the new QSD
+                                Pool <br />
+                                Your accumulated rewards can still be poked and
+                                claimed.
+                            </b>
+                        </p>
                     </p>
                 }
             />
@@ -262,7 +267,7 @@ function Bonding({ user }: { user: string }) {
 
             <AccountPageHeader
                 accountQSDBalance={userQSDBalance}
-                accountQSDSBalance={userQSDSBalance}
+                // accountQSDSBalance={userQSDSBalance}
                 totalBonded={totalBonded}
                 accountStagedBalance={userStagedBalance}
                 accountBondedBalance={userBondedBalance}
@@ -319,21 +324,19 @@ function Bonding({ user }: { user: string }) {
                     );
                 }}
             />
-
+            <Rewards
+                poolAddress={poolBondingAddress}
+                amountQSD={userRewardedQSD}
+                amountQSG={userRewardedQSG}
+            />
             <Claim
                 userStatus={userStatus}
                 poolAddress={poolBondingAddress}
                 amountQSD={userClaimableQSD}
                 amountQSG={userClaimableQSG}
             />
-
-            <Rewards
-                poolAddress={poolBondingAddress}
-                amountQSD={userRewardedQSD}
-                amountQSG={userRewardedQSG}
-            />
         </Layout>
     );
 }
 
-export default Bonding;
+export default BondingOld;

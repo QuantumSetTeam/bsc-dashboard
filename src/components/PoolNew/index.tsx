@@ -2,46 +2,41 @@ import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { Layout } from '@aragon/ui';
 import { useParams } from 'react-router-dom';
-import { DollarPool4 } from '../../constants/contracts';
-import { BUSD, QSD, UNI, QSDS } from '../../constants/tokens';
+import { BUSD, QSD, UNI, QSDS, newPoolLPAdd } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
     getExpansionAmount,
     getInstantaneousQSDPrice,
     getLPBondedLiquidity,
     getPoolBalanceOfBonded,
-    getPoolBalanceOfClaimable,
-    getPoolBalanceOfRewarded,
-    getPoolBalanceOfStaged,
+    getPoolBalanceOfClaimable1,
+    getPoolBalanceOfRewarded1,
+    getPoolBalanceOfClaimable2,
+    getPoolBalanceOfRewarded2,
+    getLPPoolBalanceOfStaged,
     getPoolFluidUntil,
     getPoolStatusOf,
-    getPoolTotalBonded,
+    getLPPoolTotalBonded,
     getTokenAllowance,
     getTokenBalance,
     getEpoch,
 } from '../../utils/infura';
 import { toBaseUnitBN, toFloat, toTokenUnitsBN } from '../../utils/number';
-import { getPoolLPAddress } from '../../utils/pool';
 import {
     approve,
     bondPool,
     depositPool,
     unbondPool,
     withdrawPool,
-    claimPool,
 } from '../../utils/web3';
-import {
-    BondUnbond,
-    IconHeader,
-    WithdrawDeposit,
-    Claim,
-    Guide,
-} from '../common';
+import { BondUnbond, IconHeader, WithdrawDeposit, Guide } from '../common';
 // import Claim from './Claim';
 // import WithdrawDeposit from "./WithdrawDeposit";
 // import BondUnbond from './BondUnbond';
 import PoolPageHeader from './Header';
 import Provide from './Provide';
+import { Claim } from './ClaimPoolLP';
+import { Rewards } from './Rewards';
 
 function Pool({ user }: { user: string }) {
     const { override } = useParams();
@@ -71,10 +66,16 @@ function Pool({ user }: { user: string }) {
     const [userBondedBalance, setUserBondedBalance] = useState(
         new BigNumber(0)
     );
-    const [userRewardedBalance, setUserRewardedBalance] = useState(
+    const [QSDuserRewardedBalance, setQSDUserRewardedBalance] = useState(
         new BigNumber(0)
     );
-    const [userClaimableBalance, setUserClaimableBalance] = useState(
+    const [QSDuserClaimableBalance, setQSDUserClaimableBalance] = useState(
+        new BigNumber(0)
+    );
+    const [BUSDuserRewardedBalance, setBUSDUserRewardedBalance] = useState(
+        new BigNumber(0)
+    );
+    const [BUSDuserClaimableBalance, setBUSDUserClaimableBalance] = useState(
         new BigNumber(0)
     );
     const [userStatus, setUserStatus] = useState(0);
@@ -115,8 +116,10 @@ function Pool({ user }: { user: string }) {
             setUserBUSDAllowance(new BigNumber(0));
             setUserStagedBalance(new BigNumber(0));
             setUserBondedBalance(new BigNumber(0));
-            setUserRewardedBalance(new BigNumber(0));
-            setUserClaimableBalance(new BigNumber(0));
+            setQSDUserRewardedBalance(new BigNumber(0));
+            setQSDUserClaimableBalance(new BigNumber(0));
+            setBUSDUserRewardedBalance(new BigNumber(0));
+            setBUSDUserClaimableBalance(new BigNumber(0));
             setUserStatus(0);
             setUserStatusUnlocked(0);
             return;
@@ -124,7 +127,7 @@ function Pool({ user }: { user: string }) {
         let isCancelled = false;
 
         async function updateUserInfo() {
-            const poolAddressStr = await getPoolLPAddress();
+            const poolAddressStr = newPoolLPAdd.addr;
 
             const [
                 poolTotalBondedStr,
@@ -136,13 +139,15 @@ function Pool({ user }: { user: string }) {
                 usdcAllowance,
                 stagedBalance,
                 bondedBalance,
-                rewardedBalance,
-                claimableBalance,
+                QSDrewardedBalance,
+                QSDclaimableBalance,
+                BUSDrewardedBalance,
+                BUSDclaimableBalance,
                 status,
                 fluidUntilStr,
                 epoch,
             ] = await Promise.all([
-                getPoolTotalBonded(poolAddressStr),
+                getLPPoolTotalBonded(poolAddressStr),
                 getTokenBalance(QSD.addr, UNI.addr),
                 getTokenBalance(BUSD.addr, UNI.addr),
                 getTokenBalance(UNI.addr, user),
@@ -150,11 +155,13 @@ function Pool({ user }: { user: string }) {
 
                 getTokenAllowance(UNI.addr, user, poolAddressStr),
                 getTokenAllowance(BUSD.addr, user, poolAddressStr),
-                getPoolBalanceOfStaged(poolAddressStr, user),
+                getLPPoolBalanceOfStaged(poolAddressStr, user),
                 getPoolBalanceOfBonded(poolAddressStr, user),
 
-                getPoolBalanceOfRewarded(poolAddressStr, user),
-                getPoolBalanceOfClaimable(poolAddressStr, user),
+                getPoolBalanceOfRewarded1(poolAddressStr, user),
+                getPoolBalanceOfClaimable1(poolAddressStr, user),
+                getPoolBalanceOfRewarded2(poolAddressStr, user),
+                getPoolBalanceOfClaimable2(poolAddressStr, user),
                 getPoolStatusOf(poolAddressStr, user),
                 getPoolFluidUntil(poolAddressStr, user),
                 getEpoch(QSDS.addr),
@@ -184,13 +191,21 @@ function Pool({ user }: { user: string }) {
                 bondedBalance,
                 UNI.decimals
             );
-            const userRewardedBalance = toTokenUnitsBN(
-                rewardedBalance,
+            const QSDuserRewardedBalance = toTokenUnitsBN(
+                QSDrewardedBalance,
                 QSD.decimals
             );
-            const userClaimableBalance = toTokenUnitsBN(
-                claimableBalance,
+            const QSDuserClaimableBalance = toTokenUnitsBN(
+                QSDclaimableBalance,
                 QSD.decimals
+            );
+            const BUSDuserRewardedBalance = toTokenUnitsBN(
+                BUSDrewardedBalance,
+                BUSD.decimals
+            );
+            const BUSDuserClaimableBalance = toTokenUnitsBN(
+                BUSDclaimableBalance,
+                BUSD.decimals
             );
             const userStatus = parseInt(status, 10);
             const fluidUntil = parseInt(fluidUntilStr, 10);
@@ -206,13 +221,21 @@ function Pool({ user }: { user: string }) {
                 setUserBUSDBalance(new BigNumber(userBUSDBalance));
                 setUserStagedBalance(new BigNumber(userStagedBalance));
                 setUserBondedBalance(new BigNumber(userBondedBalance));
-                setUserRewardedBalance(new BigNumber(userRewardedBalance));
-                setUserClaimableBalance(new BigNumber(userClaimableBalance));
+                setQSDUserRewardedBalance(
+                    new BigNumber(QSDuserRewardedBalance)
+                );
+                setQSDUserClaimableBalance(
+                    new BigNumber(QSDuserClaimableBalance)
+                );
+                setBUSDUserRewardedBalance(
+                    new BigNumber(BUSDuserRewardedBalance)
+                );
+                setBUSDUserClaimableBalance(
+                    new BigNumber(BUSDuserClaimableBalance)
+                );
                 setUserStatus(userStatus);
                 setUserStatusUnlocked(fluidUntil);
-                setLockup(
-                    poolAddressStr === DollarPool4 ? POOL_EXIT_LOCKUP_EPOCHS : 1
-                );
+                setLockup(POOL_EXIT_LOCKUP_EPOCHS);
             }
         }
         updateUserInfo();
@@ -287,8 +310,10 @@ function Pool({ user }: { user: string }) {
             <PoolPageHeader
                 accountUNIBalance={userUNIBalance}
                 accountBondedBalance={userBondedBalance}
-                accountRewardedQSDBalance={userRewardedBalance}
-                accountClaimableQSDBalance={userClaimableBalance}
+                accountRewardedQSDBalance={QSDuserRewardedBalance}
+                accountClaimableQSDBalance={QSDuserClaimableBalance}
+                accountRewardedBUSDBalance={BUSDuserRewardedBalance}
+                accountClaimableBUSDBalance={BUSDuserClaimableBalance}
                 poolTotalBonded={poolTotalBonded}
                 accountPoolStatus={userStatus}
                 unlocked={epoch + 1}
@@ -365,10 +390,21 @@ function Pool({ user }: { user: string }) {
         claimable={userClaimableBalance}
         status={userStatus}
       /> */}
+            <Rewards
+                poolAddress={poolAddress}
+                amountQSD={QSDuserRewardedBalance}
+                amountBUSD={BUSDuserRewardedBalance}
+            />
 
             <Claim
+                userStatus={userStatus}
+                poolAddress={newPoolLPAdd.addr}
+                amountQSD={QSDuserClaimableBalance}
+                amountBUSD={BUSDuserClaimableBalance}
+            />
+            {/* <Claim
                 suffix='QSD'
-                claimable={userClaimableBalance}
+                claimable={QSDuserClaimableBalance}
                 status={userStatus}
                 disabled={!poolAddress}
                 handleClaim={(claimAmount, callback) => {
@@ -379,11 +415,24 @@ function Pool({ user }: { user: string }) {
                     );
                 }}
             />
+            <Claim
+                suffix='BUSD'
+                claimable={BUSDuserClaimableBalance}
+                status={userStatus}
+                disabled={!poolAddress}
+                handleClaim={(claimAmount, callback) => {
+                    claimPool(
+                        poolAddress,
+                        toBaseUnitBN(claimAmount, BUSD.decimals),
+                        callback
+                    );
+                }}
+            /> */}
 
             <Provide
                 poolAddress={poolAddress}
                 user={user}
-                rewarded={userRewardedBalance}
+                rewarded={QSDuserRewardedBalance}
                 status={userStatus}
                 pairBalanceQSD={pairBalanceQSD}
                 pairBalanceBUSD={pairBalanceBUSD}

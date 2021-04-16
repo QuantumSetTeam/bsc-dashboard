@@ -3,24 +3,21 @@
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { QSD, QSG, QSDS } from '../../constants/tokens';
+import { QSD, QSG, QSDS, PoolGovAdd } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import { Layout } from '@aragon/ui';
 import {
     getBalanceBonded,
     getBalanceOfStaged,
-    getPoolFluidUntil,
     getPoolStatusOf,
     getPoolTotalBonded,
     getTokenAllowance,
     getTokenBalance,
     getPoolBalanceOfRewarded,
     getPoolBalanceOfClaimable,
-    getLockedUntil,
     getEpoch,
 } from '../../utils/infura';
 import { toBaseUnitBN, toTokenUnitsBN } from '../../utils/number';
-import { getPoolGovAddress } from '../../utils/pool';
 import {
     approve,
     bondPool,
@@ -32,6 +29,7 @@ import { BondUnbond, Guide, IconHeader, WithdrawDeposit } from '../common';
 import AccountPageHeader from './Header';
 import { Rewards } from './Rewards';
 import { Claim } from './Claim';
+import Web3 from 'web3';
 
 function PoolGov({ user }: { user: string }) {
     const { override } = useParams();
@@ -41,7 +39,7 @@ function PoolGov({ user }: { user: string }) {
 
     const [epoch, setEpoch] = useState<number>(0);
     const [totalBonded, setTotalBonded] = useState(new BigNumber(0));
-    const [poolGovAddress, setPoolGovAddress] = useState<null | string>(null);
+    const [poolAddress, setPoolAddress] = useState('');
     const [userQSGBalance, setUserQSGBalance] = useState(new BigNumber(0));
     const [userQSGAllowance, setUserQSGAllowance] = useState(new BigNumber(0));
     const [totalQSGSupply, setTotalQSGSupply] = useState(new BigNumber(0));
@@ -53,7 +51,6 @@ function PoolGov({ user }: { user: string }) {
     );
     const [userStatus, setUserStatus] = useState(0);
     // eslint-disable-next-line
-    const [userStatusUnlocked, setUserStatusUnlocked] = useState(0);
     const [lockup, setLockup] = useState(0);
     const [userRewardedQSD, setUserRewardedQSD] = useState(new BigNumber(0));
     const [userClaimableQSD, setUserClaimableQSD] = useState(new BigNumber(0));
@@ -73,7 +70,9 @@ function PoolGov({ user }: { user: string }) {
         let isCancelled = false;
 
         async function updateUserInfo() {
-            const poolAddress = await getPoolGovAddress();
+            const poolAddressStr = Web3.utils.toChecksumAddress(
+                PoolGovAdd.addr
+            );
 
             const [
                 poolTotalBondedStr,
@@ -82,22 +81,18 @@ function PoolGov({ user }: { user: string }) {
                 stagedBalance,
                 bondedBalance,
                 status,
-                fluidUntilStr,
-                lockedUntilStr,
                 QSDRewardedStr,
                 QSDClaimableStr,
                 epoch,
             ] = await Promise.all([
-                getPoolTotalBonded(poolAddress),
+                getPoolTotalBonded(poolAddressStr),
                 getTokenBalance(QSG.addr, user),
-                getTokenAllowance(QSG.addr, user, poolAddress),
-                getBalanceOfStaged(poolAddress, user),
-                getBalanceBonded(poolAddress, user),
-                getPoolStatusOf(poolAddress, user),
-                getPoolFluidUntil(poolAddress, user),
-                getLockedUntil(poolAddress, user),
-                getPoolBalanceOfRewarded(poolAddress, user),
-                getPoolBalanceOfClaimable(poolAddress, user),
+                getTokenAllowance(QSG.addr, user, poolAddressStr),
+                getBalanceOfStaged(poolAddressStr, user),
+                getBalanceBonded(poolAddressStr, user),
+                getPoolStatusOf(poolAddressStr, user),
+                getPoolBalanceOfRewarded(poolAddressStr, user),
+                getPoolBalanceOfClaimable(poolAddressStr, user),
                 getEpoch(QSDS.addr),
             ]);
 
@@ -117,14 +112,12 @@ function PoolGov({ user }: { user: string }) {
                 QSG.decimals
             );
             const userStatus = parseInt(status, 10);
-            const fluidUntil = parseInt(fluidUntilStr, 10);
-            const lockedUntil = parseInt(lockedUntilStr, 10);
 
             setEpoch(parseInt(epoch, 10));
 
             if (!isCancelled) {
                 setTotalBonded(poolTotalBonded);
-                setPoolGovAddress(poolAddress);
+                setPoolAddress(poolAddressStr);
                 setUserQSGBalance(new BigNumber(userQSGBalance));
                 setUserQSGAllowance(new BigNumber(QSGAllowance));
                 setUserQSGBalance(new BigNumber(userQSGBalance));
@@ -134,7 +127,6 @@ function PoolGov({ user }: { user: string }) {
                 setUserRewardedQSD(new BigNumber(QSDRewarded));
                 setUserClaimableQSD(new BigNumber(QSDClaimable));
                 setUserStatus(userStatus);
-                setUserStatusUnlocked(Math.max(fluidUntil, lockedUntil));
                 setLockup(POOL_EXIT_LOCKUP_EPOCHS);
             }
         }
@@ -187,18 +179,18 @@ function PoolGov({ user }: { user: string }) {
                 status={userStatus}
                 disabled={!user}
                 handleApprove={() => {
-                    approve(QSG.addr, poolGovAddress);
+                    approve(QSG.addr, poolAddress);
                 }}
                 handleDeposit={(depositAmount) => {
                     depositPool(
-                        poolGovAddress,
+                        poolAddress,
                         toBaseUnitBN(depositAmount, QSG.decimals),
                         () => {}
                     );
                 }}
                 handleWithdraw={(withdrawAmount) => {
                     withdrawPool(
-                        poolGovAddress,
+                        poolAddress,
                         toBaseUnitBN(withdrawAmount, QSG.decimals),
                         () => {}
                     );
@@ -214,14 +206,14 @@ function PoolGov({ user }: { user: string }) {
                 disabled={!user}
                 handleBond={(bondAmount) => {
                     bondPool(
-                        poolGovAddress,
+                        poolAddress,
                         toBaseUnitBN(bondAmount, QSG.decimals),
                         () => {}
                     );
                 }}
                 handleUnbond={(unbondAmount) => {
                     unbondPool(
-                        poolGovAddress,
+                        poolAddress,
                         toBaseUnitBN(unbondAmount, QSG.decimals),
                         () => {}
                     );
@@ -230,11 +222,11 @@ function PoolGov({ user }: { user: string }) {
 
             <Claim
                 userStatus={userStatus}
-                poolAddress={poolGovAddress}
+                poolAddress={poolAddress}
                 amountQSD={userClaimableQSD}
             />
 
-            <Rewards poolAddress={poolGovAddress} amountQSD={userRewardedQSD} />
+            <Rewards poolAddress={poolAddress} amountQSD={userRewardedQSD} />
         </Layout>
     );
 }

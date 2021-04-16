@@ -13,7 +13,12 @@
       },
       {
         "internalType": "contract IERC20",
-        "name": "_rewardsToken",
+        "name": "_rewardsToken1",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "_rewardsToken2",
         "type": "address"
       }
     ],
@@ -53,6 +58,12 @@
         "indexed": true,
         "internalType": "address",
         "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
         "type": "address"
       },
       {
@@ -139,7 +150,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "newClaimable",
+        "name": "newClaimable1",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newClaimable2",
         "type": "uint256"
       }
     ],
@@ -195,7 +212,7 @@
         "type": "address"
       }
     ],
-    "name": "balanceOfClaimable",
+    "name": "balanceOfClaimable1",
     "outputs": [
       {
         "internalType": "uint256",
@@ -216,7 +233,7 @@
         "type": "address"
       }
     ],
-    "name": "balanceOfPhantom",
+    "name": "balanceOfClaimable2",
     "outputs": [
       {
         "internalType": "uint256",
@@ -237,7 +254,70 @@
         "type": "address"
       }
     ],
-    "name": "balanceOfRewarded",
+    "name": "balanceOfPhantom1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOfPhantom2",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOfRewarded1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOfRewarded2",
     "outputs": [
       {
         "internalType": "uint256",
@@ -294,7 +374,31 @@
         "type": "uint256"
       }
     ],
-    "name": "claim",
+    "name": "claim1",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "claim2",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "claimAll",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -303,7 +407,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "busd",
+    "name": "dai",
     "outputs": [
       {
         "internalType": "address",
@@ -312,7 +416,7 @@
       }
     ],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -377,6 +481,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "inExpansion",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "paused",
     "outputs": [
       {
@@ -387,6 +506,15 @@
     ],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "pokeRewards",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -422,7 +550,22 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "rewardsToken",
+    "name": "rewardsToken1",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "rewardsToken2",
     "outputs": [
       {
         "internalType": "contract IERC20",
@@ -461,7 +604,7 @@
     "name": "statusOf",
     "outputs": [
       {
-        "internalType": "enum PoolAccount.Status",
+        "internalType": "enum Account.Status",
         "name": "",
         "type": "uint8"
       }
@@ -488,7 +631,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "totalClaimable",
+    "name": "totalClaimable1",
     "outputs": [
       {
         "internalType": "uint256",
@@ -503,7 +646,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "totalPhantom",
+    "name": "totalClaimable2",
     "outputs": [
       {
         "internalType": "uint256",
@@ -518,7 +661,52 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "totalRewarded",
+    "name": "totalPhantom1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "totalPhantom2",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "totalRewarded1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "totalRewarded2",
     "outputs": [
       {
         "internalType": "uint256",

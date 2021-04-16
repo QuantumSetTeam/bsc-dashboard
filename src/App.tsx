@@ -15,13 +15,15 @@ import CouponMarket from './components/CouponMarket';
 import Governance from './components/Governance';
 import Candidate from './components/Candidate';
 import Regulation from './components/Regulation';
-import Pool from './components/Pool';
+import Pool from './components/PoolNew';
 import PoolGov from './components/PoolGov';
-import Bonding from './components/Bonding';
+import BondingOld from './components/BondingOld';
+import BondingNew from './components/BondingNew';
 import HomePageNoWeb3 from './components/HomePageNoWeb3';
 import { Landing } from './components/Landing';
 import { themes } from './utils/theme';
 import Tools from './components/Tools';
+import PoolOld from './components/PoolOld';
 
 function App() {
     const storedTheme = getPreference('theme', 'dark');
@@ -60,21 +62,31 @@ function App() {
         <Router>
             <UseWalletProvider
                 chainId={56}
+                //
                 // chainId={97} // BSC TESTNET
+                //
                 connectors={{
-                    walletconnect: { rpcUrl: 'bsc-dataseed4.defibit.io' },
+                    walletconnect: {
+                        rpcUrl: 'https://bsc-dataseed4.defibit.io/',
+                    },
                     walletlink: {
-                        url: 'bsc-dataseed4.defibit.io',
+                        url: 'https://bsc-dataseed4.defibit.io/',
                         appName: 'Coinbase Wallet',
                         appLogoUrl: '',
                     },
-                    //   connectors={{
-                    //     walletconnect: { rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545' },
-                    //     walletlink: {
-                    //       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
-                    //       appName: 'Coinbase Wallet',
-                    //       appLogoUrl: '',
+
+                    // BSC Testnet below
+                    // connectors={{
+                    //     walletconnect: {
+                    //         rpcUrl:
+                    //             'https://data-seed-prebsc-1-s1.binance.org:8545',
                     //     },
+                    //     walletlink: {
+                    //         url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+                    //         appName: 'Coinbase Wallet',
+                    //         appLogoUrl: '',
+                    //     },
+                    //
                 }}
             >
                 <Main
@@ -92,7 +104,14 @@ function App() {
                         <div style={{ flex: 'auto', overflowY: 'auto' }}>
                             <Switch>
                                 <Route path='/' exact>
-                                    <Landing />
+                                    <NavBar
+                                        hasWeb3={hasWeb3}
+                                        user={user}
+                                        setUser={setUser}
+                                    />
+                                    {/* <LandingMod /> */}
+
+                                    <HomePage user={user} />
                                 </Route>
                                 <Route path='/'>
                                     <NavBar
@@ -127,19 +146,28 @@ function App() {
                                                 <Route path='/regulation/'>
                                                     <Regulation user={user} />
                                                 </Route>
-                                                <Route path='/lp/:override'>
+                                                {/* <Route path='/lp/:override'>
                                                     <Pool user={user} />
-                                                </Route>
+                                                </Route> */}
                                                 <Route path='/lp/'>
                                                     <Pool user={user} />
                                                 </Route>
+                                                <Route path='/lpOld/'>
+                                                    <PoolOld user={user} />
+                                                </Route>
+
                                                 <Route path='/QSD/'>
-                                                    <Bonding user={user} />
+                                                    <BondingNew user={user} />
+                                                </Route>
+                                                <Route path='/QSDOld/'>
+                                                    <BondingOld user={user} />
                                                 </Route>
                                                 <Route path='/QSG/'>
                                                     <PoolGov user={user} />
                                                 </Route>
                                                 <Route path='/dashboard/'>
+                                                    {/* <LandingMod /> */}
+
                                                     <HomePage user={user} />
                                                 </Route>
                                                 <Route path='/tools/'>

@@ -8,7 +8,6 @@ import { epochformattedRemaining } from '../../utils/calculation';
 import {
     getBalanceBonded,
     getBalanceOfStaged,
-    getDaoIsBootstrapping,
     getEpoch,
     getExpansionAmount,
     getInstantaneousQSDPrice,
@@ -20,8 +19,6 @@ import {
     getPoolTotalStaged,
     getTokenBalance,
     getTokenTotalSupply,
-    getTotalBonded,
-    getTotalStaged,
     getTWAPPrice,
     getUserLPBonded,
     getUserLPStaged,
@@ -113,12 +110,9 @@ function Tools({ user }: { user: string }) {
                 stagedLiquidity,
                 lpBonded,
                 lpStaged,
-                daoBonded,
-                daoStaged,
                 bondingBonded,
                 bondingStaged,
                 expansionAmount,
-                bootstrapping,
                 daoE,
                 treasuryQSD,
             ] = await Promise.all([
@@ -129,12 +123,9 @@ function Tools({ user }: { user: string }) {
                 getLPStagedLiquidity(),
                 getPoolTotalBonded(poolLP),
                 getPoolTotalStaged(poolLP),
-                getTotalBonded(QSDS.addr),
-                getTotalStaged(QSDS.addr),
                 getPoolTotalBonded(poolBonding),
                 getPoolTotalStaged(poolBonding),
                 getExpansionAmount(),
-                getDaoIsBootstrapping(),
                 getEpoch(QSDS.addr),
                 getTokenBalance(QSD.addr, TreasuryAddress),
             ]);
@@ -153,13 +144,9 @@ function Tools({ user }: { user: string }) {
 
             // If is bootstrapping, then bonding will be referencing dao
             // otherwise it'll be referencing bonding
-            if (bootstrapping) {
-                setDaoBonded(toTokenUnitsBN(daoBonded, 18));
-                setDaoStaged(toTokenUnitsBN(daoStaged, 18));
-            } else {
-                setDaoBonded(toTokenUnitsBN(bondingBonded, 18));
-                setDaoStaged(toTokenUnitsBN(bondingStaged, 18));
-            }
+
+            setDaoBonded(toTokenUnitsBN(bondingBonded, 18));
+            setDaoStaged(toTokenUnitsBN(bondingStaged, 18));
 
             setExpansionAmount(expansionAmount);
         };
@@ -459,7 +446,7 @@ function Tools({ user }: { user: string }) {
                     <InfoBox title='Spot Price'>
                         {QSDPrice ? '$' + formatBN(QSDPrice, 2) : '...'}
                     </InfoBox>
-                    <InfoBox title='TWAP Price'>
+                    <InfoBox title='Epoch TWAP Price'>
                         {twapPrice ? '$' + twapPrice.toFixed(2) : '...'}
                     </InfoBox>
                     <InfoBox title='Total Supply'>

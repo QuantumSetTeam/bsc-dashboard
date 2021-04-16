@@ -200,12 +200,6 @@
         "internalType": "uint256",
         "name": "newBonded",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newBusd",
-        "type": "uint256"
       }
     ],
     "name": "SupplyIncrease",
@@ -341,25 +335,6 @@
       }
     ],
     "name": "Withdraw",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sentToPoolBonding",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sentToPoolLP",
-        "type": "uint256"
-      }
-    ],
-    "name": "busdDistributed",
     "type": "event"
   },
   {
@@ -561,21 +536,6 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "dai",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
     "name": "decimals",
     "outputs": [
       {
@@ -651,37 +611,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "epochInExpansion",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
     "name": "epochTime",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "epochsAtPeg",
     "outputs": [
       {
         "internalType": "uint256",
@@ -703,21 +633,6 @@
       }
     ],
     "name": "fluidUntil",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getEpochTwap",
     "outputs": [
       {
         "internalType": "uint256",
@@ -793,11 +708,6 @@
       {
         "internalType": "address",
         "name": "poolGov",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "uniPairAddress",
         "type": "address"
       }
     ],

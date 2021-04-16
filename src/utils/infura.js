@@ -7,10 +7,16 @@ import { POOL_EXIT_LOCKUP_EPOCHS } from '../constants/values';
 import { formatBN, toTokenUnitsBN, toFloat } from './number';
 import { getPoolLPAddress } from './pool';
 
-const oracleAbi = require('../constants/abi/Oracle.json');
+// import { create, all } from 'mathjs';
+
+// const config = {};
+// const math = create(all, config);
+
+// const oracleAbi = require('../constants/abi/Oracle.json');
 const dollarAbi = require('../constants/abi/Dollar.json');
 const daoAbi = require('../constants/abi/Dao.json');
-const poolAbi = require('../constants/abi/Pool.json');
+const poolGovAbi = require('../constants/abi/PoolGov.json');
+const poolLPAbi = require('../constants/abi/PoolLP.json');
 const poolBondingAbi = require('../constants/abi/PoolBonding.json');
 const uniswapRouterAbi = require('../constants/abi/UniswapV2Router02.json');
 const uniswapPairAbi = require('../constants/abi/UniswapV2Pair.json');
@@ -145,7 +151,7 @@ export const getTotalDebt = async (dao) => {
  * @return {Promise<string>}
  */
 export const getTotalClaimable = async (dao) => {
-    const poolContract = new web3.eth.Contract(poolAbi, dao);
+    const poolContract = new web3.eth.Contract(poolGovAbi, dao);
     return poolContract.methods.totalClaimable().call();
 };
 
@@ -155,7 +161,7 @@ export const getTotalClaimable = async (dao) => {
  * @return {Promise<string>}
  */
 export const getTotalRewarded = async (dao) => {
-    const poolContract = new web3.eth.Contract(poolAbi, dao);
+    const poolContract = new web3.eth.Contract(poolGovAbi, dao);
     return poolContract.methods.totalRewarded().call();
 };
 
@@ -184,20 +190,20 @@ export const getTotalCouponsUnderlying = async (dao) => {
  * @param {string} dao address
  * @return {Promise<string>}
  */
-export const getTotalBonded = async (dao) => {
-    const daoContract = new web3.eth.Contract(daoAbi, dao);
-    return daoContract.methods.totalBonded().call();
-};
+// export const getTotalBonded = async (dao) => {
+//     const daoContract = new web3.eth.Contract(daoAbi, dao);
+//     return daoContract.methods.totalBonded().call();
+// };
 
 /**
  *
  * @param {string} dao address
  * @return {Promise<string>}
  */
-export const getTotalStaged = async (dao) => {
-    const daoContract = new web3.eth.Contract(daoAbi, dao);
-    return daoContract.methods.totalStaged().call();
-};
+// export const getTotalStaged = async (dao) => {
+//     const daoContract = new web3.eth.Contract(daoAbi, dao);
+//     return daoContract.methods.totalStaged().call();
+// };
 
 /**
  *
@@ -465,7 +471,9 @@ export const getAllProposals = async (dao) => {
     const daoContract = new web3.eth.Contract(daoAbi, dao);
     const payload = (
         await daoContract.getPastEvents('Proposal', {
-            fromBlock: 0,
+            // Hardcoded values for specific proposal
+            fromBlock: 7955500,
+            toBlock: 7955570,
         })
     ).map((event) => {
         const prop = event.returnValues;
@@ -627,7 +635,7 @@ export const getUserLPBonded = async (user) => {
 export const getUserLPStaged = async (user) => {
     const [reserve, token0] = await Promise.all([getReserves(), getToken0()]);
     const uniTotalSupplyStr = await getTokenTotalSupply(UNI.addr);
-    const uniBondedSupplyStr = await getPoolBalanceOfStaged(
+    const uniBondedSupplyStr = await getLPPoolBalanceOfStaged(
         await getPoolLPAddress(),
         user
     );
@@ -711,7 +719,7 @@ export const getToken0 = async () => {
 // Pool
 
 export const getPoolStatusOf = async (pool, account) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
     return poolContract.methods.statusOf(account).call();
 };
 
@@ -723,7 +731,7 @@ export const getPoolStatusOf = async (pool, account) => {
  */
 export const getPoolBalanceOfBonded = async (pool, account) => {
     if (account === '') return '0';
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
     return poolContract.methods.balanceOfBonded(account).call();
 };
 
@@ -734,7 +742,18 @@ export const getPoolBalanceOfBonded = async (pool, account) => {
  * @return {Promise<string>}
  */
 export const getPoolBalanceOfStaged = async (pool, account) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
+    return poolContract.methods.balanceOfStaged(account).call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolBalanceOfStaged = async (pool, account) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, pool);
     return poolContract.methods.balanceOfStaged(account).call();
 };
 
@@ -746,7 +765,7 @@ export const getPoolBalanceOfStaged = async (pool, account) => {
  */
 export const getPoolBalanceOfRewarded = async (pool, account) => {
     if (account === '') return '0';
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
     return poolContract.methods.balanceOfRewarded(account).call();
 };
 
@@ -757,7 +776,7 @@ export const getPoolBalanceOfRewarded = async (pool, account) => {
  * @return {Promise<string>}
  */
 export const getPoolBalanceOfClaimable = async (pool, account) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
     return poolContract.methods.balanceOfClaimable(account).call();
 };
 
@@ -768,12 +787,28 @@ export const getPoolBalanceOfClaimable = async (pool, account) => {
  * @return {Promise<string>}
  */
 export const getPoolTotalBonded = async (pool) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
     return poolContract.methods.totalBonded().call();
 };
 
 export const getPoolTotalStaged = async (pool) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
+    return poolContract.methods.totalStaged().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolTotalBonded = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, pool);
+    return poolContract.methods.totalBonded().call();
+};
+
+export const getLPPoolTotalStaged = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, pool);
     return poolContract.methods.totalStaged().call();
 };
 
@@ -805,6 +840,61 @@ export const getPoolTotalRewarded2 = async (pool) => {
  * @param {string} account address
  * @return {Promise<string>}
  */
+export const getPoolTotalRewarded3 = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
+    return poolContract.methods.totalRewarded3().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolTotalClaimable1 = async (poolLP) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, poolLP);
+    return poolContract.methods.totalClaimable1().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolTotalClaimable2 = async (poolLP) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, poolLP);
+    return poolContract.methods.totalClaimable2().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolTotalRewarded1 = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, pool);
+    return poolContract.methods.totalRewarded1().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getLPPoolTotalRewarded2 = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolLPAbi, pool);
+    return poolContract.methods.totalRewarded2().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
 export const getPoolTotalClaimable1 = async (pool) => {
     const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
     return poolContract.methods.totalClaimable1().call();
@@ -819,6 +909,17 @@ export const getPoolTotalClaimable1 = async (pool) => {
 export const getPoolTotalClaimable2 = async (pool) => {
     const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
     return poolContract.methods.totalClaimable2().call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
+export const getPoolTotalClaimable3 = async (pool) => {
+    const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
+    return poolContract.methods.totalClaimable3().call();
 };
 
 /**
@@ -849,6 +950,17 @@ export const getPoolBalanceOfRewarded2 = async (pool, account) => {
  * @param {string} account address
  * @return {Promise<string>}
  */
+export const getPoolBalanceOfRewarded3 = async (pool, account) => {
+    const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
+    return poolContract.methods.balanceOfRewarded3(account).call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
 export const getPoolBalanceOfClaimable1 = async (pool, account) => {
     const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
     return poolContract.methods.balanceOfClaimable1(account).call();
@@ -871,8 +983,19 @@ export const getPoolBalanceOfClaimable2 = async (pool, account) => {
  * @param {string} account address
  * @return {Promise<string>}
  */
+export const getPoolBalanceOfClaimable3 = async (pool, account) => {
+    const poolContract = new web3.eth.Contract(poolBondingAbi, pool);
+    return poolContract.methods.balanceOfClaimable3(account).call();
+};
+
+/**
+ *
+ * @param {string} pool address
+ * @param {string} account address
+ * @return {Promise<string>}
+ */
 export const getPoolFluidUntil = async (pool, account) => {
-    const poolContract = new web3.eth.Contract(poolAbi, pool);
+    const poolContract = new web3.eth.Contract(poolGovAbi, pool);
 
     // no need to look back further than the pool lockup period
     const blockNumber = await web3.eth.getBlockNumber();
@@ -913,17 +1036,12 @@ export const getDaoIsBootstrapping = async () => {
 
 export const getExpansionAmount = async () => {
     const price = await getTWAPPrice();
-    const isBootstrapping = await getDaoIsBootstrapping();
 
     const totalSupplyStr = await getTokenTotalSupply(QSD.addr);
     const totalSupply = toFloat(toTokenUnitsBN(totalSupplyStr, QSD.decimals));
 
     // 5.4% max supply
     const MAX_SUPPLY_EXPANSION = 0.054;
-
-    if (isBootstrapping) {
-        return totalSupply * MAX_SUPPLY_EXPANSION;
-    }
 
     const delta = Math.min(price - 1.02, MAX_SUPPLY_EXPANSION);
     const newSupply = totalSupply * delta;
@@ -937,57 +1055,64 @@ export const getExpansionAmount = async () => {
 
 export const getTWAPPrice = async () => {
     const daoContract = new web3.eth.Contract(daoAbi, Dao);
-    const pairContract = new web3.eth.Contract(uniswapPairAbi, UNI.addr);
 
-    const oracleAddress = await daoContract.methods.oracle().call();
-    const oracleContract = new web3.eth.Contract(oracleAbi, oracleAddress);
+    const priceStr = await daoContract.methods.getEpochTwap().call();
 
-    // Gets cumulative price
-
-    // eslint-disable-next-line
-    const cumulativePriceStr = await oracleContract.methods
-        ._cumulative()
-        .call();
-    // eslint-disable-next-line
-    const oracleTimestampStr = await oracleContract.methods._timestamp().call();
-
-    const cumulativePrice = parseFloat(
-        formatBN(toTokenUnitsBN(cumulativePriceStr, 18), 2).split(',').join('')
-    );
-    const oracleTimestamp = parseInt(oracleTimestampStr, 10);
-
-    const token0 = await pairContract.methods.token0().call();
-
-    const resp = await pairContract.methods.getReserves().call();
-    const blockTimestampLast = parseInt(resp.blockTimestampLast, 10);
-    const price0CumulativeLastStr = await pairContract.methods
-        .price0CumulativeLast()
-        .call();
-    const price1CumulativeLastStr = await pairContract.methods
-        .price1CumulativeLast()
-        .call();
-
-    const price0Cumulative = parseFloat(
-        formatBN(toTokenUnitsBN(price0CumulativeLastStr, 18), 2)
-            .split(',')
-            .join('')
-    );
-    const price1Cumulative = parseFloat(
-        formatBN(toTokenUnitsBN(price1CumulativeLastStr, 18), 2)
-            .split(',')
-            .join('')
+    const price = parseFloat(
+        formatBN(toTokenUnitsBN(priceStr, 18), 2).split(',').join('')
     );
 
-    const timeDelta = blockTimestampLast - oracleTimestamp;
+    // const pairContract = new web3.eth.Contract(uniswapPairAbi, UNI.addr);
 
-    const price0 =
-        (((price0Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
-    const price1 =
-        (((price1Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
+    // const oracleAddress = await daoContract.methods.oracle().call();
+    // const oracleContract = new web3.eth.Contract(oracleAbi, oracleAddress);
 
-    if (token0.toLowerCase() === QSD.addr.toLowerCase()) {
-        return price0;
-    }
+    // // Gets cumulative price
 
-    return price1;
+    // // eslint-disable-next-line
+    // const cumulativePriceStr = await oracleContract.methods
+    //     ._cumulative()
+    //     .call();
+    // // eslint-disable-next-line
+    // const oracleTimestampStr = await oracleContract.methods._timestamp().call();
+
+    // const cumulativePrice = parseFloat(
+    //     formatBN(toTokenUnitsBN(cumulativePriceStr, 18), 2).split(',').join('')
+    // );
+    // const oracleTimestamp = parseInt(oracleTimestampStr, 10);
+
+    // const token0 = await pairContract.methods.token0().call();
+
+    // const resp = await pairContract.methods.getReserves().call();
+    // const blockTimestampLast = parseInt(resp.blockTimestampLast, 10);
+    // const price0CumulativeLastStr = await pairContract.methods
+    //     .price0CumulativeLast()
+    //     .call();
+    // const price1CumulativeLastStr = await pairContract.methods
+    //     .price1CumulativeLast()
+    //     .call();
+
+    // const price0Cumulative = parseFloat(
+    //     formatBN(toTokenUnitsBN(price0CumulativeLastStr, 18), 2)
+    //         .split(',')
+    //         .join('')
+    // );
+    // const price1Cumulative = parseFloat(
+    //     formatBN(toTokenUnitsBN(price1CumulativeLastStr, 18), 2)
+    //         .split(',')
+    //         .join('')
+    // );
+
+    // const timeDelta = blockTimestampLast - oracleTimestamp;
+
+    // const price0 =
+    //     (((price0Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
+    // const price1 =
+    //     (((price1Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
+
+    // if (token0.toLowerCase() === QSD.addr.toLowerCase()) {
+    //     return price0;
+    // }
+
+    return price;
 };
