@@ -17,7 +17,6 @@ import {
     getBalanceOfStaged,
     getEpoch,
     getExpansionAmount,
-    getInstantaneousQSDPrice,
     getPoolBalanceOfClaimable1,
     getPoolBalanceOfClaimable2,
     getPoolBalanceOfClaimable3,
@@ -29,8 +28,11 @@ import {
     getPoolTotalBonded,
     getTokenAllowance,
     getTokenBalance,
+    getEpochsAtPeg,
+    getDailyExpansionApr,
+    getDailyPegApr,
 } from '../../utils/infura';
-import { toBaseUnitBN, toFloat, toTokenUnitsBN } from '../../utils/number';
+import { toBaseUnitBN, toTokenUnitsBN } from '../../utils/number';
 // import { getPoolBondingAddress } from '../../utils/pool';
 import {
     approve,
@@ -84,8 +86,12 @@ function BondingNew({ user }: { user: string }) {
         new BigNumber(0)
     );
 
-    const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
     const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
+    const [epochsAtPeg, setEpochsAtPeg] = useState<null | number>(null);
+    const [dailyExpansionAPRs, setDailyExpansionAPRs] = useState<object | null>(
+        null
+    );
+    const [dailyPegAPRs, setDailyPegAPRs] = useState<object | null>(null);
 
     //APR and stuff
     useEffect(() => {
@@ -94,21 +100,27 @@ function BondingNew({ user }: { user: string }) {
 
             const [
                 epoch,
-                QSDPrice,
                 expansionAmount,
                 totalBonded,
+                epochsAtPegResult,
+                dailyExpansionAPRsResult,
+                dailyPegAPRsResult,
             ] = await Promise.all([
                 getEpoch(QSDS.addr),
-                getInstantaneousQSDPrice(),
                 getExpansionAmount(),
                 getPoolTotalBonded(poolBonding),
+                getEpochsAtPeg(),
+                getDailyExpansionApr(),
+                getDailyPegApr(),
             ]);
 
             setEpoch(parseInt(epoch, 10));
-            setQSDPrice(QSDPrice);
             setExpansionAmount(expansionAmount);
             setTotalQSDSSupply(new BigNumber(totalQSDSSupply));
             setTotalBonded(toTokenUnitsBN(totalBonded, QSD.decimals));
+            setEpochsAtPeg(epochsAtPegResult);
+            setDailyExpansionAPRs(dailyExpansionAPRsResult);
+            setDailyPegAPRs(dailyPegAPRsResult);
         };
 
         updateAPR();
@@ -222,27 +234,55 @@ function BondingNew({ user }: { user: string }) {
     let bondingDailyYield = '...';
     let bondingMonthlyYield = '...';
 
-    // Define number formatting
-    var options = { minimumFractionDigits: 0, maximumFractionDigits: 2 };
-    var numberFormat = new Intl.NumberFormat('en-US', options);
+    // Set APR strings
+    if (dailyExpansionAPRs && dailyPegAPRs) {
+        // APR when in expansion
+        if (
+            expansionAmount &&
+            expansionAmount > 0 &&
+            epochsAtPeg &&
+            Number(epochsAtPeg) === 0
+        ) {
+            bondingWeeklyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolBondingDailyAPR'] * 7);
+            bondingHourlyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolBondingDailyAPR'] / 24);
+            bondingDailyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolBondingDailyAPR']);
+            bondingMonthlyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolBondingDailyAPR'] * 30);
 
-    // Calculate DAO APR (4 hrs)
-    if (QSDPrice && totalBonded && expansionAmount) {
-        if (epoch > 72) {
-            const totalQSD = toFloat(totalBonded);
-            const QSDToAdd = expansionAmount / 2;
-
-            const daoYield = (QSDToAdd / totalQSD) * 100;
-
-            bondingHourlyYield = numberFormat.format(daoYield / 4) + '%';
-            bondingDailyYield = numberFormat.format(daoYield * 6) + '%';
-            bondingWeeklyYield = numberFormat.format(daoYield * 6 * 7) + '%';
-            bondingMonthlyYield = numberFormat.format(daoYield * 6 * 30) + '%';
-        } else {
-            bondingHourlyYield = '0%';
-            bondingDailyYield = '0%';
-            bondingWeeklyYield = '0%';
-            bondingMonthlyYield = '0%';
+            // APR when at peg
+        } else if (epochsAtPeg && epochsAtPeg > 0) {
+            bondingWeeklyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolBondingDailyAPR'] * 7);
+            bondingHourlyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolBondingDailyAPR'] / 24);
+            bondingDailyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolBondingDailyAPR']);
+            bondingMonthlyYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolBondingDailyAPR'] * 30);
+        } else if (epochsAtPeg && Number(epochsAtPeg) === 0) {
+            bondingWeeklyYield = '0';
+            bondingHourlyYield = '0';
+            bondingDailyYield = '0';
+            bondingMonthlyYield = '0';
         }
     }
 
@@ -270,15 +310,19 @@ function BondingNew({ user }: { user: string }) {
                         Step 2: Bond your QSD *Note that you can only bond QSD
                         when TWAP is &lt;1.02*
                         <br />
-                        &nbsp;&nbsp; 2.1: If TWAP is &lt;1.02, you'll be
-                        rewarded QSG
+                        &nbsp;&nbsp; 2.1: If TWAP is &lt;0.98, you'll be
+                        rewarded <b>QSG</b>
                         <br />
-                        &nbsp;&nbsp; 2.2: If TWAP is &gt;=1.02, you'll be
-                        rewarded QSD
+                        &nbsp;&nbsp; 2.2: If TWAP is &gt;0.98 and &lt;1.02,
+                        you'll be rewarded <b>QSG and BUSD</b>
+                        <br />
+                        &nbsp;&nbsp; 2.3: If TWAP is &gt;=1.02, you'll be
+                        rewarded <b>QSD</b>
                         <br />
                         Step 3: Poke your rewards to move them to claimable
                         <br />
-                        Step 4: Wait 1 epoch to claim claimable QSD and/or QSG
+                        Step 4: Wait 1 epoch to claim claimable QSD, BUSD,
+                        and/or QSG
                     </p>
                 }
             />

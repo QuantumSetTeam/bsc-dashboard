@@ -23,6 +23,10 @@ import {
     getUserLPBonded,
     getUserLPStaged,
     getUserLPWallet,
+    getExpansionState,
+    getEpochsAtPeg,
+    getDailyExpansionApr,
+    getDailyPegApr,
 } from '../../utils/infura';
 import { formatBN, toTokenUnitsBN } from '../../utils/number';
 import { getPoolBondingAddress, getPoolLPAddress } from '../../utils/pool';
@@ -44,7 +48,9 @@ function Tools({ user }: { user: string }) {
     const [totalSupply, setTotalSupply] = useState<BigNumber | null>(null);
     const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
     const [twapPrice, setTwapPrice] = useState<null | number>(null);
+    const [expansionState, setExpansionState] = useState<null | boolean>(null);
     const [expansionAmount, setExpansionAmount] = useState<null | number>(null);
+    const [epochsAtPeg, setEpochsAtPeg] = useState<null | number>(null);
 
     const [
         treasuryQSDAmount,
@@ -75,6 +81,10 @@ function Tools({ user }: { user: string }) {
     const [userDaoStaged, setUserDaoStaged] = useState<BigNumber | null>(null);
     const [userQSDBal, setUserQSDBal] = useState<BigNumber | null>(null);
     const [userUniBal, setUserUniBal] = useState<BigNumber | null>(null);
+    const [dailyExpansionAPRs, setDailyExpansionAPRs] = useState<object | null>(
+        null
+    );
+    const [dailyPegAPRs, setDailyPegAPRs] = useState<object | null>(null);
 
     const [userQSDWalletLiquidity, setUserQSDWalletLiquidity] = useState<
         number | null
@@ -115,6 +125,10 @@ function Tools({ user }: { user: string }) {
                 expansionAmount,
                 daoE,
                 treasuryQSD,
+                expansionStateResult,
+                epochsAtPegResult,
+                dailyExpansionAPRsResult,
+                dailyPegAPRsResult,
             ] = await Promise.all([
                 getInstantaneousQSDPrice(),
                 getTWAPPrice(),
@@ -128,6 +142,10 @@ function Tools({ user }: { user: string }) {
                 getExpansionAmount(),
                 getEpoch(QSDS.addr),
                 getTokenBalance(QSD.addr, TreasuryAddress),
+                getExpansionState(),
+                getEpochsAtPeg(),
+                getDailyExpansionApr(),
+                getDailyPegApr(),
             ]);
 
             setTwapPrice(twap);
@@ -141,6 +159,10 @@ function Tools({ user }: { user: string }) {
             setLPStaged(toTokenUnitsBN(lpStaged, 18));
             setDaoEpoch(parseInt(daoE, 10));
             setTreasuryQSDAmount(toTokenUnitsBN(treasuryQSD, QSD.decimals));
+            setExpansionState(expansionStateResult);
+            setEpochsAtPeg(epochsAtPegResult);
+            setDailyExpansionAPRs(dailyExpansionAPRsResult);
+            setDailyPegAPRs(dailyPegAPRsResult);
 
             // If is bootstrapping, then bonding will be referencing dao
             // otherwise it'll be referencing bonding
@@ -148,7 +170,13 @@ function Tools({ user }: { user: string }) {
             setDaoBonded(toTokenUnitsBN(bondingBonded, 18));
             setDaoStaged(toTokenUnitsBN(bondingStaged, 18));
 
-            setExpansionAmount(expansionAmount);
+            // If we're expanding, set expansion amount
+            // Else set it to 0
+            if (expansionState) {
+                setExpansionAmount(expansionAmount);
+            } else {
+                setExpansionAmount(0);
+            }
         };
 
         const g = async () => {
@@ -206,6 +234,7 @@ function Tools({ user }: { user: string }) {
 
         f();
         g();
+        // eslint-disable-next-line
     }, [user]);
 
     const toFloat = (a: BigNumber): number => {
@@ -217,10 +246,10 @@ function Tools({ user }: { user: string }) {
     let daoBondedPercentage = '...';
     let daoStagedPercentage = '...';
     let QSDMarketCap = '...';
-    let daoAPR = '...';
-    let daoExpansionYield = '...';
-    let lpExpansionYield = '...';
-    let lpAPR = '...';
+    let daoExpansionAPR = '...';
+    let daoPegAPR = '...';
+    let lpExpansionAPR = '...';
+    let lpPegAPR = '...';
 
     let QSDBondedPrice = '$...';
     let QSDStagedPrice = '$...';
@@ -309,48 +338,30 @@ function Tools({ user }: { user: string }) {
         userQSDStagedPrice = '$' + numberFormat.format(totalBUSD);
     }
 
-    // Calculate LP APR (4 hrs)
-    if (
-        QSDPrice &&
-        QSDBondedLiquidity &&
-        busdBondedLiquidity &&
-        expansionAmount
-    ) {
-        const totalBUSD =
-            QSDBondedLiquidity * toFloat(QSDPrice) + busdBondedLiquidity;
-        const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
+    // Calculate Expansion APR (Daily)
+    if (dailyExpansionAPRs) {
+        lpExpansionAPR = Intl.NumberFormat('en', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+        }).format(dailyExpansionAPRs['poolLPDailyAPR'] * 365);
 
-        const lpYield = (busdToAdd / totalBUSD) * 100;
-
-        lpExpansionYield =
-            Intl.NumberFormat('en', {
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-            }).format(lpYield) + '%';
-        lpAPR =
-            Intl.NumberFormat('en', {
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-            }).format(lpYield * 6 * 365) + '%';
+        daoExpansionAPR = Intl.NumberFormat('en', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+        }).format(dailyExpansionAPRs['poolBondingDailyAPR'] * 365);
     }
 
-    // Calculate DAO APR (4 hrs)
-    if (QSDPrice && daoBonded && expansionAmount) {
-        const totalQSD = toFloat(daoBonded);
-        const QSDToAdd = expansionAmount / 2;
+    // Calculate Peg APR (Daily)
+    if (dailyPegAPRs) {
+        lpPegAPR = Intl.NumberFormat('en', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+        }).format(dailyPegAPRs['poolLPDailyAPR'] * 365);
 
-        const daoYield = (QSDToAdd / totalQSD) * 100;
-
-        daoExpansionYield =
-            Intl.NumberFormat('en', {
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-            }).format(daoYield) + '%';
-        daoAPR =
-            Intl.NumberFormat('en', {
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-            }).format(daoYield * 6 * 365) + '%';
+        daoPegAPR = Intl.NumberFormat('en', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+        }).format(dailyPegAPRs['poolBondingDailyAPR'] * 365);
     }
 
     if (QSDPrice && QSDBondedLiquidity)
@@ -403,18 +414,27 @@ function Tools({ user }: { user: string }) {
         <Layout>
             <Section>
                 <Tile
-                    line1='Next Epoch:'
+                    line1='Current Epoch:'
                     line2={
                         expansionAmount && expansionAmount > 0
-                            ? `Total supply will increase by ${expansionAmount.toFixed(
+                            ? `Total supply increases by ${expansionAmount.toFixed(
                                   2
-                              )} QSD`
-                            : 'No expansion rewards this epoch'
+                              )} QSD per Epoch`
+                            : epochsAtPeg && epochsAtPeg > 0
+                            ? `QSD is at peg.`
+                            : QSDPrice && toFloat(QSDPrice) < 0.98
+                            ? 'No QSD or BUSD rewards this epoch'
+                            : 'Connect your wallet to view current information.'
                     }
                     line3={
                         expansionAmount && expansionAmount > 0
-                            ? `Yielding ${lpExpansionYield} on LP TVL (${lpAPR} APR) and ${daoExpansionYield} to Bonded QSD (${daoAPR} APR)`
-                            : 'QSG will be allocated to QSD stakers'
+                            ? `Yielding ${lpExpansionAPR}% on LP pool and ${daoExpansionAPR}% to Bonded QSD`
+                            : epochsAtPeg && epochsAtPeg > 0
+                            ? `BUSD and QSG rewards distributed to QSD and LP stakers. 
+                            Yielding ${lpPegAPR}% for LP stakers, and ${daoPegAPR}% for QSD stakers.`
+                            : QSDPrice && toFloat(QSDPrice) < 0.98
+                            ? 'QSG rewards distributed to QSD stakers.'
+                            : ''
                     }
                 />
             </Section>
@@ -435,10 +455,14 @@ function Tools({ user }: { user: string }) {
             </BorderedSection>
             <BorderedSection>
                 <Row>
-                    <InfoBox title='LP Yield'>{lpExpansionYield}</InfoBox>
-                    <InfoBox title='LP APR'>{lpAPR}</InfoBox>
-                    <InfoBox title='QSD Yield'>{daoExpansionYield}</InfoBox>
-                    <InfoBox title='QSD APR'>{daoAPR}</InfoBox>
+                    <InfoBox title='LP Rewards in Expansion'>
+                        {lpExpansionAPR}%
+                    </InfoBox>
+                    <InfoBox title='LP Rewards at Peg'>{lpPegAPR}%</InfoBox>
+                    <InfoBox title='QSD Rewards in Expansion'>
+                        {daoExpansionAPR}%
+                    </InfoBox>
+                    <InfoBox title='QSD Rewards at Peg'>{daoPegAPR}%</InfoBox>
                 </Row>
             </BorderedSection>
             <BorderedSection>

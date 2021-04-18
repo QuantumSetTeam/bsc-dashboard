@@ -99,7 +99,7 @@ function Candidate({ user }: { user: string }) {
             const startN = parseInt(startForStr, 10);
             const periodN = parseInt(periodForStr, 10);
 
-            console.log(startForStr);
+            // console.log(startForStr);
             const endsAfter = startN + periodN - 1;
             if (epochN > endsAfter) {
                 totalStakeStr = await getPoolTotalBonded(PoolGovAdd.addr);

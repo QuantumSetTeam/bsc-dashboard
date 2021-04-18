@@ -2,7 +2,7 @@ import Web3 from 'web3';
 
 import BigNumber from 'bignumber.js';
 import { Dao, UniswapV2Router02 } from '../constants/contracts';
-import { QSD, UNI, BUSD, QSDS } from '../constants/tokens';
+import { QSD, UNI, BUSD, QSDS, newPoolBondingAdd } from '../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../constants/values';
 import { formatBN, toTokenUnitsBN, toFloat } from './number';
 import { getPoolLPAddress } from './pool';
@@ -1043,7 +1043,7 @@ export const getExpansionAmount = async () => {
     // 5.4% max supply
     const MAX_SUPPLY_EXPANSION = 0.054;
 
-    const delta = Math.min(price - 1.02, MAX_SUPPLY_EXPANSION);
+    const delta = Math.min((price - 1.02) * 0.1, MAX_SUPPLY_EXPANSION);
     const newSupply = totalSupply * delta;
 
     if (price < 1.02) {
@@ -1062,57 +1062,120 @@ export const getTWAPPrice = async () => {
         formatBN(toTokenUnitsBN(priceStr, 18), 2).split(',').join('')
     );
 
-    // const pairContract = new web3.eth.Contract(uniswapPairAbi, UNI.addr);
-
-    // const oracleAddress = await daoContract.methods.oracle().call();
-    // const oracleContract = new web3.eth.Contract(oracleAbi, oracleAddress);
-
-    // // Gets cumulative price
-
-    // // eslint-disable-next-line
-    // const cumulativePriceStr = await oracleContract.methods
-    //     ._cumulative()
-    //     .call();
-    // // eslint-disable-next-line
-    // const oracleTimestampStr = await oracleContract.methods._timestamp().call();
-
-    // const cumulativePrice = parseFloat(
-    //     formatBN(toTokenUnitsBN(cumulativePriceStr, 18), 2).split(',').join('')
-    // );
-    // const oracleTimestamp = parseInt(oracleTimestampStr, 10);
-
-    // const token0 = await pairContract.methods.token0().call();
-
-    // const resp = await pairContract.methods.getReserves().call();
-    // const blockTimestampLast = parseInt(resp.blockTimestampLast, 10);
-    // const price0CumulativeLastStr = await pairContract.methods
-    //     .price0CumulativeLast()
-    //     .call();
-    // const price1CumulativeLastStr = await pairContract.methods
-    //     .price1CumulativeLast()
-    //     .call();
-
-    // const price0Cumulative = parseFloat(
-    //     formatBN(toTokenUnitsBN(price0CumulativeLastStr, 18), 2)
-    //         .split(',')
-    //         .join('')
-    // );
-    // const price1Cumulative = parseFloat(
-    //     formatBN(toTokenUnitsBN(price1CumulativeLastStr, 18), 2)
-    //         .split(',')
-    //         .join('')
-    // );
-
-    // const timeDelta = blockTimestampLast - oracleTimestamp;
-
-    // const price0 =
-    //     (((price0Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
-    // const price1 =
-    //     (((price1Cumulative - cumulativePrice) / timeDelta) * 1e18) / 2 ** 112;
-
-    // if (token0.toLowerCase() === QSD.addr.toLowerCase()) {
-    //     return price0;
-    // }
-
     return price;
+};
+
+export const getExpansionState = async () => {
+    const daoContract = new web3.eth.Contract(daoAbi, Dao);
+
+    const expansionState = await daoContract.methods.epochInExpansion().call();
+
+    return expansionState;
+};
+
+export const getEpochsAtPeg = async () => {
+    const daoContract = new web3.eth.Contract(daoAbi, Dao);
+
+    const epochsAtPeg = await daoContract.methods.epochsAtPeg().call();
+
+    return epochsAtPeg;
+};
+
+export const getDaoBusdBalance = async () => {
+    const busdContract = new web3.eth.Contract(dollarAbi, BUSD.addr);
+
+    const balance = await busdContract.methods.balanceOf(Dao).call();
+
+    const balanceFormatted = toFloat(toTokenUnitsBN(balance, 18));
+
+    return balanceFormatted;
+};
+
+export const getPoolBondingBondedInUSD = async () => {
+    const QSDPriceStr = await getInstantaneousQSDPrice();
+
+    const QSDPrice = toFloat(toTokenUnitsBN(QSDPriceStr, 18));
+
+    const poolBondingTotalBondedStr = await getPoolTotalBonded(
+        newPoolBondingAdd.addr
+    );
+
+    const poolBondingTotalBonded =
+        toFloat(toTokenUnitsBN(poolBondingTotalBondedStr, 18)) * QSDPrice;
+
+    return poolBondingTotalBonded;
+};
+
+export const getPoolLPBondedInUSD = async () => {
+    const QSDPriceStr = await getInstantaneousQSDPrice();
+
+    const QSDPrice = toFloat(toTokenUnitsBN(QSDPriceStr, 18));
+
+    const liquidityAmounts = await getLPBondedLiquidity();
+
+    const totalBonded =
+        liquidityAmounts['busd'] + liquidityAmounts['QSD'] * QSDPrice;
+
+    return totalBonded;
+};
+
+export const getDailyPegApr = async () => {
+    const busdBalance = await getDaoBusdBalance();
+
+    const epochsAtPeg = await getEpochsAtPeg();
+
+    // If we're not at peg, just return 0
+    if (Number(epochsAtPeg) === 0) {
+        return {
+            poolBondingDailyAPR: 0,
+            poolLPDailyAPR: 0,
+        };
+    }
+
+    // balance * [((epochsatpeg - 1) ** 1.25) * (0.75.div(100)) + (4.div(100))]
+    const baseReturn =
+        ((epochsAtPeg - 1) ** 1.25 * (0.75 / 100) + 4 / 100) * busdBalance;
+
+    const poolBondingBonded = await getPoolBondingBondedInUSD();
+
+    const poolLPBonded = await getPoolLPBondedInUSD();
+
+    // 50% of the BUSD returns go to this pool, the other 50%
+    // go to the poolLP pool
+    const poolBondingAPRPerEpoch = ((baseReturn / 2) * 100) / poolBondingBonded;
+    const poolBondingAPRPerDay = poolBondingAPRPerEpoch * 4;
+
+    const poolLPAPRPerEpoch = ((baseReturn / 2) * 100) / poolLPBonded;
+    const poolLPAPRPerDay = poolLPAPRPerEpoch * 4;
+
+    return {
+        poolBondingDailyAPR: poolBondingAPRPerDay,
+        poolLPDailyAPR: poolLPAPRPerDay,
+    };
+};
+
+export const getDailyExpansionApr = async () => {
+    const poolBondingBonded = await getPoolBondingBondedInUSD();
+
+    const poolLPBonded = await getPoolLPBondedInUSD();
+
+    const expansionAmount = await getExpansionAmount();
+
+    // 25% is written off to buy BUSD for peg rewards
+    const expansionToDistribute = expansionAmount * 0.75;
+
+    const expansionForPoolBonding = expansionToDistribute * 0.4;
+    const expansionForPoolLP = expansionToDistribute * 0.35;
+
+    const poolBondingAPRPerEpoch =
+        (expansionForPoolBonding * 100) / poolBondingBonded;
+    const poolBondingAPRPerDay = poolBondingAPRPerEpoch * 6;
+
+    const poolLPAPRPerEpoch = (expansionForPoolLP * 100) / poolLPBonded;
+    const poolLPAPRPerDay = poolLPAPRPerEpoch * 6;
+
+    return {
+        poolBondingDailyAPR: poolBondingAPRPerDay,
+        poolLPDailyAPR: poolLPAPRPerDay,
+    };
 };

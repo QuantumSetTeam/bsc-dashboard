@@ -31,6 +31,9 @@ import {
     getLPPoolTotalClaimable1,
     getPoolTotalClaimable1,
     getPoolTotalRewarded1,
+    getEpochsAtPeg,
+    getDailyExpansionApr,
+    getDailyPegApr,
 } from '../../utils/infura';
 import { formatBN, toFloat, toTokenUnitsBN } from '../../utils/number';
 import { epochformatted } from '../../utils/calculation';
@@ -46,7 +49,6 @@ function HomePage({ user }: HomePageProps) {
     const [totalSupply, setTotalSupply] = useState<BigNumber | null>(null);
     const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
 
-    const [daoBonded, setTotalBonded] = useState(new BigNumber(0));
     // const [daoStaged, setTotalStaged] = useState(new BigNumber(0));
     // const [poolLPLiquidity, setPoolLiquidity] = useState(new BigNumber(0));
     // const [poolTotalRewarded, setPoolTotalRewarded] = useState(
@@ -56,8 +58,6 @@ function HomePage({ user }: HomePageProps) {
     //     new BigNumber(0)
     // );
 
-    const [lpQSDLiquidity, setLpQSDLiquidity] = useState<number | null>(null);
-    const [lpDaiLiquidity, setLpDaiLiquidity] = useState<number | null>(null);
     const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
     const [lpTVL, setLPTVL] = useState<string | null>(null);
@@ -66,6 +66,12 @@ function HomePage({ user }: HomePageProps) {
     const [totalTVL, setTotalTVL] = useState<string>('');
 
     const [tokenPriceStr, setTokenPriceStr] = useState<string>('...');
+
+    const [epochsAtPeg, setEpochsAtPeg] = useState<null | number>(null);
+    const [dailyExpansionAPRs, setDailyExpansionAPRs] = useState<object | null>(
+        null
+    );
+    const [dailyPegAPRs, setDailyPegAPRs] = useState<object | null>(null);
 
     useEffect(() => {
         let isCancelled = false;
@@ -84,6 +90,9 @@ function HomePage({ user }: HomePageProps) {
                 daoClaimableStr,
                 lpRewardedStr,
                 lpClaimable1Str,
+                epochsAtPegResult,
+                dailyExpansionAPRsResult,
+                dailyPegAPRsResult,
             ] = await Promise.all([
                 getTokenTotalSupply(QSD.addr),
                 getInstantaneousQSDPrice(),
@@ -95,21 +104,23 @@ function HomePage({ user }: HomePageProps) {
                 getPoolTotalClaimable1(poolBonding),
                 getPoolTotalRewarded1(newPoolLPAdd.addr),
                 getLPPoolTotalClaimable1(newPoolLPAdd.addr),
+                getEpochsAtPeg(),
+                getDailyExpansionApr(),
+                getDailyPegApr(),
             ]);
 
             setTotalSupply(toTokenUnitsBN(supply, 18));
             setQSDPrice(toTokenUnitsBN(tokenPrice, 18));
-            setLpQSDLiquidity(liquidityLp.QSD);
-            setLpDaiLiquidity(liquidityLp.busd);
             setExpansionAmount(expansion);
+            setEpochsAtPeg(epochsAtPegResult);
+            setDailyExpansionAPRs(dailyExpansionAPRsResult);
+            setDailyPegAPRs(dailyPegAPRsResult);
 
             // FIRST PROCESS POOLBONDING(DAO) TVL //
             const daoTotalBonded = toTokenUnitsBN(
                 new BigNumber(daoBondedStr),
                 18
             );
-
-            setTotalBonded(daoTotalBonded);
 
             const daoTotalStaged = toTokenUnitsBN(
                 new BigNumber(daoStagedStr),
@@ -211,44 +222,53 @@ function HomePage({ user }: HomePageProps) {
     //let daoHourlyYield = '...';
     // let daoDailyYield = '...';
     // let daoMonthlyYield = '...';
-    let daoAnnualYield = '0';
+    let daoAnnualYield = '...';
 
     // let lpWeeklyYield = '...';
     //let lpHourlyYield = '...';
     // let lpDailyYield = '...';
     // let lpMonthlyYield = '...';
-    let lpAnnualYield = '0';
+    let lpAnnualYield = '...';
 
-    // Define number formatting
-    var options = { minimumFractionDigits: 0, maximumFractionDigits: 2 };
-    var numberFormat = new Intl.NumberFormat('en-US', options);
+    // Set APR strings
+    if (dailyExpansionAPRs && dailyPegAPRs) {
+        // APR when in expansion
+        if (
+            expansionAmount &&
+            expansionAmount > 0 &&
+            epochsAtPeg &&
+            Number(epochsAtPeg) === 0
+        ) {
+            daoAnnualYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolBondingDailyAPR'] * 365);
+            //
+            //
+            lpAnnualYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolLPDailyAPR'] * 365);
 
-    // Calculate LP APR (4 hrs)
-    if (QSDPrice && lpQSDLiquidity && lpDaiLiquidity && expansionAmount) {
-        const totalBUSD = lpQSDLiquidity * toFloat(QSDPrice) + lpDaiLiquidity;
-        const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
+            // APR when at peg
+        } else if (epochsAtPeg && epochsAtPeg > 0) {
+            daoAnnualYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolBondingDailyAPR'] * 365);
+            //
+            //
 
-        const lpYield = (busdToAdd / totalBUSD) * 100;
+            lpAnnualYield = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolLPDailyAPR'] * 365);
 
-        //lpHourlyYield = numberFormat.format(lpYield / 4) + '%';
-        // lpDailyYield = numberFormat.format(lpYield * 6) + '%';
-        // lpWeeklyYield = numberFormat.format(lpYield * 6 * 7) + '%';
-        // lpMonthlyYield = numberFormat.format(lpYield * 6 * 30) + '%';
-        lpAnnualYield = numberFormat.format(lpYield * 6 * 30 * 12) + '%';
-    }
-
-    // Calculate DAO APR (4 hrs)
-    if (QSDPrice && daoBonded && expansionAmount) {
-        const totalQSD = toFloat(daoBonded);
-        const QSDToAdd = expansionAmount / 2;
-
-        const daoYield = (QSDToAdd / totalQSD) * 100;
-
-        //daoHourlyYield = numberFormat.format(daoYield / 4) + '%';
-        // daoDailyYield = numberFormat.format(daoYield * 6) + '%';
-        // daoWeeklyYield = numberFormat.format(daoYield * 6 * 7) + '%';
-        // daoMonthlyYield = numberFormat.format(daoYield * 6 * 30) + '%';
-        daoAnnualYield = numberFormat.format(daoYield * 6 * 30 * 12) + '%';
+            // Not at peg, not at expansion
+        } else if (epochsAtPeg && Number(epochsAtPeg) === 0) {
+            daoAnnualYield = '0';
+            lpAnnualYield = '0';
+        }
     }
 
     // eslint-disable-next-line
@@ -304,7 +324,7 @@ function HomePage({ user }: HomePageProps) {
                                             <BalanceBlockMod
                                                 asset='APR'
                                                 balance={lpAnnualYield}
-                                                suffix={''}
+                                                suffix={'%'}
                                             />
                                         </div>
                                     </div>
@@ -380,7 +400,7 @@ function HomePage({ user }: HomePageProps) {
                                             <BalanceBlockMod
                                                 asset='APR'
                                                 balance={daoAnnualYield}
-                                                suffix={''}
+                                                suffix={'%'}
                                             />
                                         </div>
                                     </div>

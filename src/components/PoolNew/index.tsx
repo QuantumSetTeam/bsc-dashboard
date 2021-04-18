@@ -6,8 +6,6 @@ import { BUSD, QSD, UNI, QSDS, newPoolLPAdd } from '../../constants/tokens';
 import { POOL_EXIT_LOCKUP_EPOCHS } from '../../constants/values';
 import {
     getExpansionAmount,
-    getInstantaneousQSDPrice,
-    getLPBondedLiquidity,
     getPoolBalanceOfBonded,
     getPoolBalanceOfClaimable1,
     getPoolBalanceOfRewarded1,
@@ -20,8 +18,11 @@ import {
     getTokenAllowance,
     getTokenBalance,
     getEpoch,
+    getEpochsAtPeg,
+    getDailyExpansionApr,
+    getDailyPegApr,
 } from '../../utils/infura';
-import { toBaseUnitBN, toFloat, toTokenUnitsBN } from '../../utils/number';
+import { toBaseUnitBN, toTokenUnitsBN } from '../../utils/number';
 import {
     approve,
     bondPool,
@@ -45,9 +46,6 @@ function Pool({ user }: { user: string }) {
     }
 
     const [epoch, setEpoch] = useState<number>(0);
-    const [QSDLiquidity, setQSDLiquidity] = useState<number | null>(null);
-    const [busdLiquidity, setBUSDLiquidity] = useState<number | null>(null);
-    const [QSDPrice, setQSDPrice] = useState<BigNumber | null>(null);
     const [expansionAmount, setExpansionAmount] = useState<number | null>(null);
 
     const [poolAddress, setPoolAddress] = useState('');
@@ -85,19 +83,31 @@ function Pool({ user }: { user: string }) {
 
     const [lockup, setLockup] = useState(0);
 
+    const [epochsAtPeg, setEpochsAtPeg] = useState<null | number>(null);
+    const [dailyExpansionAPRs, setDailyExpansionAPRs] = useState<object | null>(
+        null
+    );
+    const [dailyPegAPRs, setDailyPegAPRs] = useState<object | null>(null);
+
     //APR
     useEffect(() => {
         const updateAPR = async () => {
-            const [spot, expansionAmount, liquidity] = await Promise.all([
-                getInstantaneousQSDPrice(),
+            const [
+                expansionAmount,
+                epochsAtPegResult,
+                dailyExpansionAPRsResult,
+                dailyPegAPRsResult,
+            ] = await Promise.all([
                 getExpansionAmount(),
-                getLPBondedLiquidity(),
+                getEpochsAtPeg(),
+                getDailyExpansionApr(),
+                getDailyPegApr(),
             ]);
 
-            setQSDPrice(toTokenUnitsBN(spot, 18));
-            setQSDLiquidity(liquidity.QSD);
-            setBUSDLiquidity(liquidity.busd);
             setExpansionAmount(expansionAmount);
+            setEpochsAtPeg(epochsAtPegResult);
+            setDailyExpansionAPRs(dailyExpansionAPRsResult);
+            setDailyPegAPRs(dailyPegAPRsResult);
         };
 
         updateAPR();
@@ -253,20 +263,56 @@ function Pool({ user }: { user: string }) {
     let lpWeeklyAPR = '...';
     let lpMonthlyAPR = '...';
 
-    // Define number formatting
-    var options = { minimumFractionDigits: 0, maximumFractionDigits: 2 };
-    var numberFormat = new Intl.NumberFormat('en-US', options);
+    // Set APR strings
+    if (dailyExpansionAPRs && dailyPegAPRs) {
+        // APR when in expansion
+        if (
+            expansionAmount &&
+            expansionAmount > 0 &&
+            epochsAtPeg &&
+            Number(epochsAtPeg) === 0
+        ) {
+            lpWeeklyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolLPDailyAPR'] * 7);
+            lpHourlyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolLPDailyAPR'] / 24);
+            lpDailyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolLPDailyAPR']);
+            lpMonthlyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyExpansionAPRs['poolLPDailyAPR'] * 30);
 
-    if (QSDPrice && QSDLiquidity && busdLiquidity && expansionAmount) {
-        const totalBUSD = QSDLiquidity * toFloat(QSDPrice) + busdLiquidity;
-        const busdToAdd = (expansionAmount / 2) * toFloat(QSDPrice);
-
-        const lpYield = (busdToAdd / totalBUSD) * 100;
-
-        lpHourlyAPR = numberFormat.format(lpYield / 4) + '%';
-        lpDailyAPR = numberFormat.format(lpYield * 6) + '%';
-        lpWeeklyAPR = numberFormat.format(lpYield * 6 * 7) + '%';
-        lpMonthlyAPR = numberFormat.format(lpYield * 6 * 30) + '%';
+            // APR when at peg
+        } else if (epochsAtPeg && epochsAtPeg > 0) {
+            lpWeeklyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolLPDailyAPR'] * 7);
+            lpHourlyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolLPDailyAPR'] / 24);
+            lpDailyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolLPDailyAPR']);
+            lpMonthlyAPR = Intl.NumberFormat('en', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+            }).format(dailyPegAPRs['poolLPDailyAPR'] * 30);
+        } else if (epochsAtPeg && Number(epochsAtPeg) === 0) {
+            lpWeeklyAPR = '0';
+            lpHourlyAPR = '0';
+            lpDailyAPR = '0';
+            lpMonthlyAPR = '0';
+        }
     }
 
     return (
@@ -289,7 +335,7 @@ function Pool({ user }: { user: string }) {
                         &nbsp;&nbsp; (Remember to re-bond your CAKE-LP to
                         continue getting rewards)
                         <br />
-                        Step 4: Wait 1 epoch to claim claimable QSD
+                        Step 4: Wait 1 epoch to claim claimable QSD and BUSD
                         <br />
                         Step 5: Provide your rewards to compound your returns
                         <br />
